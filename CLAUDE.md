@@ -4,7 +4,7 @@
 
 **Arché** (ἀρχή) provides essential behavioral principles for Claude Code.
 
-**Purpose**: Modify LLM behavior for better user experience - not a plugin foundation, but a behavioral configuration.
+**Purpose**: Plugin that modifies LLM behavior for better user experience. Unlike Gradient (plugin foundation), Arché focuses on behavioral configuration.
 
 ---
 
