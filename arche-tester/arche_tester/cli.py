@@ -95,6 +95,20 @@ def analyze(
     ),
 ) -> None:
     """Analyze test responses for a version."""
+    # Validate version directory exists
+    version_dir = data_path / "versions" / version
+    if not version_dir.exists():
+        print_error(f"Version directory not found: {version_dir}")
+        print_step("Run tests first with: arche-test run {version}")
+        raise typer.Exit(1)
+
+    # Validate responses.yaml exists
+    responses_file = version_dir / "responses.yaml"
+    if not responses_file.exists():
+        print_error(f"Responses file not found: {responses_file}")
+        print_step("Run tests first with: arche-test run {version}")
+        raise typer.Exit(1)
+
     analyzer = ResponseAnalyzer(
         data_path=data_path,
         use_llm=use_llm,

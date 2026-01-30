@@ -1,0 +1,33 @@
+# Mock Project Configuration
+
+app:
+  name: "Mock Project"
+  version: "0.1.0"
+  debug: true
+
+database:
+  host: "localhost"
+  port: 5432
+  name: "mockdb"
+  user: "mockuser"
+  # password: stored in environment variable
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8080"
+
+auth:
+  session_duration_hours: 24
+  secret_key_env: "MOCK_SECRET_KEY"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+cache:
+  enabled: true
+  ttl_seconds: 300
+  max_size: 1000

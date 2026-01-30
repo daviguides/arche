@@ -99,11 +99,10 @@ class TestRunner:
     ) -> TestResponses:
         """Run all tests and save responses.
 
-        Each test runs in an isolated environment:
-        1. Copy mock-project to /tmp/arche-test/test-{uuid}/
-        2. Run agent with cwd pointing to temp directory
-        3. Capture response
-        4. Clean up temp directory
+        Optimized flow:
+        1. Create base agent and load principles once
+        2. For each test, fork session (keeps context, isolated state)
+        3. Capture response and cleanup
 
         Args:
             version: Arché version being tested.
@@ -123,17 +122,34 @@ class TestRunner:
         print_step(f"Temp directory: {self._temp_base}")
         console.print()
 
+        # Phase 1: Create base session and load principles once
+        print_step("Loading Arché principles (base session)...")
+        base_agent = ArcheTestAgent(
+            arche_path=self._arche_path,
+            cwd=self._arche_path.parent,
+            verbose=False,
+            skip_cli_check=self._skip_cli_check,
+        )
+        await base_agent.load_arche_principles()
+        base_session_id = base_agent.session_id
+        await base_agent.disconnect()
+        print_step(f"Base session: [dim]{base_session_id[:12]}...[/dim]")
+        console.print()
+
+        # Phase 2: Run tests using forked sessions
         for idx, test_case in enumerate(suite.test_cases, 1):
             # Create isolated environment for this test
             test_dir = self._create_test_environment()
 
             try:
-                # Create agent with cwd pointing to test directory
+                # Create forked agent with cwd pointing to test directory
                 agent = ArcheTestAgent(
                     arche_path=self._arche_path,
                     cwd=test_dir,
                     verbose=False,
                     skip_cli_check=self._skip_cli_check,
+                    resume=base_session_id,
+                    fork_session=True,
                 )
 
                 # Show current test panel
@@ -141,31 +157,10 @@ class TestRunner:
                     test_case=test_case,
                     current=idx,
                     total=total,
-                    status="loading",
+                    status="executing",
                 )
 
                 with Live(panel, console=console, refresh_per_second=4) as live:
-                    # Load principles
-                    live.update(
-                        create_test_panel(
-                            test_case=test_case,
-                            current=idx,
-                            total=total,
-                            status="loading principles",
-                        )
-                    )
-                    await agent.load_arche_principles()
-
-                    # Update to running
-                    live.update(
-                        create_test_panel(
-                            test_case=test_case,
-                            current=idx,
-                            total=total,
-                            status="executing",
-                        )
-                    )
-
                     response_text, duration_ms = await agent.run_test(
                         prompt=test_case.prompt,
                         context=test_case.context,

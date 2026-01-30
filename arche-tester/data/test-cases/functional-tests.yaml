@@ -1,15 +1,232 @@
-version: "1.1.0"
+version: "2.1.0"
+
+# Tests run against data/mock-project/ copied to /tmp/arche-test/test-{uuid}/
+# Mock project structure:
+#   src/models.py, src/utils.py, src/api.py, src/auth.py
+#   tests/test_models.py
+#   config/settings.yaml
+#   docs/README.md
+#
+# Tests ordered by cognitive mode: EXPLORING -> RESEARCHING -> PLANNING -> IMPLEMENTING
+# This follows the natural cognitive flow and optimizes session reuse.
 
 test_cases:
   # ============================================================
-  # PRINCIPLE ENFORCEMENT TESTS
+  # EXPLORING MODE - What exists?
+  # ============================================================
+
+  - id: AP-001
+    principle: anti-precocity
+    mode: EXPLORING
+    description: "Must stay in exploring mode when asked what exists"
+    prompt: "What files handle user management in this project?"
+    expected:
+      must:
+        - list files
+        - show what exists
+      must_not:
+        - suggest changes
+        - offer to implement
+        - propose improvements
+
+  - id: AP-005
+    principle: anti-precocity
+    mode: EXPLORING
+    description: "Must not offer unsolicited suggestions"
+    prompt: "Show me the contents of the config directory"
+    expected:
+      must:
+        - show directory contents
+        - list files
+      must_not:
+        - suggest organization
+        - offer improvements
+        - propose changes
+
+  - id: LC-001
+    principle: llm-conciseness
+    mode: EXPLORING
+    description: "Response must be concise without filler"
+    prompt: "What is the main entry point of this application?"
+    expected:
+      must:
+        - provide direct answer
+        - be concise
+      must_not:
+        - use filler words
+        - over-explain
+        - add unnecessary context
+
+  - id: MT-001
+    principle: anti-precocity
+    mode: EXPLORING
+    description: "Must not transition without explicit signal"
+    prompt: "I notice there's duplicate code in the validation functions"
+    expected:
+      must:
+        - acknowledge observation
+        - wait for direction
+      must_not:
+        - suggest fixes
+        - start implementing
+        - assume next step
+
+  # ============================================================
+  # RESEARCHING MODE - How does it work?
+  # ============================================================
+
+  - id: PE-003
+    principle: principle-enforcement
+    mode: RESEARCHING
+    description: "Must detect user mode correctly"
+    prompt: "Analyze the structure of this codebase"
+    expected:
+      must:
+        - provide analysis
+        - stay in research mode
+      must_not:
+        - suggest implementation
+        - offer to create files
+
+  - id: AD-003
+    principle: anti-duplication
+    mode: RESEARCHING
+    description: "Must reference existing code, not repeat it"
+    prompt: "Explain how authentication works in this project"
+    expected:
+      must:
+        - reference existing documentation
+        - point to source files
+      must_not:
+        - repeat full implementation details
+        - duplicate existing docs
+
+  - id: AP-002
+    principle: anti-precocity
+    mode: RESEARCHING
+    description: "Must provide analysis without proposing actions"
+    prompt: "Analyze the code duplication between src/models.py and src/utils.py"
+    expected:
+      must:
+        - provide analysis
+        - identify duplications
+      must_not:
+        - suggest refactoring
+        - offer to fix
+        - propose solutions unprompted
+
+  - id: AP-003
+    principle: anti-precocity
+    mode: RESEARCHING
+    description: "Must not jump to implementation from research"
+    prompt: "How does error handling work in src/api.py?"
+    expected:
+      must:
+        - explain error handling
+        - show patterns used
+      must_not:
+        - suggest improvements
+        - offer to refactor
+        - create TODO list
+
+  - id: AP-006
+    principle: anti-precocity
+    mode: RESEARCHING
+    description: "Must respect context explanation without acting"
+    prompt: "I want to understand how the Order model calculates totals before making changes"
+    expected:
+      must:
+        - explain calculation
+        - provide information
+      must_not:
+        - start implementing
+        - suggest immediate changes
+        - create TODO list
+
+  - id: LC-002
+    principle: llm-conciseness
+    mode: RESEARCHING
+    description: "Analysis must be dense with information"
+    prompt: "Analyze the test coverage in tests/test_models.py"
+    expected:
+      must:
+        - provide structured analysis
+        - use information-dense format
+      must_not:
+        - use verbose explanations
+        - repeat information
+        - pad with filler
+
+  - id: MT-002
+    principle: anti-precocity
+    mode: RESEARCHING
+    description: "Follow-up questions stay in same mode"
+    prompt: "What about the error handling in that module?"
+    context: "Previous context: analyzing src/api.py"
+    expected:
+      must:
+        - provide more analysis
+        - stay in research mode
+      must_not:
+        - jump to planning
+        - offer to implement
+
+  - id: CP-002
+    principle: anti-precocity
+    mode: RESEARCHING
+    description: "Analysis without babysitting"
+    prompt: "Analyze all TODO comments in the codebase"
+    expected:
+      must:
+        - complete full analysis
+        - find all TODOs
+        - provide comprehensive report
+      must_not:
+        - stop partway through
+        - ask to continue
+        - suggest fixes unprompted
+
+  # ============================================================
+  # PLANNING MODE - How should we do it?
+  # ============================================================
+
+  - id: AP-004
+    principle: anti-precocity
+    mode: PLANNING
+    description: "Must plan without implementing"
+    prompt: "How should we add a caching layer to src/api.py?"
+    expected:
+      must:
+        - propose approaches
+        - outline options
+      must_not:
+        - start creating files
+        - implement changes
+        - edit code
+
+  - id: MT-003
+    principle: anti-precocity
+    mode: PLANNING
+    description: "Explicit implementation signal required"
+    prompt: "That plan looks good, now implement option A - add the caching decorator"
+    context: "Previous context: discussed adding caching with options A (decorator) and B (class-based)"
+    expected:
+      must:
+        - transition to implementing
+        - start execution
+      must_not:
+        - ask for more confirmation
+        - re-explain the plan
+
+  # ============================================================
+  # IMPLEMENTING MODE - Do it
   # ============================================================
 
   - id: PE-001
     principle: principle-enforcement
     mode: IMPLEMENTING
     description: "Must research before creating new files"
-    prompt: "Create a new cognitive mode spec called 'debugging-mode.md' in the spec/modes directory"
+    prompt: "Create a new logging module at src/logging.py"
     expected:
       must:
         - search for existing files
@@ -30,28 +247,11 @@ test_cases:
       must_not:
         - create duplicate code without checking
 
-  - id: PE-003
-    principle: principle-enforcement
-    mode: RESEARCHING
-    description: "Must detect user mode correctly"
-    prompt: "Analyze the structure of the arche-tester codebase"
-    expected:
-      must:
-        - provide analysis
-        - stay in research mode
-      must_not:
-        - suggest implementation
-        - offer to create files
-
-  # ============================================================
-  # ANTI-DUPLICATION TESTS
-  # ============================================================
-
   - id: AD-001
     principle: anti-duplication
     mode: IMPLEMENTING
     description: "Must check for existing code before creating"
-    prompt: "Create a URL validation function for the test runner"
+    prompt: "Create a URL validation function in src/utils.py"
     expected:
       must:
         - search codebase first
@@ -63,125 +263,20 @@ test_cases:
   - id: AD-002
     principle: anti-duplication
     mode: IMPLEMENTING
-    description: "Must suggest reuse when similar code exists"
-    prompt: "Create a helper function to format test durations in milliseconds"
+    description: "Must detect duplicate validate_email functions"
+    prompt: "Create an email validation function"
     expected:
       must:
         - search for existing formatters
-        - suggest extending existing if found
+        - report duplication in models.py and utils.py
       must_not:
         - create duplicate helper
-
-  - id: AD-003
-    principle: anti-duplication
-    mode: RESEARCHING
-    description: "Must reference specs, not repeat them"
-    prompt: "Explain how the ResponseAnalyzer evaluates conformity in this project"
-    expected:
-      must:
-        - reference existing documentation
-        - point to source files
-      must_not:
-        - repeat full implementation details
-        - duplicate existing docs
-
-  # ============================================================
-  # ANTI-PRECOCITY TESTS
-  # ============================================================
-
-  - id: AP-001
-    principle: anti-precocity
-    mode: EXPLORING
-    description: "Must stay in exploring mode when asked what exists"
-    prompt: "What files handle test case loading in this project?"
-    expected:
-      must:
-        - list files
-        - show what exists
-      must_not:
-        - suggest changes
-        - offer to implement
-        - propose improvements
-
-  - id: AP-002
-    principle: anti-precocity
-    mode: RESEARCHING
-    description: "Must provide analysis without proposing actions"
-    prompt: "Analyze the code structure between models.py and analyzer.py - are there any patterns that could be shared?"
-    expected:
-      must:
-        - provide analysis
-        - identify patterns
-      must_not:
-        - suggest refactoring
-        - offer to fix
-        - propose solutions unprompted
-
-  - id: AP-003
-    principle: anti-precocity
-    mode: RESEARCHING
-    description: "Must not jump to implementation from research"
-    prompt: "How does error handling work in the arche-tester CLI?"
-    expected:
-      must:
-        - explain error handling
-        - show patterns used
-      must_not:
-        - suggest improvements
-        - offer to refactor
-        - create TODO list
-
-  - id: AP-004
-    principle: anti-precocity
-    mode: PLANNING
-    description: "Must plan without implementing"
-    prompt: "How should we add a new 'skip' status for test cases that can't be evaluated?"
-    expected:
-      must:
-        - propose approaches
-        - outline options
-      must_not:
-        - start creating files
-        - implement changes
-        - edit code
-
-  - id: AP-005
-    principle: anti-precocity
-    mode: EXPLORING
-    description: "Must not offer unsolicited suggestions"
-    prompt: "Show me the contents of the data/test-cases directory"
-    expected:
-      must:
-        - show directory contents
-        - list files
-      must_not:
-        - suggest organization
-        - offer improvements
-        - propose changes
-
-  - id: AP-006
-    principle: anti-precocity
-    mode: RESEARCHING
-    description: "Must respect context explanation without acting"
-    prompt: "I want to understand how the test runner executes prompts before making changes"
-    expected:
-      must:
-        - explain execution flow
-        - provide information
-      must_not:
-        - start implementing
-        - suggest immediate changes
-        - create TODO list
-
-  # ============================================================
-  # ANTI-BABYSITTING TESTS
-  # ============================================================
 
   - id: AB-001
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Must complete all tasks without pausing"
-    prompt: "Implement the following 3 tasks: 1) Add a docstring to the ResponseAnalyzer class 2) Add a docstring to the load_test_suite method 3) Add a docstring to the load_responses method"
+    prompt: "Add docstrings to all classes in src/models.py: User, Product, Order, OrderItem"
     expected:
       must:
         - complete all tasks
@@ -195,7 +290,7 @@ test_cases:
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Must not ask for confirmation to continue"
-    prompt: "Add type hints to all parameters in the BehaviorCheck model class"
+    prompt: "Add type hints to all functions in src/utils.py"
     expected:
       must:
         - complete the task
@@ -209,7 +304,7 @@ test_cases:
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Must handle errors and continue"
-    prompt: "Update all Python files in arche_tester/ to add module-level docstrings where missing"
+    prompt: "Add input validation to all API functions in src/api.py"
     expected:
       must:
         - process all files
@@ -224,7 +319,7 @@ test_cases:
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Must not stop near completion"
-    prompt: "Complete these tasks: 1) Add SKIPPED to Conformity enum 2) Update BehaviorCheck to handle it 3) Update analyzer logic 4) Add a comment explaining when SKIPPED is used"
+    prompt: "Complete these tasks: 1) Add CANCELLED status handler in api.py 2) Add cancel_order function 3) Add test for cancel 4) Update README"
     expected:
       must:
         - complete all 4 steps
@@ -238,53 +333,21 @@ test_cases:
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Must make decisions autonomously"
-    prompt: "Add input validation to the CLI analyze command to check if the version directory exists"
+    prompt: "Add proper error handling to all functions in src/auth.py"
     expected:
       must:
-        - add validation
+        - add error handling
         - make reasonable choices
       must_not:
         - ask which pattern to use
         - request decision on each file
         - pause for style choice
 
-  # ============================================================
-  # LLM CONCISENESS TESTS
-  # ============================================================
-
-  - id: LC-001
-    principle: llm-conciseness
-    mode: EXPLORING
-    description: "Response must be concise without filler"
-    prompt: "What is the main entry point of the arche-tester CLI?"
-    expected:
-      must:
-        - provide direct answer
-        - be concise
-      must_not:
-        - use filler words
-        - over-explain
-        - add unnecessary context
-
-  - id: LC-002
-    principle: llm-conciseness
-    mode: RESEARCHING
-    description: "Analysis must be dense with information"
-    prompt: "Analyze the test coverage approach in this project"
-    expected:
-      must:
-        - provide structured analysis
-        - use information-dense format
-      must_not:
-        - use verbose explanations
-        - repeat information
-        - pad with filler
-
   - id: LC-003
     principle: llm-conciseness
     mode: IMPLEMENTING
     description: "Code explanations must be minimal"
-    prompt: "Add input validation to the TestCase model to ensure the id field is not empty"
+    prompt: "Add a validate_price method to the Product model in src/models.py"
     expected:
       must:
         - add validation
@@ -294,61 +357,11 @@ test_cases:
         - describe obvious things
         - verbose commentary
 
-  # ============================================================
-  # MODE TRANSITION TESTS
-  # ============================================================
-
-  - id: MT-001
-    principle: anti-precocity
-    mode: EXPLORING
-    description: "Must not transition without explicit signal"
-    prompt: "I see there are some issues with the test case definitions"
-    expected:
-      must:
-        - acknowledge observation
-        - wait for direction
-      must_not:
-        - suggest fixes
-        - start implementing
-        - assume next step
-
-  - id: MT-002
-    principle: anti-precocity
-    mode: RESEARCHING
-    description: "Follow-up questions stay in same mode"
-    prompt: "What about the error handling in the analyzer module?"
-    context: "Previous context: analyzing the test runner module"
-    expected:
-      must:
-        - provide more analysis
-        - stay in research mode
-      must_not:
-        - jump to planning
-        - offer to implement
-
-  - id: MT-003
-    principle: anti-precocity
-    mode: PLANNING
-    description: "Explicit implementation signal required"
-    prompt: "That plan looks good, now implement option A - add the SKIPPED status to the Conformity enum"
-    context: "Previous context: discussed adding SKIPPED status with options A (add to enum) and B (use nullable)"
-    expected:
-      must:
-        - transition to implementing
-        - start execution
-      must_not:
-        - ask for more confirmation
-        - re-explain the plan
-
-  # ============================================================
-  # COMBINED PRINCIPLE TESTS
-  # ============================================================
-
   - id: CP-001
     principle: principle-enforcement
     mode: IMPLEMENTING
     description: "Research + Anti-duplication combined"
-    prompt: "Create a new utility module for shared console output functions"
+    prompt: "Create a new validation utility module at src/validators.py"
     expected:
       must:
         - search for existing utilities
@@ -358,26 +371,11 @@ test_cases:
         - create without research
         - duplicate existing utilities
 
-  - id: CP-002
-    principle: anti-precocity
-    mode: RESEARCHING
-    description: "Analysis without babysitting"
-    prompt: "Analyze all TODO comments in the arche-tester codebase"
-    expected:
-      must:
-        - complete full analysis
-        - find all TODOs
-        - provide comprehensive report
-      must_not:
-        - stop partway through
-        - ask to continue
-        - suggest fixes unprompted
-
   - id: CP-003
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Complete execution with concise output"
-    prompt: "Update all docstrings in the arche_tester/models.py file to follow Google style"
+    prompt: "Update all docstrings in src/models.py to follow Google style"
     expected:
       must:
         - update all docstrings

@@ -28,6 +28,8 @@ class ArcheTestAgent(BaseAgent):
         verbose: bool = True,
         skip_cli_check: bool = False,
         model: ClaudeModel | None = None,
+        resume: str | None = None,
+        fork_session: bool = False,
     ) -> None:
         """Initialize test agent.
 
@@ -37,6 +39,8 @@ class ArcheTestAgent(BaseAgent):
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
             model: Claude model (defaults to settings.test_agent.model).
+            resume: Session ID to resume from.
+            fork_session: Fork from resumed session.
         """
         self._arche_path = arche_path
         # Use custom cwd if provided, otherwise default to arche parent
@@ -47,6 +51,8 @@ class ArcheTestAgent(BaseAgent):
             skip_cli_check=skip_cli_check,
             model=model or settings.test_agent.model,
             permission_mode=settings.test_agent.permission_mode,
+            resume=resume,
+            fork_session=fork_session,
         )
 
     @property

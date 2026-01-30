@@ -50,6 +50,8 @@ class BaseAgent(ABC):
         console: Console | None = None,
         model: ClaudeModel | None = None,
         permission_mode: str = "bypassPermissions",
+        resume: str | None = None,
+        fork_session: bool = False,
     ) -> None:
         """Initialize base agent.
 
@@ -60,10 +62,13 @@ class BaseAgent(ABC):
             console: Optional Rich console for output.
             model: Claude model to use (haiku, sonnet, opus).
             permission_mode: Claude permission mode.
+            resume: Session ID to resume from.
+            fork_session: Fork from resumed session (keeps context, isolated).
         """
         self._verbose = verbose
         self._console = console or Console()
         self._model = model
+        self._cwd = str(cwd)
 
         if not skip_cli_check:
             self._check_claude_cli()
@@ -73,11 +78,14 @@ class BaseAgent(ABC):
             allowed_tools=self.allowed_tools,
             permission_mode=permission_mode,
             include_partial_messages=True,
-            cwd=str(cwd),
+            cwd=self._cwd,
+            resume=resume,
+            fork_session=fork_session,
         )
 
         self._client = ClaudeSDKClient(options=options)
         self._connected = False
+        self._session_id: str | None = None
 
     @property
     @abstractmethod
@@ -129,6 +137,11 @@ class BaseAgent(ABC):
             await self._client.disconnect()
             self._connected = False
 
+    @property
+    def session_id(self) -> str | None:
+        """Return current session ID (available after first call)."""
+        return self._session_id
+
     def _log(
         self,
         message: str,
@@ -170,7 +183,8 @@ class BaseAgent(ABC):
                         self._log(f"Tool: {block.name}", "cyan")
 
             elif isinstance(message, ResultMessage):
-                self._log("Agent completed", "green")
+                self._session_id = message.session_id
+                self._log(f"Agent completed (session: {self._session_id[:8]}...)", "green")
                 break
 
         self._log(f"Received {len(text_blocks)} blocks, {tool_count} tools")

@@ -1,10 +1,10 @@
 """Rich display components for Arché Tester.
 
 Provides consistent, rich CLI output across all commands.
+Display components (panels, tables, progress bars) are defined here.
+Basic console output functions are in utils.py but re-exported for compatibility.
 """
 
-from rich.console import Console, Group
-from rich.live import Live
 from rich.panel import Panel
 from rich.progress import (
     BarColumn,
@@ -20,37 +20,15 @@ from rich.text import Text
 
 from arche_tester.models import Conformity, TestCase, VersionAnalysis
 
-console = Console()
-
-
-def format_duration(ms: int | None) -> str:
-    """Format milliseconds into human-readable duration.
-
-    Args:
-        ms: Duration in milliseconds (None returns "—").
-
-    Returns:
-        Formatted string: "<1s", "1.2s", "1m 30s", "1h 5m".
-    """
-    if ms is None:
-        return "—"
-
-    if ms < 1000:
-        return f"{ms}ms"
-
-    seconds = ms / 1000
-    if seconds < 60:
-        return f"{seconds:.1f}s"
-
-    minutes = int(seconds // 60)
-    remaining_seconds = int(seconds % 60)
-
-    if minutes < 60:
-        return f"{minutes}m {remaining_seconds}s"
-
-    hours = minutes // 60
-    remaining_minutes = minutes % 60
-    return f"{hours}h {remaining_minutes}m"
+# Import from utils and re-export for backward compatibility
+from arche_tester.utils import (
+    console,
+    format_duration,
+    print_error,
+    print_header,
+    print_step,
+    print_success,
+)
 
 
 def create_progress_bar() -> Progress:
@@ -106,6 +84,8 @@ def create_test_panel(
         status_text = "[red]✗ FAIL[/red]"
     elif status == "partial":
         status_text = "[yellow]◐ PARTIAL[/yellow]"
+    elif status == "skipped":
+        status_text = "[dim]⊘ SKIPPED[/dim]"
     else:
         status_text = f"[dim]{status}[/dim]"
 
@@ -140,6 +120,7 @@ def create_analysis_summary(analysis: VersionAnalysis) -> Panel:
     results.add_row("Passed", f"[green]{analysis.passed}[/green]")
     results.add_row("Failed", f"[red]{analysis.failed}[/red]")
     results.add_row("Partial", f"[yellow]{analysis.partial}[/yellow]")
+    results.add_row("Skipped", f"[dim]{analysis.skipped}[/dim]")
     results.add_row("", "")
     results.add_row("Pass Rate (strict)", f"{analysis.pass_rate:.1f}%")
     results.add_row(
@@ -177,6 +158,8 @@ def create_test_result_row(
         status = "[green]✓ PASS[/green]"
     elif conformity == Conformity.FAIL:
         status = "[red]✗ FAIL[/red]"
+    elif conformity == Conformity.SKIPPED:
+        status = "[dim]⊘ SKIPPED[/dim]"
     else:
         status = "[yellow]◐ PARTIAL[/yellow]"
 
@@ -210,34 +193,6 @@ def create_results_table(analysis: VersionAnalysis) -> Table:
         table.add_row(*row)
 
     return table
-
-
-def print_header(title: str, version: str | None = None) -> None:
-    """Print command header."""
-    header = Text()
-    header.append("🏛️  ", style="bold")
-    header.append(title, style="bold white")
-    if version:
-        header.append(f" v{version}", style="bold cyan")
-
-    console.print()
-    console.print(Panel(header, border_style="blue", padding=(0, 2)))
-    console.print()
-
-
-def print_step(message: str, style: str = "dim") -> None:
-    """Print step message."""
-    console.print(f"  [{style}]{message}[/{style}]")
-
-
-def print_success(message: str) -> None:
-    """Print success message."""
-    console.print(f"\n[bold green]✓ {message}[/bold green]\n")
-
-
-def print_error(message: str) -> None:
-    """Print error message."""
-    console.print(f"\n[bold red]✗ {message}[/bold red]\n")
 
 
 __all__ = [
