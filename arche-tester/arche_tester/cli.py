@@ -1,0 +1,236 @@
+"""CLI for Arché functional testing.
+
+Commands for running tests, analyzing results, and comparing versions.
+"""
+
+import asyncio
+from pathlib import Path
+
+import typer
+
+from arche_tester.analyzer import ResponseAnalyzer
+from arche_tester.comparator import VersionComparator
+from arche_tester.display import (
+    console,
+    print_error,
+    print_header,
+    print_step,
+    print_success,
+)
+from arche_tester.runner import TestRunner
+
+app = typer.Typer(
+    name="arche-test",
+    help="Functional testing for Arché principles",
+)
+
+# Default paths (relative to arche repo root)
+DEFAULT_ARCHE_PATH = Path(__file__).parent.parent.parent / "arche"
+DEFAULT_DATA_PATH = Path(__file__).parent.parent / "data"
+
+
+@app.command()
+def run(
+    version: str = typer.Argument(
+        help="Arché version to test (e.g., 0.1.0)",
+    ),
+    arche_path: Path = typer.Option(
+        DEFAULT_ARCHE_PATH,
+        "--arche-path",
+        "-a",
+        help="Path to arche bundle",
+    ),
+    data_path: Path = typer.Option(
+        DEFAULT_DATA_PATH,
+        "--data-path",
+        "-d",
+        help="Path to data directory",
+    ),
+    verbose: bool = typer.Option(
+        True,
+        "--verbose/--quiet",
+        "-v/-q",
+        help="Enable verbose output",
+    ),
+    skip_cli_check: bool = typer.Option(
+        False,
+        "--skip-cli-check",
+        "-s",
+        help="Skip Claude CLI check (for nested sessions)",
+    ),
+) -> None:
+    """Run functional tests for a version."""
+    runner = TestRunner(
+        arche_path=arche_path,
+        data_path=data_path,
+        verbose=verbose,
+        skip_cli_check=skip_cli_check,
+    )
+
+    asyncio.run(runner.run_suite(version=version))
+
+
+@app.command()
+def analyze(
+    version: str = typer.Argument(
+        help="Version to analyze (e.g., 0.1.0)",
+    ),
+    data_path: Path = typer.Option(
+        DEFAULT_DATA_PATH,
+        "--data-path",
+        "-d",
+        help="Path to data directory",
+    ),
+    use_llm: bool = typer.Option(
+        True,
+        "--use-llm/--no-llm",
+        "-l/-L",
+        help="Use LLM-based semantic analysis (default) or keyword matching",
+    ),
+    skip_cli_check: bool = typer.Option(
+        False,
+        "--skip-cli-check",
+        "-s",
+        help="Skip Claude CLI check (for nested sessions)",
+    ),
+) -> None:
+    """Analyze test responses for a version."""
+    analyzer = ResponseAnalyzer(
+        data_path=data_path,
+        use_llm=use_llm,
+        skip_cli_check=skip_cli_check,
+    )
+
+    if use_llm:
+        asyncio.run(analyzer.analyze_version_async(version=version))
+    else:
+        analyzer.analyze_version(version=version)
+
+
+@app.command()
+def compare(
+    baseline: str = typer.Argument(
+        help="Baseline version (e.g., 0.1.0)",
+    ),
+    current: str = typer.Argument(
+        help="Current version (e.g., 0.2.0)",
+    ),
+    data_path: Path = typer.Option(
+        DEFAULT_DATA_PATH,
+        "--data-path",
+        "-d",
+        help="Path to data directory",
+    ),
+) -> None:
+    """Compare versions for degradation."""
+    print_header("Version Comparison", f"{baseline} → {current}")
+
+    comparator = VersionComparator(data_path=data_path)
+    comparator.compare(
+        baseline_version=baseline,
+        current_version=current,
+    )
+
+
+@app.command()
+def report(
+    phase: int = typer.Argument(
+        help="Phase number (1, 2, or 3)",
+    ),
+    baseline: str = typer.Option(
+        "0.1.0",
+        "--baseline",
+        "-b",
+        help="Baseline version",
+    ),
+    data_path: Path = typer.Option(
+        DEFAULT_DATA_PATH,
+        "--data-path",
+        "-d",
+        help="Path to data directory",
+    ),
+) -> None:
+    """Generate report for a phase."""
+    version_map = {1: "0.2.0", 2: "0.3.0", 3: "0.4.0"}
+    current = version_map.get(phase)
+
+    if not current:
+        print_error(f"Invalid phase: {phase}. Use 1, 2, or 3.")
+        raise typer.Exit(1)
+
+    print_header("Phase Report", f"Phase {phase}")
+    print_step(f"Comparing {baseline} → {current}")
+
+    comparator = VersionComparator(data_path=data_path)
+    report_path = comparator.generate_report(
+        baseline_version=baseline,
+        current_version=current,
+        phase=phase,
+    )
+
+    print_success(f"Report ready: {report_path}")
+
+
+@app.command()
+def baseline(
+    arche_path: Path = typer.Option(
+        DEFAULT_ARCHE_PATH,
+        "--arche-path",
+        "-a",
+        help="Path to arche bundle",
+    ),
+    data_path: Path = typer.Option(
+        DEFAULT_DATA_PATH,
+        "--data-path",
+        "-d",
+        help="Path to data directory",
+    ),
+    skip_cli_check: bool = typer.Option(
+        False,
+        "--skip-cli-check",
+        "-s",
+        help="Skip Claude CLI check (for nested sessions)",
+    ),
+    use_llm: bool = typer.Option(
+        True,
+        "--use-llm/--no-llm",
+        "-l/-L",
+        help="Use LLM-based semantic analysis (default) or keyword matching",
+    ),
+) -> None:
+    """Run baseline tests (v0.1.0) and analyze."""
+    print_header("Baseline Execution", "0.1.0")
+
+    # Run tests
+    print_step("Phase 1: Running functional tests...")
+    console.print()
+
+    runner = TestRunner(
+        arche_path=arche_path,
+        data_path=data_path,
+        verbose=True,
+        skip_cli_check=skip_cli_check,
+    )
+    asyncio.run(runner.run_suite(version="0.1.0"))
+
+    # Analyze
+    console.print()
+    print_step("Phase 2: Analyzing responses...")
+    console.print()
+
+    analyzer = ResponseAnalyzer(
+        data_path=data_path,
+        use_llm=use_llm,
+        skip_cli_check=skip_cli_check,
+    )
+
+    if use_llm:
+        asyncio.run(analyzer.analyze_version_async(version="0.1.0"))
+    else:
+        analyzer.analyze_version(version="0.1.0")
+
+    print_success("Baseline complete!")
+
+
+if __name__ == "__main__":
+    app()

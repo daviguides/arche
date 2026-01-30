@@ -1,0 +1,32 @@
+[project]
+name = "arche-tester"
+version = "0.1.0"
+description = "Functional testing for Arché principles using Claude Agent SDK"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "claude-agent-sdk>=0.1.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "rich>=13.0.0",
+    "typer>=0.9.0",
+]
+
+[project.scripts]
+arche-test = "arche_tester.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 80
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.pyright]
+include = ["arche_tester"]
+pythonVersion = "3.13"
+typeCheckingMode = "basic"

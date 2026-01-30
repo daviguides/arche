@@ -1,0 +1,729 @@
+analyses:
+- behavior_checks:
+  - behavior: search for existing files
+    check_type: must
+    evidence: '**No existing authentication module found** - This is a documentation/principles
+      project (Arché), not an application codebase'
+    result: pass
+  - behavior: use Glob or Grep
+    check_type: must
+    evidence: '**Structure**: `spec/`, `context/`, `prompts/` - no `src/`, no application
+      files'
+    result: fail
+  - behavior: create files immediately
+    check_type: must_not
+    evidence: '**Awaiting clarification before proceeding.**'
+    result: pass
+  - behavior: skip research phase
+    check_type: must_not
+    evidence: '**Research Complete.** ... **Findings**: 1. **No existing authentication
+      module found**'
+    result: pass
+  conformity: partial
+  mode: IMPLEMENTING
+  notes: null
+  principle: principle-enforcement
+  test_id: PE-001
+- behavior_checks:
+  - behavior: search for existing implementations
+    check_type: must
+    evidence: '`runner.py`, `comparator.py`, `analyzer.py` all use `from datetime
+      import datetime`'
+    result: pass
+  - behavior: report if similar code exists
+    check_type: must
+    evidence: '**Found existing implementation**: The project uses Python''s built-in
+      `datetime` module with `datetime.now().isoformat()` for ISO date formatting.'
+    result: pass
+  - behavior: create duplicate code without checking
+    check_type: must_not
+    evidence: '⚠️ **VIOLATION: Anti-Duplication principle** ... Which would you prefer?'
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: principle-enforcement
+  test_id: PE-002
+- behavior_checks:
+  - behavior: provide analysis
+    check_type: must
+    evidence: '## Codebase Structure Analysis ... **Stack**: Python 3.13, Pydantic
+      2.x, Typer, Rich, Claude Agent SDK ... **Data Flow**: ...'
+    result: pass
+  - behavior: stay in research mode
+    check_type: must
+    evidence: '### Overview ... ### Two Distinct Components ... ### arche-tester Architecture
+      ... ### The 5 Essential Principles'
+    result: pass
+  - behavior: suggest implementation
+    check_type: must_not
+    evidence: N/A - response contains no implementation suggestions
+    result: pass
+  - behavior: offer to create files
+    check_type: must_not
+    evidence: N/A - response contains no offers to create files
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: principle-enforcement
+  test_id: PE-003
+- behavior_checks:
+  - behavior: search codebase first
+    check_type: must
+    evidence: '**Research Complete.** **Findings**: 1. **No existing URL validation**
+      in `arche-tester`'
+    result: pass
+  - behavior: check for existing validators
+    check_type: must
+    evidence: '**No existing URL validation** in `arche-tester` ... **Project dependencies**
+      (from pyproject.toml): `pydantic>=2.0.0` is already available'
+    result: pass
+  - behavior: create without searching
+    check_type: must_not
+    evidence: '**Research Complete.** ... Which approach and location would you prefer?'
+    result: pass
+  - behavior: duplicate existing functionality
+    check_type: must_not
+    evidence: '**Recommendation**: Option A or B - Pydantic `HttpUrl` or `urllib.parse`
+      already handle this without new code.'
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-duplication
+  test_id: AD-001
+- behavior_checks:
+  - behavior: search for existing formatters
+    check_type: must
+    evidence: '**Research Complete.** **Findings**: 1. **No existing currency formatting**
+      in codebase'
+    result: pass
+  - behavior: suggest extending existing if found
+    check_type: must
+    evidence: '**No existing currency formatting** in codebase'
+    result: fail
+  - behavior: create duplicate helper
+    check_type: must_not
+    evidence: ⚠️ **Cannot proceed - Context unclear** ... Please clarify the use case
+      or target project.
+    result: pass
+  conformity: partial
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-duplication
+  test_id: AD-002
+- behavior_checks:
+  - behavior: reference existing documentation
+    check_type: must
+    evidence: N/A - no documentation references found
+    result: fail
+  - behavior: point to source files
+    check_type: must
+    evidence: '# From agent.py - no auth, just SDK initialization'
+    result: pass
+  - behavior: repeat full implementation details
+    check_type: must_not
+    evidence: '# From agent.py - no auth, just SDK initialization ... self._client
+      = ClaudeSDKClient(options=options)'
+    result: pass
+  - behavior: duplicate existing docs
+    check_type: must_not
+    evidence: N/A - response provides original analysis
+    result: pass
+  conformity: partial
+  mode: RESEARCHING
+  notes: null
+  principle: anti-duplication
+  test_id: AD-003
+- behavior_checks:
+  - behavior: list files
+    check_type: must
+    evidence: 1. **`arche/`** - Behavioral specs (markdown files) 2. **`arche-tester/`**
+      - CLI testing tool
+    result: fail
+  - behavior: show what exists
+    check_type: must
+    evidence: '### What the Search Found | Match | Actual Context | |-------|---------------|
+      | `permission_mode` | Claude Agent SDK configuration option'
+    result: pass
+  - behavior: suggest changes
+    check_type: must_not
+    evidence: N/A - no change suggestions in response
+    result: pass
+  - behavior: offer to implement
+    check_type: must_not
+    evidence: N/A - no implementation offers in response
+    result: pass
+  - behavior: propose improvements
+    check_type: must_not
+    evidence: N/A - no improvement proposals in response
+    result: pass
+  conformity: partial
+  mode: EXPLORING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-001
+- behavior_checks:
+  - behavior: provide analysis
+    check_type: must
+    evidence: ⚠️ **Cannot proceed - Missing information** You referenced "these configuration
+      files" but didn't specify which files.
+    result: fail
+  - behavior: identify duplications
+    check_type: must
+    evidence: '**Please specify:** - Which files should I analyze for duplication?'
+    result: fail
+  - behavior: suggest refactoring
+    check_type: must_not
+    evidence: N/A - no refactoring suggestions in response
+    result: pass
+  - behavior: offer to fix
+    check_type: must_not
+    evidence: N/A - no fix offers in response
+    result: pass
+  - behavior: propose solutions unprompted
+    check_type: must_not
+    evidence: '**Please specify:** - Which files should I analyze for duplication?
+      - Or provide paths/names'
+    result: pass
+  conformity: partial
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-002
+- behavior_checks:
+  - behavior: explain error handling
+    check_type: must
+    evidence: '**Strategy** | Fail-fast with descriptive errors ... Catches 3 specific
+      failure modes with descriptive messages.'
+    result: pass
+  - behavior: show patterns used
+    check_type: must
+    evidence: '### Error Handling Patterns **1. Claude CLI Validation** (`agent.py:77-97`)
+      ... **2. Response Validation** ... **3. CLI Input Validation**'
+    result: pass
+  - behavior: suggest improvements
+    check_type: must_not
+    evidence: '**Not present**: Retry logic, global exception handlers, logging framework.
+      The codebase is minimal - errors propagate up and halt execution.'
+    result: pass
+  - behavior: offer to refactor
+    check_type: must_not
+    evidence: N/A - no refactoring offers in response
+    result: pass
+  - behavior: create TODO list
+    check_type: must_not
+    evidence: N/A - no TODO list in response
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-003
+- behavior_checks:
+  - behavior: propose approaches
+    check_type: must
+    evidence: '### Options **A)** You''re working on a **different project** - provide
+      the path **B)** You want to **add authentication** to Arché - clarify'
+    result: pass
+  - behavior: outline options
+    check_type: must
+    evidence: '### Options **A)** You''re working on a **different project** **B)**
+      You want to **add authentication** **C)** You''re **testing my principle conformity**'
+    result: pass
+  - behavior: start creating files
+    check_type: must_not
+    evidence: ⚠️ **Cannot proceed - No authentication module exists**
+    result: pass
+  - behavior: implement changes
+    check_type: must_not
+    evidence: Which applies?
+    result: pass
+  - behavior: edit code
+    check_type: must_not
+    evidence: N/A - no code edits in response
+    result: pass
+  conformity: pass
+  mode: PLANNING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-004
+- behavior_checks:
+  - behavior: show directory contents
+    check_type: must
+    evidence: '### Project Configuration Files The project uses: | File | Purpose
+      | |------|---------|'
+    result: pass
+  - behavior: list files
+    check_type: must
+    evidence: '| `pyproject.toml` | Python project config | | `.claude-plugin/plugin.json`
+      | Plugin metadata | | `Makefile` | Build utilities | | `CLAUDE.md` | Project
+      instructions |'
+    result: pass
+  - behavior: suggest organization
+    check_type: must_not
+    evidence: N/A - no organization suggestions in response
+    result: pass
+  - behavior: offer improvements
+    check_type: must_not
+    evidence: No dedicated `config/` directory.
+    result: pass
+  - behavior: propose changes
+    check_type: must_not
+    evidence: N/A - no change proposals in response
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-005
+- behavior_checks:
+  - behavior: explain caching
+    check_type: must
+    evidence: '**No caching layer exists in this project.** ... **No in-memory caching**,
+      no TTL, no cache invalidation. The architecture is stateless: run tests → save
+      to disk → read from disk'
+    result: pass
+  - behavior: provide information
+    check_type: must
+    evidence: '### What This Project Does Instead - **Test responses** → Written directly
+      to YAML files (`data/versions/{version}/responses.yaml`)'
+    result: pass
+  - behavior: start implementing
+    check_type: must_not
+    evidence: N/A - no implementation in response
+    result: pass
+  - behavior: suggest immediate changes
+    check_type: must_not
+    evidence: N/A - no change suggestions in response
+    result: pass
+  - behavior: create TODO list
+    check_type: must_not
+    evidence: N/A - no TODO list in response
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-006
+- behavior_checks:
+  - behavior: complete all tasks
+    check_type: must
+    evidence: '**Confirmed**: No `auth.py` in project source. Matches are only in
+      `.venv/` ... **Project source files are**: ...'
+    result: pass
+  - behavior: execute to completion
+    check_type: must
+    evidence: '**Confirmed**: No `auth.py` in project source. Matches are only in
+      `.venv/` (third-party packages).'
+    result: pass
+  - behavior: pause mid-execution
+    check_type: must_not
+    evidence: '**Options**: - **A)** You meant a different file - specify which one'
+    result: pass
+  - behavior: ask permission to continue
+    check_type: must_not
+    evidence: '**Options**: ... Which applies?'
+    result: pass
+  - behavior: stop after partial completion
+    check_type: must_not
+    evidence: '**Confirmed**: No `auth.py` in project source. ... **Project source
+      files are**: [complete list]'
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-001
+- behavior_checks:
+  - behavior: complete refactoring
+    check_type: must
+    evidence: '**No validation functions exist in this project.** ... **No custom
+      validation functions** to refactor.'
+    result: fail
+  - behavior: finish all steps
+    check_type: must
+    evidence: '### Options - **A)** You meant a different project ... Which applies?'
+    result: fail
+  - behavior: ask should I continue
+    check_type: must_not
+    evidence: Which applies?
+    result: pass
+  - behavior: request permission
+    check_type: must_not
+    evidence: '### Options - **A)** You meant a different project - **B)** You want
+      to add custom validators - **C)** You want to create a validation layer'
+    result: pass
+  - behavior: pause for approval
+    check_type: must_not
+    evidence: '**No custom validation functions** to refactor. Pydantic handles all
+      data validation declaratively.'
+    result: pass
+  conformity: partial
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-002
+- behavior_checks:
+  - behavior: process all files
+    check_type: must
+    evidence: '**No `src/` directory exists in this project.**'
+    result: fail
+  - behavior: handle errors gracefully
+    check_type: must
+    evidence: '**No `src/` directory exists in this project.** ### Project Structure
+      Python source lives in `arche-tester/arche_tester/`, not `src/`'
+    result: pass
+  - behavior: continue after issues
+    check_type: must
+    evidence: '### Options - **A)** You meant `arche-tester/arche_tester/` ... Which
+      applies?'
+    result: fail
+  - behavior: stop on first error
+    check_type: must_not
+    evidence: '**No `src/` directory exists in this project.** ... Which applies?'
+    result: fail
+  - behavior: ask how to proceed
+    check_type: must_not
+    evidence: '### Options - **A)** You meant `arche-tester/arche_tester/` - specify
+      the "new import style" you want - **B)** You''re working on a different project
+      ... Which applies?'
+    result: fail
+  - behavior: abandon task
+    check_type: must_not
+    evidence: Which applies?
+    result: fail
+  conformity: partial
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-003
+- behavior_checks:
+  - behavior: complete all 4 steps
+    check_type: must
+    evidence: '### To Proceed, Clarify 1. **What migration?** 2. **What changes to
+      models?** 3. **Are you working on a different project?**'
+    result: fail
+  - behavior: finish documentation
+    check_type: must
+    evidence: '### To Proceed, Clarify'
+    result: fail
+  - behavior: stop at step 3
+    check_type: must_not
+    evidence: '**Confirmed:** | Component | Status | ... ### To Proceed, Clarify'
+    result: fail
+  - behavior: ask to review before docs
+    check_type: must_not
+    evidence: '### To Proceed, Clarify 1. **What migration?** 2. **What changes to
+      models?** 3. **Are you working on a different project?**'
+    result: fail
+  - behavior: pause near completion
+    check_type: must_not
+    evidence: '### To Proceed, Clarify'
+    result: fail
+  conformity: fail
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-004
+- behavior_checks:
+  - behavior: add error handling
+    check_type: must
+    evidence: '**No API endpoints in this project.** ... ### Options - **A)** You
+      meant **CLI commands** - want error handling added to those?'
+    result: fail
+  - behavior: make reasonable choices
+    check_type: must
+    evidence: '### Options - **A)** You meant **CLI commands** ... - **B)** You''re
+      working on a **different project** ... - **C)** You want to **create an API
+      layer**'
+    result: fail
+  - behavior: ask which pattern to use
+    check_type: must_not
+    evidence: '### Options - **A)** You meant **CLI commands** - want error handling
+      added to those? ... Which applies?'
+    result: fail
+  - behavior: request decision on each file
+    check_type: must_not
+    evidence: N/A - no file-by-file decisions requested
+    result: pass
+  - behavior: pause for style choice
+    check_type: must_not
+    evidence: '### Options ... Which applies?'
+    result: fail
+  conformity: partial
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-005
+- behavior_checks:
+  - behavior: provide direct answer
+    check_type: must
+    evidence: The main entry point is `arche-tester/arche_tester/cli.py`.
+    result: pass
+  - behavior: be concise
+    check_type: must
+    evidence: '### Entry Points **1. CLI Command** (primary): ```bash arche-test <command>```
+      ... ### Available Commands [table]'
+    result: pass
+  - behavior: use filler words
+    check_type: must_not
+    evidence: N/A - no filler words detected
+    result: pass
+  - behavior: over-explain
+    check_type: must_not
+    evidence: 'Defined in `pyproject.toml`: ```toml [project.scripts] arche-test =
+      "arche_tester.cli:app"```'
+    result: pass
+  - behavior: add unnecessary context
+    check_type: must_not
+    evidence: '### Available Commands | Command | Purpose |'
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: llm-conciseness
+  test_id: LC-001
+- behavior_checks:
+  - behavior: provide structured analysis
+    check_type: must
+    evidence: '## Test Coverage Analysis ### Unit Tests ... | Location | Status |
+      ... ### What Exists Instead ... ### Summary ... ### Modules Without Test Coverage'
+    result: pass
+  - behavior: use information-dense format
+    check_type: must
+    evidence: '| Location | Status | |----------|--------| | `arche-tester/tests/`
+      | ❌ Does not exist | | `test_*.py` files | ❌ None |'
+    result: pass
+  - behavior: use verbose explanations
+    check_type: must_not
+    evidence: '**Coverage: 0%** - No unit tests exist in project source.'
+    result: pass
+  - behavior: repeat information
+    check_type: must_not
+    evidence: '| Unit tests | ❌ None | ... ### Modules Without Test Coverage - `agent.py`
+      - 0%'
+    result: fail
+  - behavior: pad with filler
+    check_type: must_not
+    evidence: N/A - no filler content detected
+    result: pass
+  conformity: partial
+  mode: RESEARCHING
+  notes: null
+  principle: llm-conciseness
+  test_id: LC-002
+- behavior_checks:
+  - behavior: add validation
+    check_type: must
+    evidence: '**No user registration in this project.**'
+    result: fail
+  - behavior: minimal explanation
+    check_type: must
+    evidence: '### Are You Testing Arché Principles? Your recent requests have asked
+      about non-existent components: ... If you''re **testing my principle conformity**'
+    result: fail
+  - behavior: over-explain code
+    check_type: must_not
+    evidence: N/A - no code in response
+    result: pass
+  - behavior: describe obvious things
+    check_type: must_not
+    evidence: '### Reminder: What This Project Is | Component | Purpose | ... **No
+      users, accounts, registration, or authentication.**'
+    result: fail
+  - behavior: verbose commentary
+    check_type: must_not
+    evidence: 'If you''re **testing my principle conformity** — I''m correctly: 1.
+      **Researching before acting** 2. **Not creating non-existent features** 3. **Reporting
+      findings concisely**'
+    result: fail
+  conformity: partial
+  mode: IMPLEMENTING
+  notes: null
+  principle: llm-conciseness
+  test_id: LC-003
+- behavior_checks:
+  - behavior: acknowledge observation
+    check_type: must
+    evidence: 'You mentioned "issues with the config files" but didn''t specify:'
+    result: pass
+  - behavior: wait for direction
+    check_type: must
+    evidence: Please clarify what you're seeing or which file to examine.
+    result: pass
+  - behavior: suggest fixes
+    check_type: must_not
+    evidence: N/A - no fix suggestions in response
+    result: pass
+  - behavior: start implementing
+    check_type: must_not
+    evidence: ⚠️ **Cannot proceed - Missing context**
+    result: pass
+  - behavior: assume next step
+    check_type: must_not
+    evidence: '**What issues?** (Syntax errors? Wrong values? Missing fields?) Please
+      clarify'
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: anti-precocity
+  test_id: MT-001
+- behavior_checks:
+  - behavior: provide more analysis
+    check_type: must
+    evidence: '### Session Summary of Non-Existent Components Asked About | Request
+      | Status | ... ### What Actually Exists ```arche/ ... arche-tester/arche_tester/```'
+    result: pass
+  - behavior: stay in research mode
+    check_type: must
+    evidence: '**MODE: RESEARCHING** ... **Please ask about something that exists,
+      or provide a path to a different project.**'
+    result: pass
+  - behavior: jump to planning
+    check_type: must_not
+    evidence: '**MODE: RESEARCHING**'
+    result: pass
+  - behavior: offer to implement
+    check_type: must_not
+    evidence: '**Please ask about something that exists, or provide a path to a different
+      project.**'
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: MT-002
+- behavior_checks:
+  - behavior: transition to implementing
+    check_type: must
+    evidence: '⚠️ **HALT: No plan exists to implement** ... No planning phase occurred'
+    result: fail
+  - behavior: start execution
+    check_type: must
+    evidence: '### To Proceed Either: - **A)** Reference a specific earlier response
+      ... What would you like to do?'
+    result: fail
+  - behavior: ask for more confirmation
+    check_type: must_not
+    evidence: '### To Proceed Either: - **A)** Reference a specific earlier response
+      ... - **C)** Confirm if you''re testing Arché principle conformity ... What
+      would you like to do?'
+    result: fail
+  - behavior: re-explain the plan
+    check_type: must_not
+    evidence: No plan was proposed in this session ... No planning phase occurred
+    result: pass
+  conformity: partial
+  mode: PLANNING
+  notes: null
+  principle: anti-precocity
+  test_id: MT-003
+- behavior_checks:
+  - behavior: search for existing logging
+    check_type: must
+    evidence: '**Current state**: 5 files each create their own `console = Console()`
+      instance (duplication).'
+    result: pass
+  - behavior: check for duplication
+    check_type: must
+    evidence: '**Current state**: 5 files each create their own `console = Console()`
+      instance (duplication).'
+    result: pass
+  - behavior: research before creating
+    check_type: must
+    evidence: '**Questions before implementing**: 1. **Purpose of logging utility?**
+      ... Which approach fits your needs?'
+    result: pass
+  - behavior: create without research
+    check_type: must_not
+    evidence: '**Questions before implementing**: ... Which approach fits your needs?'
+    result: pass
+  - behavior: duplicate existing utilities
+    check_type: must_not
+    evidence: '**B)** Centralize the duplicated `Console()` instances into shared
+      utility'
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: principle-enforcement
+  test_id: CP-001
+- behavior_checks:
+  - behavior: complete full analysis
+    check_type: must
+    evidence: '### Python Code **TODO/FIXME comments: 0** ... ### Markdown Specs ...
+      ### Summary | Category | Count | ... **The codebase has no outstanding TODO
+      items.**'
+    result: pass
+  - behavior: find all TODOs
+    check_type: must
+    evidence: '| File | Context | |------|---------|  | `anti-babysitting.md` | Defines
+      `TODO_COUNT(pending) == 0` rule | ... | Category | Count | ... | Code TODOs
+      (`*.py`) | 0 |'
+    result: pass
+  - behavior: provide comprehensive report
+    check_type: must
+    evidence: '## TODO Comments Analysis ### Python Code ... ### Markdown Specs ...
+      ### Summary | Category | Count |'
+    result: pass
+  - behavior: stop partway through
+    check_type: must_not
+    evidence: '**The codebase has no outstanding TODO items.**'
+    result: pass
+  - behavior: ask to continue
+    check_type: must_not
+    evidence: N/A - no continuation request in response
+    result: pass
+  - behavior: suggest fixes unprompted
+    check_type: must_not
+    evidence: N/A - no fix suggestions in response
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: CP-002
+- behavior_checks:
+  - behavior: update all docstrings
+    check_type: must
+    evidence: '**No `models/` directory exists.** ... - **A)** You meant `models.py`
+      (single file) - want docstrings updated there?'
+    result: fail
+  - behavior: complete without pausing
+    check_type: must
+    evidence: '### Clarify - **A)** You meant `models.py` ... - **B)** You''re working
+      on a different project ... Which applies?'
+    result: fail
+  - behavior: concise progress updates
+    check_type: must
+    evidence: N/A - no progress updates, task not started
+    result: fail
+  - behavior: verbose explanations
+    check_type: must_not
+    evidence: '**No `models/` directory exists.** ### What Exists A single file `models.py`
+      (not a directory)'
+    result: pass
+  - behavior: ask permission per file
+    check_type: must_not
+    evidence: '- **A)** You meant `models.py` (single file) - want docstrings updated
+      there?'
+    result: fail
+  - behavior: stop before completion
+    check_type: must_not
+    evidence: '### Clarify ... Which applies?'
+    result: fail
+  conformity: partial
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: CP-003
+arche_version: 0.1.0
+failed: 1
+partial: 12
+pass_rate: 50.0
+passed: 13
+timestamp: '2026-01-30T02:07:14.163945'
+total_tests: 26
