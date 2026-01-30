@@ -92,7 +92,7 @@ test_results:
   notes: "Acceptable - v0.1.0 showed similar variance in practice"
 
 progress:
-  phases_completed: [1, 2]
-  phases_pending: [3, 4, 5]
-  current_phase: 3
+  phases_completed: [1, 2, 3]
+  phases_pending: [4, 5]
+  current_phase: 4
   last_updated: "2025-01-30"

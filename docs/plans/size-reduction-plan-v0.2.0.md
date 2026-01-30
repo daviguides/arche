@@ -207,7 +207,7 @@ uv run arche-test report 1
 |------|--------|-----------|
 | Fase 1: Framework comum | ✅ Feito | `_spec-framework.md` criado |
 | Fase 2: Exemplos em context/ | ✅ Feito | `context/examples/` com 3 arquivos |
-| Fase 3: Unificar boundary | 🔄 Pendente | `context/guides/mode-execution-guide.md` |
+| Fase 3: Unificar boundary | ✅ Feito | `context/guides/mode-execution-guide.md` (-1.1KB) |
 | Fase 4: Comprimir seções | 🔄 Pendente | Aplicar llm-conciseness aos specs |
 | Fase 5: Simplificar modes | 🔄 Pendente | Consolidar Mode Signal Vocabulary |
 
