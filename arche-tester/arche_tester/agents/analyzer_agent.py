@@ -57,6 +57,7 @@ class AnalyzerAgent(BaseAgent):
             verbose=verbose,
             skip_cli_check=skip_cli_check,
             model=model or settings.analyzer_agent.model,
+            permission_mode=settings.analyzer_agent.permission_mode,
         )
 
     @property

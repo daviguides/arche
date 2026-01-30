@@ -26,7 +26,7 @@ class TestAgentSettings(BaseSettings):
 
     model: ClaudeModel = ClaudeModel.SONNET  # Good balance of speed/quality
     allowed_tools: list[str] = Field(default_factory=lambda: ["Read", "Glob", "Grep"])
-    permission_mode: str = "acceptEdits"
+    permission_mode: str = "bypassPermissions"
     include_partial_messages: bool = True
 
 
@@ -35,7 +35,7 @@ class AnalyzerAgentSettings(BaseSettings):
 
     model: ClaudeModel = ClaudeModel.HAIKU  # Fast, sufficient for classification
     allowed_tools: list[str] = Field(default_factory=list)  # No tools needed
-    permission_mode: str = "acceptEdits"
+    permission_mode: str = "bypassPermissions"
     include_partial_messages: bool = True
 
 

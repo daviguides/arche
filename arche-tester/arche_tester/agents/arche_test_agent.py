@@ -46,6 +46,7 @@ class ArcheTestAgent(BaseAgent):
             verbose=verbose,
             skip_cli_check=skip_cli_check,
             model=model or settings.test_agent.model,
+            permission_mode=settings.test_agent.permission_mode,
         )
 
     @property

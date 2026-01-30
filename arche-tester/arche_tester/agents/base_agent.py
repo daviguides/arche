@@ -49,6 +49,7 @@ class BaseAgent(ABC):
         skip_cli_check: bool = False,
         console: Console | None = None,
         model: ClaudeModel | None = None,
+        permission_mode: str = "bypassPermissions",
     ) -> None:
         """Initialize base agent.
 
@@ -58,6 +59,7 @@ class BaseAgent(ABC):
             skip_cli_check: Skip Claude CLI check (for nested sessions).
             console: Optional Rich console for output.
             model: Claude model to use (haiku, sonnet, opus).
+            permission_mode: Claude permission mode.
         """
         self._verbose = verbose
         self._console = console or Console()
@@ -69,7 +71,7 @@ class BaseAgent(ABC):
         options = ClaudeAgentOptions(
             model=self._model.value if self._model else None,
             allowed_tools=self.allowed_tools,
-            permission_mode="acceptEdits",
+            permission_mode=permission_mode,
             include_partial_messages=True,
             cwd=str(cwd),
         )
