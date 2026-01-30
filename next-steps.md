@@ -89,12 +89,37 @@ arche/
 | `/arche:load-essential` | Load all essential principles |
 | `/arche:validate` | Check compliance with principles |
 
-### 5. Update gradient plugin
+### 5. Update gradient plugin ← PENDING
 
 After extraction:
-- Remove `universal-principles/` from gradient
-- Add note about arche dependency in gradient docs
-- Update `/gradient:load-essential` to delegate to `/arche:load-essential`
+- [ ] Remove `universal-principles/` from gradient
+- [ ] Update `/gradient:load-essential` to delegate to `/arche:load-essential`
+- [ ] Add note about arche dependency in gradient docs
+
+---
+
+## Pending Actions
+
+### Action 1: Update gradient delegation
+
+**File**: `gradient/commands/load-essential.md`
+
+**Current**: Loads specs directly from `gradient/spec/universal-principles/`
+
+**Target**: Delegate to `/arche:load-essential`
+
+### Action 2: Remove legacy specs from gradient
+
+**Remove**: `gradient/gradient/spec/universal-principles/`
+```
+├── anti-duplication.md      → now in arche
+├── anti-babysitting.md      → now in arche
+├── anti-precocity.md        → now in arche (split)
+├── llm-conciseness.md       → now in arche
+└── principle-enforcement.md → now in arche
+```
+
+**Rationale**: Arché is now the SSOT for these principles
 
 ---
 
