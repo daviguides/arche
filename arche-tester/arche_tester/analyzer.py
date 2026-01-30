@@ -45,8 +45,11 @@ class ResponseAnalyzer:
         - keyword: Fast pattern matching using behavior indicators (default).
         - llm: Semantic analysis using Claude Agent SDK for nuanced evaluation.
 
+    Can load Arché principles for context-aware LLM analysis.
+
     Attributes:
         _data_path: Path to data directory containing test cases and responses.
+        _arche_path: Path to Arché bundle for loading principles.
         _use_llm: Whether to use LLM-based semantic analysis.
         _skip_cli_check: Whether to skip Claude CLI availability check.
         _analyzer_agent: Lazy-initialized AnalyzerAgent for LLM mode.
@@ -61,6 +64,7 @@ class ResponseAnalyzer:
         data_path: Path,
         use_llm: bool = False,
         skip_cli_check: bool = False,
+        arche_path: Path | None = None,
     ) -> None:
         """Initialize analyzer.
 
@@ -68,11 +72,14 @@ class ResponseAnalyzer:
             data_path: Path to data directory.
             use_llm: Use LLM-based semantic analysis.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
+            arche_path: Path to Arché bundle (loads principles for LLM context).
         """
         self._data_path = data_path
+        self._arche_path = arche_path
         self._use_llm = use_llm
         self._skip_cli_check = skip_cli_check
         self._analyzer_agent: AnalyzerAgent | None = None
+        self._principles_loaded = False
 
     def load_test_suite(self) -> TestSuite:
         """Load test cases from YAML file.
@@ -122,8 +129,17 @@ class ResponseAnalyzer:
                 cwd=self._data_path,
                 verbose=False,  # We handle our own display
                 skip_cli_check=self._skip_cli_check,
+                arche_path=self._arche_path,
             )
         return self._analyzer_agent
+
+    async def _ensure_principles_loaded(self) -> None:
+        """Load Arché principles into agent if arche_path provided."""
+        if self._arche_path and not self._principles_loaded:
+            agent = self._get_analyzer_agent()
+            print_step("Loading Arché principles for context-aware analysis...")
+            await agent.load_arche_principles()
+            self._principles_loaded = True
 
     async def analyze_version_async(self, version: str) -> VersionAnalysis:
         """Analyze all responses using LLM-based semantic analysis.
@@ -136,6 +152,10 @@ class ResponseAnalyzer:
         """
         start_time = time.time()
         print_header("Semantic Analysis", version)
+
+        # Load principles for context-aware analysis
+        await self._ensure_principles_loaded()
+
         print_step("Loading test suite and responses...")
 
         suite = self.load_test_suite()

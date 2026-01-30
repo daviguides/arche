@@ -82,6 +82,12 @@ def analyze(
     version: str = typer.Argument(
         help="Version to analyze (e.g., 0.1.0)",
     ),
+    arche_path: Path = typer.Option(
+        DEFAULT_ARCHE_PATH,
+        "--arche-path",
+        "-a",
+        help="Path to arche bundle (loads principles for context)",
+    ),
     data_path: Path = typer.Option(
         DEFAULT_DATA_PATH,
         "--data-path",
@@ -120,6 +126,7 @@ def analyze(
         data_path=data_path,
         use_llm=use_llm,
         skip_cli_check=skip_cli_check,
+        arche_path=arche_path if use_llm else None,
     )
 
     if use_llm:
@@ -250,6 +257,7 @@ def baseline(
         data_path=data_path,
         use_llm=use_llm,
         skip_cli_check=skip_cli_check,
+        arche_path=arche_path if use_llm else None,
     )
 
     if use_llm:
