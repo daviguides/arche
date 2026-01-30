@@ -188,11 +188,13 @@ class TestResponses(BaseModel):
         arche_version: The Arché version that was tested.
         timestamp: ISO format timestamp when responses were captured.
         responses: List of individual test responses.
+        total_duration_ms: Total execution time in milliseconds.
     """
 
     arche_version: str
     timestamp: str
     responses: list[TestResponse]
+    total_duration_ms: int | None = None
 
 
 class Conformity(str, Enum):

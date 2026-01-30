@@ -4,6 +4,7 @@ Executes test suite against isolated mock project environments.
 """
 
 import shutil
+import time
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -110,6 +111,7 @@ class TestRunner:
         Returns:
             TestResponses with all results.
         """
+        start_time = time.time()
         print_header("Functional Tests", version)
 
         suite = self.load_test_suite()
@@ -193,14 +195,29 @@ class TestRunner:
                 # Always cleanup the test environment
                 self._cleanup_test_environment(test_dir)
 
+        # Calculate total duration
+        total_duration_ms = int((time.time() - start_time) * 1000)
+
         result = TestResponses(
             arche_version=version,
             timestamp=datetime.now().isoformat(),
             responses=responses,
+            total_duration_ms=total_duration_ms,
         )
 
         # Save responses
         self._save_responses(version=version, responses=result)
+
+        # Print summary
+        console.print()
+        minutes, seconds = divmod(total_duration_ms // 1000, 60)
+        if minutes > 0:
+            time_str = f"{minutes}m {seconds}s"
+        else:
+            time_str = f"{total_duration_ms / 1000:.1f}s"
+        print_success(f"Completed {total} tests")
+        console.print(f"[dim]Total time: {time_str}[/dim]")
+        console.print()
 
         return result
 

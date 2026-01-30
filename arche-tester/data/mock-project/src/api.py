@@ -73,6 +73,8 @@ def create_user(data: dict[str, Any]) -> User:
 
 def list_users(role: UserRole | None = None) -> list[User]:
     """List all users, optionally filtered by role."""
+    if role is not None and not isinstance(role, UserRole):
+        raise ValidationError("role", "must be a valid UserRole")
     users = list(_users.values())
     if role:
         users = [u for u in users if u.role == role]
@@ -91,6 +93,27 @@ def get_product(product_id: int) -> Product:
 
 def create_product(data: dict[str, Any]) -> Product:
     """Create new product."""
+    # Validate required fields
+    if "name" not in data:
+        raise ValidationError("name", "is required")
+    if "description" not in data:
+        raise ValidationError("description", "is required")
+    if "price" not in data:
+        raise ValidationError("price", "is required")
+
+    # Validate name
+    if not isinstance(data["name"], str) or not data["name"].strip():
+        raise ValidationError("name", "must be a non-empty string")
+
+    # Validate price
+    if not isinstance(data["price"], (int, float)) or data["price"] < 0:
+        raise ValidationError("price", "must be a non-negative number")
+
+    # Validate stock if provided
+    if "stock" in data:
+        if not isinstance(data["stock"], int) or data["stock"] < 0:
+            raise ValidationError("stock", "must be a non-negative integer")
+
     product_id = len(_products) + 1
     product = Product(id=product_id, **data)
     _products[product_id] = product
@@ -99,6 +122,8 @@ def create_product(data: dict[str, Any]) -> Product:
 
 def list_products(in_stock_only: bool = False) -> list[Product]:
     """List all products."""
+    if not isinstance(in_stock_only, bool):
+        raise ValidationError("in_stock_only", "must be a boolean")
     products = list(_products.values())
     if in_stock_only:
         products = [p for p in products if p.is_available()]
@@ -117,6 +142,14 @@ def get_order(order_id: int) -> Order:
 
 def create_order(user_id: int, items: list[dict[str, Any]]) -> Order:
     """Create new order."""
+    # Validate user_id
+    if not isinstance(user_id, int) or user_id <= 0:
+        raise ValidationError("user_id", "must be a positive integer")
+
+    # Validate items list
+    if not isinstance(items, list) or len(items) == 0:
+        raise ValidationError("items", "must be a non-empty list")
+
     # Validate user exists
     get_user(user_id)
 
@@ -124,14 +157,35 @@ def create_order(user_id: int, items: list[dict[str, Any]]) -> Order:
     from src.models import OrderItem
 
     order_items = []
-    for item_data in items:
+    for idx, item_data in enumerate(items):
+        # Validate item structure
+        if not isinstance(item_data, dict):
+            raise ValidationError(f"items[{idx}]", "must be a dictionary")
+        if "product_id" not in item_data:
+            raise ValidationError(f"items[{idx}].product_id", "is required")
+        if "quantity" not in item_data:
+            raise ValidationError(f"items[{idx}].quantity", "is required")
+
+        # Validate quantity
+        quantity = item_data["quantity"]
+        if not isinstance(quantity, int) or quantity <= 0:
+            raise ValidationError(f"items[{idx}].quantity", "must be a positive integer")
+
         product = get_product(item_data["product_id"])
         if not product.is_available():
             raise ValidationError("product", f"Product {product.id} is out of stock")
+
+        # Validate quantity doesn't exceed stock
+        if quantity > product.stock:
+            raise ValidationError(
+                f"items[{idx}].quantity",
+                f"requested {quantity} but only {product.stock} in stock"
+            )
+
         order_items.append(
             OrderItem(
                 product_id=product.id,
-                quantity=item_data["quantity"],
+                quantity=quantity,
                 unit_price=product.price,
             )
         )
@@ -144,6 +198,11 @@ def create_order(user_id: int, items: list[dict[str, Any]]) -> Order:
 
 def list_orders(user_id: int | None = None) -> list[Order]:
     """List orders, optionally filtered by user."""
+    if user_id is not None:
+        if not isinstance(user_id, int) or user_id <= 0:
+            raise ValidationError("user_id", "must be a positive integer")
+        # Validate user exists
+        get_user(user_id)
     orders = list(_orders.values())
     if user_id:
         orders = [o for o in orders if o.user_id == user_id]
