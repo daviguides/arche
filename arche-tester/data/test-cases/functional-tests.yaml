@@ -1,4 +1,4 @@
-version: "2.3.0"
+version: "2.5.0"
 
 # Optimized for speed: simple prompts that test principles, not complex tasks.
 # Tests ordered by cognitive mode: EXPLORING -> RESEARCHING -> PLANNING -> IMPLEMENTING
@@ -24,7 +24,7 @@ test_cases:
     principle: anti-precocity
     mode: EXPLORING
     description: "No unsolicited suggestions"
-    prompt: "Show config/settings.yaml"
+    prompt: "Read the file config/settings.yaml and show its contents"
     expected:
       must:
         - show contents
@@ -163,7 +163,7 @@ test_cases:
     principle: principle-enforcement
     mode: IMPLEMENTING
     description: "Research before creating"
-    prompt: "Create src/logger.py"
+    prompt: "Add a logging module to the project"
     expected:
       must:
         - search for existing files
@@ -229,7 +229,7 @@ test_cases:
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Handle errors, continue"
-    prompt: "Add validation to get_user in api.py"
+    prompt: "Add a check to get_user in api.py that raises ValidationError if user_id > 10000"
     expected:
       must:
         - complete task
@@ -240,7 +240,7 @@ test_cases:
     principle: anti-babysitting
     mode: IMPLEMENTING
     description: "Autonomous decisions"
-    prompt: "Add error handling to authenticate()"
+    prompt: "Add error handling to login() in auth.py"
     expected:
       must:
         - add handling
