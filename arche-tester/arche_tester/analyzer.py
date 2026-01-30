@@ -517,8 +517,7 @@ class ResponseAnalyzer:
         behavior: str,
     ) -> str:
         """Extract relevant quote from response as evidence."""
-        lines = response.split("
-")
+        lines = response.split("\n")
         behavior_lower = behavior.lower()
 
         for line in lines:
