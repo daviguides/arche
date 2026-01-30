@@ -151,10 +151,11 @@ class ResponseAnalyzer:
         """
         async with semaphore:
             # Create agent for this analysis
+            # Always skip CLI check for parallel agents (already validated)
             agent = AnalyzerAgent(
                 cwd=self._data_path,
                 verbose=False,
-                skip_cli_check=self._skip_cli_check,
+                skip_cli_check=True,
             )
 
             try:
@@ -212,6 +213,16 @@ class ResponseAnalyzer:
         """
         start_time = time.time()
         print_header("Semantic Analysis", version)
+
+        # Validate CLI once before parallel execution
+        if not self._skip_cli_check:
+            test_agent = AnalyzerAgent(
+                cwd=self._data_path,
+                verbose=False,
+                skip_cli_check=False,
+            )
+            await test_agent.disconnect()
+
         print_step("Loading test suite and responses...")
 
         suite = self.load_test_suite()
