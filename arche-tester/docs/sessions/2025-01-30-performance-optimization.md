@@ -233,6 +233,25 @@ context: "Previous: discussed options A and B for logging"
 prompt: "We discussed logging options: A) structured logging with levels, B) minimal logging. Implement option A in api.py"
 ```
 
-### Estimativa de Ganho
-Com 4 testes paralelos: ~22 testes / 4 = ~6 batches
-Tempo estimado: 6 batches × ~20s = **~2 minutos** (vs 6m48s sequencial)
+### Otimização #3: Fork + Paralelo
+
+Combinar fork_session com execução paralela usando subdirectories:
+
+```
+/tmp/arche-test/                    ← cwd fixo (base + todos forks)
+  ├── test-AP-001/                  ← subdirectório isolado
+  ├── test-AP-002/
+  └── ...
+```
+
+**Prompt direciona:** `"Work in the test-{id}/ directory"`
+
+### Resultado Final
+
+| Abordagem | Tempo | Chamadas LLM | vs Baseline |
+|-----------|-------|--------------|-------------|
+| Baseline (sem otimização) | 13m 29s | 52 | - |
+| Sequencial + fork | 6m 48s | 23 | -50% |
+| **Fork + Paralelo (4x)** | **5m 30s** | **23** | **-59%** |
+
+**Nota:** Teste MT-003 levou 3m24s sozinho (implementou logging completo). Sem ele, os outros 21 testes rodaram em ~2 minutos.
