@@ -133,13 +133,17 @@ print(f"Total time: {minutes}m {seconds}s")
 
 ---
 
-## Comparação de Performance
+## Comparação de Performance (Resultados Finais)
 
-| Métrica | Baseline | Otimizado | Redução |
-|---------|----------|-----------|---------|
-| Testes | 26 | 22 | 15% |
-| Chamadas LLM | 52 | 23 | 56% |
-| Tempo estimado | 13m 29s | ~5-6m | ~55% |
+| Métrica | Baseline | Otimizado | Melhoria |
+|---------|----------|-----------|----------|
+| Testes | 26 | 22 | 15% menos |
+| Chamadas LLM | 52 | 23 | 56% menos |
+| **Tempo Total** | **13m 29s** (809,118 ms) | **6m 48s** (407,996 ms) | **49.6% mais rápido** |
+
+### Resultado: ✅ Sucesso
+
+A bateria de testes foi reduzida de **13.5 minutos para 6.8 minutos** - quase 50% mais rápida.
 
 ---
 
@@ -178,6 +182,6 @@ feat(arche-tester): fix fork_session with fixed workspace
 ## Próximos Passos
 
 1. ✅ Rodar bateria otimizada
-2. Comparar tempo real vs baseline (13m 29s)
-3. Validar que resultados são consistentes
-4. Documentar ganho final
+2. ✅ Comparar tempo real vs baseline (13m 29s → 6m 48s = **49.6% mais rápido**)
+3. ✅ Validar que resultados são consistentes (22 testes executados com sucesso)
+4. ✅ Documentar ganho final
