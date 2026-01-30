@@ -32,10 +32,10 @@ from arche_tester.models import (
 class TestRunner:
     """Runs functional tests against Arché principles.
 
-    Each test runs in an isolated copy of the mock project to ensure:
-    - Clean state for each test
-    - Real file operations can be performed
-    - No interference between tests
+    Uses fork_session optimization:
+    - Load principles once in base session
+    - Fork for each test (keeps context, isolated state)
+    - Reset workspace between tests (same cwd for fork compatibility)
     """
 
     def __init__(
@@ -59,6 +59,8 @@ class TestRunner:
         self._skip_cli_check = skip_cli_check
         self._mock_project_path = data_path / "mock-project"
         self._temp_base = Path("/tmp/arche-test")
+        # Fixed workspace for fork_session compatibility (same cwd always)
+        self._workspace = self._temp_base / "workspace"
 
     def load_test_suite(self) -> TestSuite:
         """Load test cases from YAML."""
@@ -67,32 +69,31 @@ class TestRunner:
         data = yaml.safe_load(content)
         return TestSuite.model_validate(data)
 
-    def _create_test_environment(self) -> Path:
-        """Create isolated test environment by copying mock project.
+    def _setup_workspace(self) -> Path:
+        """Setup fixed workspace directory with fresh mock project copy.
 
         Returns:
-            Path to the temporary test directory.
+            Path to the workspace directory.
         """
-        # Ensure temp base exists
-        self._temp_base.mkdir(parents=True, exist_ok=True)
+        # Remove existing workspace if present
+        if self._workspace.exists():
+            shutil.rmtree(self._workspace)
 
-        # Create unique directory for this test
-        test_id = str(uuid.uuid4())[:8]
-        test_dir = self._temp_base / f"test-{test_id}"
+        # Copy mock project to workspace
+        shutil.copytree(self._mock_project_path, self._workspace)
 
-        # Copy mock project to temp
-        shutil.copytree(self._mock_project_path, test_dir)
+        return self._workspace
 
-        return test_dir
+    def _reset_workspace(self) -> None:
+        """Reset workspace to clean state (fresh mock project copy)."""
+        if self._workspace.exists():
+            shutil.rmtree(self._workspace)
+        shutil.copytree(self._mock_project_path, self._workspace)
 
-    def _cleanup_test_environment(self, test_dir: Path) -> None:
-        """Remove test environment after test completion.
-
-        Args:
-            test_dir: Path to the temporary test directory.
-        """
-        if test_dir.exists() and test_dir.is_relative_to(self._temp_base):
-            shutil.rmtree(test_dir)
+    def _cleanup_workspace(self) -> None:
+        """Remove workspace after all tests complete."""
+        if self._workspace.exists():
+            shutil.rmtree(self._workspace)
 
     async def run_suite(
         self,
@@ -121,21 +122,40 @@ class TestRunner:
         print_step(f"Running {total} tests against Arché principles")
         print_step(f"Model: [cyan]{settings.test_agent.model.value}[/cyan]")
         print_step(f"Mock project: {self._mock_project_path}")
-        print_step(f"Temp directory: {self._temp_base}")
+        print_step(f"Workspace: {self._workspace}")
         console.print()
 
-        # Run tests (each with fresh agent + principles load)
-        for idx, test_case in enumerate(suite.test_cases, 1):
-            # Create isolated environment for this test
-            test_dir = self._create_test_environment()
+        # Setup workspace and load principles once
+        workspace = self._setup_workspace()
+        print_step("Loading Arché principles (base session)...")
 
-            try:
-                # Create agent with cwd pointing to test directory
+        base_agent = ArcheTestAgent(
+            arche_path=self._arche_path,
+            cwd=workspace,
+            verbose=False,
+            skip_cli_check=self._skip_cli_check,
+        )
+        await base_agent.load_arche_principles()
+        base_session_id = base_agent.session_id
+        await base_agent.disconnect()
+
+        print_step(f"Base session: [dim]{base_session_id[:12]}...[/dim]")
+        console.print()
+
+        # Run tests using forked sessions (same cwd = workspace)
+        try:
+            for idx, test_case in enumerate(suite.test_cases, 1):
+                # Reset workspace to clean state before each test
+                self._reset_workspace()
+
+                # Create forked agent (same cwd as base)
                 agent = ArcheTestAgent(
                     arche_path=self._arche_path,
-                    cwd=test_dir,
+                    cwd=workspace,
                     verbose=False,
                     skip_cli_check=self._skip_cli_check,
+                    resume=base_session_id,
+                    fork_session=True,
                 )
 
                 # Show current test panel
@@ -143,30 +163,10 @@ class TestRunner:
                     test_case=test_case,
                     current=idx,
                     total=total,
-                    status="loading",
+                    status="executing",
                 )
 
                 with Live(panel, console=console, refresh_per_second=4) as live:
-                    # Load principles
-                    live.update(
-                        create_test_panel(
-                            test_case=test_case,
-                            current=idx,
-                            total=total,
-                            status="loading principles",
-                        )
-                    )
-                    await agent.load_arche_principles()
-
-                    # Run test
-                    live.update(
-                        create_test_panel(
-                            test_case=test_case,
-                            current=idx,
-                            total=total,
-                            status="executing",
-                        )
-                    )
                     response_text, duration_ms = await agent.run_test(
                         prompt=test_case.prompt,
                         context=test_case.context,
@@ -195,9 +195,9 @@ class TestRunner:
                     )
                 )
 
-            finally:
-                # Always cleanup the test environment
-                self._cleanup_test_environment(test_dir)
+        finally:
+            # Cleanup workspace after all tests
+            self._cleanup_workspace()
 
         # Calculate total duration
         total_duration_ms = int((time.time() - start_time) * 1000)
