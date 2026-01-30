@@ -47,10 +47,10 @@ def run(
         help="Path to data directory",
     ),
     concurrency: int = typer.Option(
-        4,
+        8,
         "--concurrency",
         "-c",
-        help="Number of parallel tests (default: 4)",
+        help="Number of parallel tests (default: 8)",
     ),
     verbose: bool = typer.Option(
         True,
@@ -207,10 +207,10 @@ def baseline(
         help="Path to data directory",
     ),
     concurrency: int = typer.Option(
-        4,
+        8,
         "--concurrency",
         "-c",
-        help="Number of parallel tests (default: 4)",
+        help="Number of parallel tests (default: 8)",
     ),
     skip_cli_check: bool = typer.Option(
         False,

@@ -45,7 +45,7 @@ class TestRunner:
     - Each test works in its own subdirectory (isolation)
     """
 
-    DEFAULT_CONCURRENCY = 4
+    DEFAULT_CONCURRENCY = 8
 
     def __init__(
         self,
