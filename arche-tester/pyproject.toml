@@ -31,3 +31,12 @@ select = ["E", "F", "I", "N", "W", "UP"]
 include = ["arche_tester"]
 pythonVersion = "3.13"
 typeCheckingMode = "basic"
+
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "ipykernel>=7.1.0",
+    "ipython>=9.9.0",
+    "pre-commit>=4.5.1",
+    "ruff>=0.14.14",
+]

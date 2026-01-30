@@ -639,16 +639,20 @@ More content
 
 ---
 
+## Validation
+
+@~/.claude/arche/spec/_spec-framework.md (universal checklist)
+
+**Conciseness specific:**
+- [ ] Zero filler words?
+- [ ] Active voice 90%+?
+- [ ] Code blocks for code (not prose)?
+- [ ] HRs < 3 per document?
+
+---
+
 ## Remember
 
-**Core truth**: We're optimizing for LLMs, not humans.
+> Every word must justify existence. If it doesn't add meaning, delete it.
 
-**Token economy is virtue**. Conciseness without loss of essence.
-
-**Every word must justify existence**. If it doesn't add meaning, delete it.
-
-**Show, don't tell**. Code > prose. Examples > explanations.
-
-**Structure is semantic**. Use markdown to signal meaning, not aesthetics.
-
-**Brevity respects attention**. LLM's and reader's.
+**Token economy is virtue**. Code > prose. Show, don't tell.

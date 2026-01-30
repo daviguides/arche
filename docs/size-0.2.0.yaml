@@ -1,0 +1,84 @@
+# Arché Size v0.2.0
+# After Phase 1 + Phase 2 optimization
+
+version: "0.2.0"
+date: "2025-01-30"
+
+specs:
+  total_bytes: 66439
+  total_kb: 64.9
+
+  files:
+    llm-conciseness.md:
+      bytes: 16733
+      kb: 16.3
+      path: arche/spec/behavior/llm-conciseness.md
+
+    principle-enforcement.md:
+      bytes: 13643
+      kb: 13.3
+      path: arche/spec/meta/principle-enforcement.md
+
+    anti-duplication.md:
+      bytes: 12404
+      kb: 12.1
+      path: arche/spec/knowledge/anti-duplication.md
+
+    essential-cognitive-modes.md:
+      bytes: 7901
+      kb: 7.7
+      path: arche/spec/modes/essential-cognitive-modes.md
+
+    debugging-mode.md:
+      bytes: 5674
+      kb: 5.5
+      path: arche/spec/modes/debugging-mode.md
+
+    anti-precocity.md:
+      bytes: 4169
+      kb: 4.1
+      path: arche/spec/behavior/anti-precocity.md
+
+    anti-babysitting.md:
+      bytes: 4151
+      kb: 4.1
+      path: arche/spec/behavior/anti-babysitting.md
+
+    _spec-framework.md:
+      bytes: 1764
+      kb: 1.7
+      path: arche/spec/_spec-framework.md
+
+context:
+  total_bytes: 13120
+  total_kb: 12.8
+
+  files:
+    mode-transitions.md:
+      bytes: 5963
+      kb: 5.8
+      path: arche/context/examples/mode-transitions.md
+
+    validation-flow.md:
+      bytes: 3698
+      kb: 3.6
+      path: arche/context/examples/validation-flow.md
+
+    recovery-strategies.md:
+      bytes: 3459
+      kb: 3.4
+      path: arche/context/examples/recovery-strategies.md
+
+prompts:
+  load-essential.md:
+    bytes: 1087
+    kb: 1.1
+    path: arche/prompts/load-essential.md
+
+comparison:
+  baseline_specs_kb: 96.0
+  current_specs_kb: 64.9
+  reduction_kb: 31.1
+  reduction_percent: 32.4
+  target_kb: 65
+  target_achieved: true

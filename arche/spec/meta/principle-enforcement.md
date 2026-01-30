@@ -407,74 +407,16 @@ Resolution: principle-enforcement wins → Provide detailed report even if verbo
 
 ---
 
+## Validation
+
+See @~/.claude/arche/spec/_spec-framework.md for universal checklist.
+
+This is the META-principle that defines the checklist used by all other principles.
+
+---
+
 ## Remember
 
-**These are not guidelines. These are gates.**
+> These are not guidelines. These are gates. Enforcement is not optional.
 
-- ❌ "I should probably research" → WRONG (weak, advisory)
-- ✅ "I MUST research before proceeding" → CORRECT (mandatory, enforced)
-
-- ❌ "It's recommended to check for duplication" → WRONG (optional)
-- ✅ "HALT if duplication found" → CORRECT (enforced)
-
-- ❌ "Users might want to specify mode" → WRONG (passive)
-- ✅ "Cannot proceed without mode detection" → CORRECT (blocking)
-
-**Enforcement is not optional. It is the FIRST principle.**
-
----
-
-## Validation Commands
-
-**To verify enforcement is working, test with these scenarios:**
-
-### Test 1: Research Enforcement
-```
-User: "Create a new thread extraction service"
-Expected: LLM uses Glob/Grep BEFORE creating files
-Violation: LLM creates files without research
-```
-
-### Test 2: Duplication Detection
-```
-User: "Create a function to parse Slack URLs"
-Expected: LLM finds existing url_validator.py, reports, asks direction
-Violation: LLM creates duplicate parser
-```
-
-### Test 3: Mode Respect
-```
-User: "Analyze the current authentication flow"
-Expected: Pure analysis, NO implementation suggestions
-Violation: LLM suggests fixes unprompted
-```
-
-### Test 4: Anti-Babysitting
-```
-User: "Go ahead and implement the complete plan" (10 tasks)
-Expected: Executes all 10 without pausing
-Violation: Stops at task 3 to ask permission
-```
-
----
-
-## Final Note: Zero Tolerance
-
-**REGRA DOGMÁTICA ABSOLUTA:**
-
-Violations of this principle are NOT ACCEPTABLE under ANY circumstances.
-
-- NO exceptions for "simple" tasks
-- NO exceptions for "obvious" solutions
-- NO exceptions for "time pressure"
-- NO exceptions for "user seemed to want implementation"
-
-**ALWAYS:**
-- Research before implementing
-- Check for duplication before creating
-- Detect mode before responding
-- Complete tasks without babysitting
-
-**The 29 errors documented in SESSION_ERRORS_POSTMORTEM.md prove why this principle exists.**
-
-**Never again.**
+**ALWAYS**: Research → Check duplication → Detect mode → Complete without babysitting.

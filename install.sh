@@ -72,20 +72,6 @@ validate_source_structure() {
   fi
 }
 
-confirm_overwrite() {
-  if [ -d "$TARGET_DIR" ]; then
-    read -p "Directory $TARGET_DIR already exists. Overwrite? (y/n) " -n 1 -r
-    printf "\n"
-
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      rm -rf "$TARGET_DIR"
-    else
-      printf "%b\n" "${YELLOW}Installation cancelled.${NC}"
-      exit 0
-    fi
-  fi
-}
-
 copy_files() {
   local src_subdir="$TMP_DIR/$SOURCE_SUBDIR"
 
@@ -106,7 +92,9 @@ install() {
   # Ensure ~/.claude directory exists
   [ -d "$CLAUDE_DIR" ] || mkdir -p "$CLAUDE_DIR"
 
-  confirm_overwrite
+  # Remove existing installation
+  [ -d "$TARGET_DIR" ] && rm -rf "$TARGET_DIR"
+
   copy_files
 
   printf "%b\n\n" "${GREEN}✓ Arche installed successfully!${NC}"

@@ -1,0 +1,567 @@
+arche_version: 0.2.0
+responses:
+- duration_ms: 34339
+  prompt: Add docstring to User class
+  response: 'Done. I''ve enhanced the User class docstring with:
+
+
+    - **Summary**: Clear description of what the class represents
+
+    - **Attributes section**: Documents each field with its purpose and constraints
+
+    - **Example section**: Shows how to instantiate the User class
+
+
+    The docstring follows standard Python documentation conventions and provides comprehensive
+    information for developers using this class.'
+  test_id: AB-001
+  tokens_used: null
+- duration_ms: 23202
+  prompt: Add type hint to format_date in utils.py
+  response: 'The `format_date` function on line 10 already has type hints: it takes
+    `dt: datetime` as a parameter and returns `-> str`. The type hints are already
+    complete.
+
+
+    The function signature is:
+
+    ```python
+
+    def format_date(dt: datetime) -> str:
+
+    ```
+
+
+    This already includes:
+
+    - Parameter type hint: `dt: datetime`
+
+    - Return type hint: `-> str`
+
+
+    **The type hints are already present and complete.**'
+  test_id: AB-002
+  tokens_used: null
+- duration_ms: 42509
+  prompt: Add a check to get_user in api.py that raises ValidationError if user_id
+    > 10000
+  response: 'Done. I''ve added a validation check to the `get_user` function in `test-AB-003/src/api.py`
+    that raises `ValidationError` if `user_id > 10000`.
+
+
+    The check is placed after the existing positive integer validation and before
+    the not-found check, following the existing validation pattern in the codebase.'
+  test_id: AB-003
+  tokens_used: null
+- duration_ms: 33455
+  prompt: Add error handling to login() in auth.py
+  response: 'Error handling added to login() function in auth.py:
+
+
+    **Enhancements**:
+
+    - **Type validation**: Ensures username and password are strings (raises TypeError)
+
+    - **Value validation**: Checks for None/empty values (raises ValueError)
+
+    - **Exception handling**: Catches unexpected errors during authentication
+
+    - **Documentation**: Added comprehensive docstring with Args, Returns, and Raises
+    sections
+
+
+    **Error handling covers**:
+
+    - Invalid types (non-string inputs)
+
+    - Empty/whitespace-only usernames
+
+    - Empty passwords
+
+    - Unexpected runtime errors (logged and returns False)'
+  test_id: AB-005
+  tokens_used: null
+- duration_ms: 22962
+  prompt: Add validate_url to utils.py
+  response: "⚠️ **ANTI-DUPLICATION VIOLATION DETECTED**\n\n**Attempted to create**:\
+    \ `validate_url` function in utils.py\n**Found existing**: `validate_url` already\
+    \ exists in utils.py (lines 46-48)\n\n**Existing implementation analysis**:\n\
+    - Location: test-AD-001/src/utils.py:46-48\n- Functionality: Validates URL format\
+    \ by checking for http:// or https:// prefix\n- Implementation:\n  ```python\n\
+    \  def validate_url(url: str) -> bool:\n      \"\"\"Validate URL format.\"\"\"\
+    \n      return url.startswith(\"http://\") or url.startswith(\"https://\")\n \
+    \ ```\n\n**Status**: The `validate_url` function already exists in the requested\
+    \ location with URL validation logic.\n\nNo action needed - the function is already\
+    \ implemented."
+  test_id: AD-001
+  tokens_used: null
+- duration_ms: 28026
+  prompt: Create email validator
+  response: "⚠️ **ANTI-DUPLICATION VIOLATION DETECTED**\n\n**Attempted to create**:\
+    \ New email validator\n\n**Found existing implementations**:\n1. **Location**:\
+    \ `test-AD-002/src/utils.py:41-43`\n   - Function: `validate_email(email: str)\
+    \ -> bool`\n   - Implementation: `return \"@\" in email and \".\" in email.split(\"\
+    @\")[1]`\n\n2. **Location**: `test-AD-002/src/models.py:85-87`\n   - Function:\
+    \ `validate_email(email: str) -> bool`\n   - Implementation: Identical - `return\
+    \ \"@\" in email and \".\" in email.split(\"@\")[1]`\n\n**Analysis**:\n- Duplication\
+    \ already exists (intentionally for anti-duplication testing, per comment on line\
+    \ 84 of models.py)\n- Email validator is used in `src/api.py:65` (imports from\
+    \ models.py)\n- Tests exist in `test_models.py` covering valid/invalid email cases\n\
+    - TODO comment in `models.py:29` suggests need for email validation on User model\n\
+    \n**Recommended approaches**:\n\n**A) Extend existing implementation** - Improve\
+    \ the current validator with better email validation logic (RFC 5322 compliance,\
+    \ handle edge cases)\n\n**B) Consolidate duplicates** - Keep one canonical source\
+    \ (in utils.py), remove from models.py, update imports\n\n**C) Create new implementation**\
+    \ - Justify why a different email validator is needed (different validation rules,\
+    \ external library, etc.)\n\nWhich approach would you prefer?"
+  test_id: AD-002
+  tokens_used: null
+- duration_ms: 49483
+  prompt: How does auth.py work?
+  response: '## Analysis: How auth.py Works
+
+
+    **Architecture**: Session-based authentication with role-based authorization.
+
+
+    ### Core Components
+
+
+    **Session Storage** (line 15):
+
+    - In-memory dictionary storing active sessions
+
+    - Key: session token, Value: user metadata (id, username, role, timestamps)
+
+
+    **Configuration** (lines 18-19):
+
+    - 24-hour session duration
+
+    - Mock secret key for password hashing
+
+
+    ### Password Security
+
+
+    **hash_password()** (lines 22-25):
+
+    - Uses SHA-256 with salt (secret key + password)
+
+    - Returns hexadecimal hash
+
+
+    **verify_password()** (lines 28-30):
+
+    - Compares hashed password against stored hash
+
+
+    ### Session Management
+
+
+    **create_session()** (lines 33-43):
+
+    - Generates secure random token (32 bytes, URL-safe)
+
+    - Stores user metadata with creation and expiration timestamps
+
+    - Returns token for client use
+
+
+    **get_session()** (lines 46-54):
+
+    - Retrieves session by token
+
+    - Auto-invalidates expired sessions
+
+    - Returns None if not found or expired
+
+
+    **invalidate_session()** (lines 57-62):
+
+    - Deletes session from storage
+
+    - Returns success boolean
+
+
+    ### Authorization Middleware
+
+
+    **require_auth()** (lines 65-72):
+
+    - Validates token exists and is valid
+
+    - Raises PermissionError if authentication fails
+
+    - Returns session data for authorized requests
+
+
+    **require_role()** (lines 75-80):
+
+    - Checks user has specific role
+
+    - Delegates to require_auth() first
+
+    - Raises PermissionError if role mismatch
+
+
+    **require_admin()** (lines 83-85):
+
+    - Convenience wrapper for admin role check
+
+
+    ### Login/Logout Flow
+
+
+    **login()** (lines 89-98):
+
+    - Fetches users from API (circular import via local import)
+
+    - Matches username (password check commented out)
+
+    - Creates and returns session token
+
+    - Raises PermissionError on invalid credentials
+
+
+    **logout()** (lines 101-103):
+
+    - Wrapper for invalidate_session()
+
+
+    **get_current_user()** (lines 106-113):
+
+    - Retrieves User object from session token
+
+    - Uses API to fetch full user data
+
+
+    ### Key Patterns
+
+
+    **Security note**: Password verification in login() is commented out (line 96),
+    making this mock implementation insecure.
+
+
+    **Circular import handling**: Uses local imports (lines 91, 111) to avoid circular
+    dependencies with src.api.
+
+
+    **Session expiry**: Automatic cleanup when accessing expired sessions (lines 51-53).'
+  test_id: AD-003
+  tokens_used: null
+- duration_ms: 22005
+  prompt: What files are in src/?
+  response: 'Files in `test-AP-001/src/`:
+
+
+    - `__init__.py` (35 bytes)
+
+    - `api.py` (6,802 bytes)
+
+    - `auth.py` (3,009 bytes)
+
+    - `models.py` (1,964 bytes)
+
+    - `utils.py` (2,182 bytes)'
+  test_id: AP-001
+  tokens_used: null
+- duration_ms: 31990
+  prompt: What's duplicated between models.py and utils.py?
+  response: "## Duplication Analysis\n\n**Duplicated Code**:\n\n1. **`validate_email()`\
+    \ function**:\n   - **models.py:85-87** (3 lines, 100% identical)\n   - **utils.py:41-43**\
+    \ (3 lines, 100% identical)\n   ```python\n   def validate_email(email: str) ->\
+    \ bool:\n       \"\"\"Validate email format.\"\"\"\n       return \"@\" in email\
+    \ and \".\" in email.split(\"@\")[1]\n   ```\n\n**Other findings**:\n\n2. **Related\
+    \ but distinct**: `validate_username()` exists only in models.py (lines 90-92),\
+    \ while `validate_url()` exists only in utils.py (lines 46-48). These are similar\
+    \ validation functions but serve different purposes.\n\n**Duplication severity**:\
+    \ Low (3 lines total duplicated)\n\n**Note**: Both files contain comments indicating\
+    \ this is intentional duplication for testing anti-duplication principles (models.py:84,\
+    \ utils.py:40)."
+  test_id: AP-002
+  tokens_used: null
+- duration_ms: 26016
+  prompt: How does error handling work in api.py?
+  response: "The test-AP-003/ directory doesn't exist yet. I can see test-AP-002/\
+    \ exists. Let me check if you want me to create test-AP-003/ or if you meant to\
+    \ work with an existing directory.\n\n**Current state**: The `test-AP-003/` directory\
+    \ does not exist in `/Users/daviguides/work/sources/gradients/arche/`.\n\n**Available\
+    \ test directories**:\n- test-AB-002/\n- test-AP-002/ \n- test-CP-001/\n- test-MT-003/\n\
+    - test-PE-001/\n\nWould you like me to:\n1. Create the `test-AP-003/` directory\
+    \ and an `api.py` file to demonstrate error handling?\n2. Analyze error handling\
+    \ in `api.py` from an existing test directory (like test-AP-002/)?\n3. Something\
+    \ else?"
+  test_id: AP-003
+  tokens_used: null
+- duration_ms: 36136
+  prompt: How should we add logging to api.py?
+  response: "**MODE DETECTED: PLANNING**\n\nSignal: \"How should we\" → User asking\
+    \ for approach/strategy\n\n---\n\n## Logging Strategy for api.py\n\nAnalysis of\
+    \ `api.py` (210 lines, 9 endpoint functions, 3 error classes):\n- No existing\
+    \ logging in the codebase\n- Multiple validation points and error conditions\n\
+    - CRUD operations on users, products, orders\n- In-memory storage operations\n\
+    \n### **Recommended Approach**\n\n**1. Logger Setup**\n```python\nimport logging\n\
+    \nlogger = logging.getLogger(__name__)\n```\n\n**2. Key Logging Points**\n\n**Entry/Exit\
+    \ Logging** (INFO level):\n- Log each endpoint call with parameters\n- Log successful\
+    \ operations with results\n\n**Error Logging** (ERROR/WARNING level):\n- Log validation\
+    \ failures before raising errors\n- Log not found errors\n- Log business logic\
+    \ failures\n\n**Debug Logging** (DEBUG level):\n- Log intermediate validation\
+    \ steps\n- Log data transformations\n\n### **Pattern Example**\n\n```python\n\
+    def get_user(user_id: int) -> User:\n    \"\"\"Get user by ID.\"\"\"\n    logger.info(f\"\
+    get_user called with user_id={user_id}\")\n    \n    if not isinstance(user_id,\
+    \ int) or user_id <= 0:\n        logger.warning(f\"Invalid user_id: {user_id}\"\
+    )\n        raise ValidationError(\"user_id\", \"must be a positive integer\")\n\
+    \    \n    if user_id not in _users:\n        logger.error(f\"User {user_id} not\
+    \ found\")\n        raise NotFoundError(\"User\", user_id)\n    \n    logger.info(f\"\
+    Successfully retrieved user {user_id}\")\n    return _users[user_id]\n```\n\n\
+    ### **Logging Levels Strategy**\n\n- **INFO**: Successful operations (creates,\
+    \ retrievals, lists)\n- **WARNING**: Validation failures (invalid inputs)\n- **ERROR**:\
+    \ Resource not found, business logic failures\n- **DEBUG**: Detailed validation\
+    \ steps, data inspection\n\n### **Coverage Recommendation**\n\nLog in all 9 endpoint\
+    \ functions:\n- `get_user`, `create_user`, `list_users`\n- `get_product`, `create_product`,\
+    \ `list_products`\n- `get_order`, `create_order`, `list_orders`\n\nWhich approach\
+    \ fits your needs better:\n**A)** Comprehensive logging (all entry/exit + errors\
+    \ + debug)\n**B)** Minimal logging (errors + critical operations only)\n**C)**\
+    \ Custom pattern you have in mind?"
+  test_id: AP-004
+  tokens_used: null
+- duration_ms: 22060
+  prompt: Read the file config/settings.yaml and show its contents
+  response: "**Contents of `test-AP-005/config/settings.yaml`:**\n\n```yaml\n# Mock\
+    \ Project Configuration\n\napp:\n  name: \"Mock Project\"\n  version: \"0.1.0\"\
+    \n  debug: true\n\ndatabase:\n  host: \"localhost\"\n  port: 5432\n  name: \"\
+    mockdb\"\n  user: \"mockuser\"\n  # password: stored in environment variable\n\
+    \napi:\n  host: \"0.0.0.0\"\n  port: 8000\n  cors_origins:\n    - \"http://localhost:3000\"\
+    \n    - \"http://localhost:8080\"\n\nauth:\n  session_duration_hours: 24\n  secret_key_env:\
+    \ \"MOCK_SECRET_KEY\"\n\nlogging:\n  level: \"INFO\"\n  format: \"%(asctime)s\
+    \ - %(name)s - %(levelname)s - %(message)s\"\n\ncache:\n  enabled: true\n  ttl_seconds:\
+    \ 300\n  max_size: 1000\n```\n\nThis is a mock project configuration file with\
+    \ settings for:\n- **App** metadata (name, version, debug mode)\n- **Database**\
+    \ connection (PostgreSQL on localhost:5432)\n- **API** server (running on 0.0.0.0:8000\
+    \ with CORS origins)\n- **Auth** configuration (24-hour sessions, secret key from\
+    \ env)\n- **Logging** setup (INFO level with timestamp format)\n- **Cache** settings\
+    \ (enabled, 5-minute TTL, max 1000 items)"
+  test_id: AP-005
+  tokens_used: null
+- duration_ms: 47071
+  prompt: Create src/validators.py
+  response: 'Created `src/validators.py` with common validation utilities:
+
+
+    **Functions included:**
+
+    - `validate_email()` - Email format validation
+
+    - `validate_phone()` - Phone number format validation (multiple formats supported)
+
+    - `validate_required()` - Check for non-empty values
+
+    - `validate_length()` - String length bounds validation
+
+    - `validate_range()` - Numeric range validation
+
+
+    The file is 2.7KB and follows Python best practices with proper type hints and
+    docstrings.'
+  test_id: CP-001
+  tokens_used: null
+- duration_ms: 11923
+  prompt: Find TODO comments in src/
+  response: 'Found 2 TODO comments in `test-CP-002/src/`:
+
+
+    **File: `src/models.py`**
+
+    - **Line 28**: `# TODO: Add password hashing`
+
+    - **Line 29**: `# TODO: Add email validation`
+
+
+    Both TODOs are in the models.py file and relate to user security features.'
+  test_id: CP-002
+  tokens_used: null
+- duration_ms: 22224
+  prompt: What is the main file in src/?
+  response: 'The main file in `test-LC-001/src/` is **`api.py`** (6,802 bytes) - it''s
+    the largest file and typically serves as the primary API/application entry point.
+
+
+    The directory contains:
+
+    - `api.py` - Main file (6.8KB)
+
+    - `auth.py` - Authentication module (3KB)
+
+    - `models.py` - Data models (1.9KB)
+
+    - `utils.py` - Utility functions (2.1KB)
+
+    - `__init__.py` - Package marker (35 bytes)'
+  test_id: LC-001
+  tokens_used: null
+- duration_ms: 36880
+  prompt: What does test_models.py test?
+  response: '**test_models.py** tests data models for an e-commerce-like application.
+    Specifically:
+
+
+    **TestUser** - User model functionality:
+
+    - Basic user creation with default USER role
+
+    - Admin user creation with ADMIN role
+
+
+    **TestProduct** - Product model functionality:
+
+    - Product availability check (is_available() returns True when stock > 0)
+
+    - Out-of-stock detection (is_available() returns False when stock = 0)
+
+
+    **TestOrder** - Order model functionality:
+
+    - Order total calculation from multiple OrderItems
+
+    - Default order status (PENDING)
+
+
+    **TestValidation** - Validation functions:
+
+    - Email validation (valid/invalid formats)
+
+    - Username validation (length requirements, allowed characters)
+
+
+    The tests cover basic CRUD model behavior, business logic (availability, totals),
+    and input validation for a simple ordering system.'
+  test_id: LC-002
+  tokens_used: null
+- duration_ms: 27846
+  prompt: Add validate_price to Product
+  response: Added `validate_price` method to the `Product` class. The method validates
+    that the price is positive (greater than 0).
+  test_id: LC-003
+  tokens_used: null
+- duration_ms: 50479
+  prompt: I see duplicate code in utils.py
+  response: "## Duplication Analysis Complete\n\n**Found duplicate code in `utils.py`:**\n\
+    \n### 1. **`validate_email()` function** - 100% identical duplication\n\n**Location\
+    \ 1**: `src/utils.py:41-43`\n```python\ndef validate_email(email: str) -> bool:\n\
+    \    \"\"\"Validate email format.\"\"\"\n    return \"@\" in email and \".\" in\
+    \ email.split(\"@\")[1]\n```\n\n**Location 2**: `src/models.py:85-87`\n```python\n\
+    def validate_email(email: str) -> bool:\n    \"\"\"Validate email format.\"\"\"\
+    \n    return \"@\" in email and \".\" in email.split(\"@\")[1]\n```\n\n**Usage**:\
+    \ Imported and used in `src/api.py:52, 65` and tested in `tests/test_models.py:86-92`\n\
+    \n**Current import source**: `src/models.py` (api.py imports from models)\n\n\
+    ---\n\n### 2. **Additional validation functions in `utils.py`** (no duplicates\
+    \ found elsewhere)\n\n- `validate_url()` - exists only in utils.py\n- `sanitize_string()`\
+    \ - exists only in utils.py\n- `validate_username()` - exists only in models.py\
+    \ (not duplicated)\n\n---\n\n### Duplication Severity\n\n**High** - The `validate_email()`\
+    \ function exists in two locations with 100% identical implementation (3 lines).\
+    \ Comments in both files acknowledge this is intentional for anti-duplication\
+    \ testing purposes."
+  test_id: MT-001
+  tokens_used: null
+- duration_ms: 16817
+  prompt: 'We discussed logging options: A) structured logging with levels, B) minimal
+    logging. Implement option A in api.py'
+  response: "**Mode detected: IMPLEMENTING** (user requested implementation with \"\
+    Implement option A\")\n\nStructured logging with levels (Option A) is already\
+    \ fully implemented in `/Users/daviguides/work/sources/gradients/arche/test-MT-003/api.py`.\
+    \ \n\nThe implementation includes:\n\n**Features implemented:**\n- `StructuredLogger`\
+    \ class with configurable log levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)\n\
+    - Structured format: `timestamp | level | logger | message`\n- Context support\
+    \ via `**kwargs` for additional structured data\n- `APIClient` class demonstrating\
+    \ logging integration\n- Runtime log level adjustment via `set_log_level()`\n\
+    - Prevents duplicate handlers\n- Example usage showing all log levels\n\n**Example\
+    \ output format:**\n```\n2026-01-30 14:23:45 | INFO     | __main__ | API client\
+    \ initialized | base_url=https://api.example.com\n2026-01-30 14:23:45 | DEBUG\
+    \    | __main__ | GET request | url=https://api.example.com/users/123 | method=GET\n\
+    2026-01-30 14:23:45 | INFO     | __main__ | Request successful | endpoint=users/123\
+    \ | status=200\n```\n\nThe implementation is complete and ready to use."
+  test_id: MT-003
+  tokens_used: null
+- duration_ms: 122401
+  prompt: Add a logging module to the project
+  response: "All 5 tasks completed:\n\n✓ **Created `src/logging.py`** with comprehensive\
+    \ logging module featuring:\n  - YAML configuration loading from `config/settings.yaml`\n\
+    \  - Support for console and file handlers\n  - Configurable log levels and formats\n\
+    \  - Logger caching for performance\n  - Convenience functions (debug, info, warning,\
+    \ error, critical)\n\n✓ **Added PyYAML dependency** to `pyproject.toml` (version\
+    \ >=6.0.0)\n\n✓ **Updated `src/__init__.py`** to expose `configure_logging` and\
+    \ `get_logger` functions\n\n✓ **Created `tests/test_logging.py`** with 16 unit\
+    \ tests covering:\n  - Logger creation and caching\n  - Configuration and level\
+    \ settings\n  - Handler management (console and file)\n  - Convenience functions\n\
+    \  - Auto-configuration behavior\n\n✓ **Updated `docs/README.md`** with logging\
+    \ documentation including:\n  - Basic usage examples\n  - Convenience functions\n\
+    \  - Configuration options\n  - Advanced configuration with file logging\n  -\
+    \ Runtime level changes\n\nThe logging module integrates with the existing project\
+    \ configuration and follows Python logging best practices."
+  test_id: PE-001
+  tokens_used: null
+- duration_ms: 25471
+  prompt: Create a date parser function
+  response: '⚠️ **ANTI-DUPLICATION VIOLATION DETECTED**
+
+
+    **Attempted to create**: New date parser function
+
+
+    **Found existing**: `/private/tmp/arche-test/test-PE-002/src/utils.py` (lines
+    15-17)
+
+
+    **Existing implementation analysis**:
+
+    - Location: `test-PE-002/src/utils.py`
+
+    - Functionality: `parse_date()` function that parses ISO format date strings using
+    `datetime.fromisoformat()`
+
+    - Also includes: `format_date()` function for formatting datetime as ISO string
+
+
+    **Recommended approach**:
+
+    - **A)** The date parser already exists - no action needed
+
+    - **B)** Extend existing `parse_date()` to support additional date formats (e.g.,
+    "MM/DD/YYYY", "DD-MM-YYYY", natural language)
+
+    - **C)** Create new parser with justification for why the existing one is insufficient
+
+
+    **Which approach would you prefer?**'
+  test_id: PE-002
+  tokens_used: null
+- duration_ms: 45211
+  prompt: Analyze src/models.py structure
+  response: "## Analysis of src/models.py Structure\n\n**File**: test-PE-003/src/models.py\n\
+    \n### Overall Structure\n\nThe file contains Pydantic data models for a mock e-commerce\
+    \ system with users, products, and orders.\n\n### Components\n\n**1. Imports**\
+    \ (lines 6-8):\n- `datetime` from datetime\n- `Enum` from enum  \n- Pydantic:\
+    \ `BaseModel`, `Field`\n\n**2. Enumerations** (2 enums):\n- `UserRole` (lines\
+    \ 11-16): ADMIN, USER, GUEST\n- `OrderStatus` (lines 46-53): PENDING, PROCESSING,\
+    \ SHIPPED, DELIVERED, CANCELLED\n\n**3. Models** (5 Pydantic models):\n- `User`\
+    \ (lines 19-29): id, username, email, role, created_at\n  - Has TODO comments\
+    \ for password hashing and email validation\n- `Product` (lines 32-43): id, name,\
+    \ description, price, stock\n  - Method: `is_available()` checks stock > 0\n-\
+    \ `OrderItem` (lines 56-66): product_id, quantity, unit_price\n  - Property: `total`\
+    \ calculates quantity × unit_price\n- `Order` (lines 69-81): id, user_id, items,\
+    \ status, created_at\n  - Property: `total` sums all item totals\n\n**4. Utility\
+    \ Functions** (2 standalone functions):\n- `validate_email()` (lines 85-87): Basic\
+    \ email format check\n- `validate_username()` (lines 90-92): Length ≥3 and alphanumeric\
+    \ check\n\n### Notable Characteristics\n\n**Design Patterns**:\n- Enum-based type\
+    \ safety for roles and statuses\n- Pydantic models for validation\n- Properties\
+    \ for computed values (totals)\n- Default factories for timestamps\n\n**Intentional\
+    \ Issues** (per comment on line 84):\n- Duplicate validation functions marked\
+    \ as intentional for anti-duplication testing\n- These could be extracted to a\
+    \ validators module or integrated into Pydantic validators\n\n**Code Quality**:\n\
+    - Clear docstrings on all classes and functions\n- Type hints throughout\n- Clean\
+    \ separation of concerns (models vs utilities)"
+  test_id: PE-003
+  tokens_used: null
+timestamp: '2026-01-30T19:46:16.572070'
+total_duration_ms: 187666

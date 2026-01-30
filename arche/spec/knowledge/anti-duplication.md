@@ -547,24 +547,19 @@ Danger: < 0.2 (too much inline content)
 
 ---
 
-## Summary
+## Validation
 
-### Core Principles
+@~/.claude/arche/spec/_spec-framework.md (universal checklist)
 
-1. **Single Source of Truth**: One authoritative location per concept
-2. **Reference, Don't Repeat**: Use `@` links liberally
-3. **Layer Boundaries**: Respect SPECS → CONTEXT → PROMPTS separation
-4. **Default to Reference**: When in doubt, reference
-5. **Validate Continuously**: Check for duplication drift
-
-### Key Outcomes
-
-- **Zero duplication** across layers
-- **Minimal maintenance** burden
-- **Clear information hierarchy**
-- **Efficient token usage** (for LLMs)
-- **Easy navigation** (for humans)
+**Anti-duplication specific:**
+- [ ] Does this content exist elsewhere?
+- [ ] Could I reference instead of repeating?
+- [ ] Is this the SSOT for this information?
 
 ---
 
-**Remember**: Duplication is a bug, not a feature. Every repeated piece of information is a maintenance liability and a source of potential inconsistency.
+## Remember
+
+> Duplication is a bug, not a feature.
+
+**SSOT**: One location per concept. Reference, don't repeat.
