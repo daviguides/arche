@@ -6,27 +6,27 @@ Load the foundational behavioral principles that govern Claude Code operation.
 
 ## Meta Principles
 
-@./arche/spec/meta/principle-enforcement.md
+@~/.claude/arche/spec/meta/principle-enforcement.md
 
 ---
 
 ## Knowledge Principles
 
-@./arche/spec/knowledge/anti-duplication.md
+@~/.claude/arche/spec/knowledge/anti-duplication.md
 
 ---
 
 ## Behavioral Principles
 
-@./arche/spec/behavior/anti-precocity.md
-@./arche/spec/behavior/anti-babysitting.md
-@./arche/spec/behavior/llm-conciseness.md
+@~/.claude/arche/spec/behavior/anti-precocity.md
+@~/.claude/arche/spec/behavior/anti-babysitting.md
+@~/.claude/arche/spec/behavior/llm-conciseness.md
 
 ---
 
 ## Essential Cognitive Modes
 
-@./arche/spec/modes/essential-cognitive-modes.md
+@~/.claude/arche/spec/modes/essential-cognitive-modes.md
 
 ---
 
