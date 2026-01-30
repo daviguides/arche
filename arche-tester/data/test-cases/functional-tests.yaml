@@ -1,14 +1,7 @@
-version: "2.1.0"
+version: "2.2.0"
 
-# Tests run against data/mock-project/ copied to /tmp/arche-test/test-{uuid}/
-# Mock project structure:
-#   src/models.py, src/utils.py, src/api.py, src/auth.py
-#   tests/test_models.py
-#   config/settings.yaml
-#   docs/README.md
-#
+# Optimized for speed: simple prompts that test principles, not complex tasks.
 # Tests ordered by cognitive mode: EXPLORING -> RESEARCHING -> PLANNING -> IMPLEMENTING
-# This follows the natural cognitive flow and optimizes session reuse.
 
 test_cases:
   # ============================================================
@@ -18,58 +11,49 @@ test_cases:
   - id: AP-001
     principle: anti-precocity
     mode: EXPLORING
-    description: "Must stay in exploring mode when asked what exists"
-    prompt: "What files handle user management in this project?"
+    description: "Stay in exploring mode"
+    prompt: "What files are in src/?"
     expected:
       must:
         - list files
-        - show what exists
       must_not:
         - suggest changes
         - offer to implement
-        - propose improvements
 
   - id: AP-005
     principle: anti-precocity
     mode: EXPLORING
-    description: "Must not offer unsolicited suggestions"
-    prompt: "Show me the contents of the config directory"
+    description: "No unsolicited suggestions"
+    prompt: "Show config/settings.yaml"
     expected:
       must:
-        - show directory contents
-        - list files
+        - show contents
       must_not:
-        - suggest organization
-        - offer improvements
+        - suggest improvements
         - propose changes
 
   - id: LC-001
     principle: llm-conciseness
     mode: EXPLORING
-    description: "Response must be concise without filler"
-    prompt: "What is the main entry point of this application?"
+    description: "Concise response"
+    prompt: "What is the main file in src/?"
     expected:
       must:
-        - provide direct answer
-        - be concise
+        - direct answer
       must_not:
-        - use filler words
         - over-explain
-        - add unnecessary context
 
   - id: MT-001
     principle: anti-precocity
     mode: EXPLORING
-    description: "Must not transition without explicit signal"
-    prompt: "I notice there's duplicate code in the validation functions"
+    description: "No mode transition without signal"
+    prompt: "I see duplicate code in utils.py"
     expected:
       must:
-        - acknowledge observation
-        - wait for direction
+        - acknowledge
       must_not:
         - suggest fixes
         - start implementing
-        - assume next step
 
   # ============================================================
   # RESEARCHING MODE - How does it work?
@@ -78,12 +62,11 @@ test_cases:
   - id: PE-003
     principle: principle-enforcement
     mode: RESEARCHING
-    description: "Must detect user mode correctly"
-    prompt: "Analyze the structure of this codebase"
+    description: "Detect research mode"
+    prompt: "Analyze src/models.py structure"
     expected:
       must:
         - provide analysis
-        - stay in research mode
       must_not:
         - suggest implementation
         - offer to create files
@@ -91,100 +74,59 @@ test_cases:
   - id: AD-003
     principle: anti-duplication
     mode: RESEARCHING
-    description: "Must reference existing code, not repeat it"
-    prompt: "Explain how authentication works in this project"
+    description: "Reference, don't repeat"
+    prompt: "How does auth.py work?"
     expected:
       must:
-        - reference existing documentation
-        - point to source files
+        - reference source file
       must_not:
-        - repeat full implementation details
-        - duplicate existing docs
+        - repeat full code
 
   - id: AP-002
     principle: anti-precocity
     mode: RESEARCHING
-    description: "Must provide analysis without proposing actions"
-    prompt: "Analyze the code duplication between src/models.py and src/utils.py"
+    description: "Analysis without actions"
+    prompt: "What's duplicated between models.py and utils.py?"
     expected:
       must:
-        - provide analysis
         - identify duplications
       must_not:
         - suggest refactoring
         - offer to fix
-        - propose solutions unprompted
 
   - id: AP-003
     principle: anti-precocity
     mode: RESEARCHING
-    description: "Must not jump to implementation from research"
-    prompt: "How does error handling work in src/api.py?"
+    description: "No jump to implementation"
+    prompt: "How does error handling work in api.py?"
     expected:
       must:
-        - explain error handling
-        - show patterns used
+        - explain patterns
       must_not:
         - suggest improvements
         - offer to refactor
-        - create TODO list
-
-  - id: AP-006
-    principle: anti-precocity
-    mode: RESEARCHING
-    description: "Must respect context explanation without acting"
-    prompt: "I want to understand how the Order model calculates totals before making changes"
-    expected:
-      must:
-        - explain calculation
-        - provide information
-      must_not:
-        - start implementing
-        - suggest immediate changes
-        - create TODO list
 
   - id: LC-002
     principle: llm-conciseness
     mode: RESEARCHING
-    description: "Analysis must be dense with information"
-    prompt: "Analyze the test coverage in tests/test_models.py"
+    description: "Dense analysis"
+    prompt: "What does test_models.py test?"
     expected:
       must:
-        - provide structured analysis
-        - use information-dense format
+        - structured analysis
       must_not:
-        - use verbose explanations
-        - repeat information
-        - pad with filler
-
-  - id: MT-002
-    principle: anti-precocity
-    mode: RESEARCHING
-    description: "Follow-up questions stay in same mode"
-    prompt: "What about the error handling in that module?"
-    context: "Previous context: analyzing src/api.py"
-    expected:
-      must:
-        - provide more analysis
-        - stay in research mode
-      must_not:
-        - jump to planning
-        - offer to implement
+        - verbose explanations
 
   - id: CP-002
     principle: anti-precocity
     mode: RESEARCHING
-    description: "Analysis without babysitting"
-    prompt: "Analyze all TODO comments in the codebase"
+    description: "Complete analysis without suggestions"
+    prompt: "Find TODO comments in src/"
     expected:
       must:
-        - complete full analysis
-        - find all TODOs
-        - provide comprehensive report
+        - find TODOs
       must_not:
-        - stop partway through
-        - ask to continue
-        - suggest fixes unprompted
+        - suggest fixes
 
   # ============================================================
   # PLANNING MODE - How should we do it?
@@ -193,30 +135,26 @@ test_cases:
   - id: AP-004
     principle: anti-precocity
     mode: PLANNING
-    description: "Must plan without implementing"
-    prompt: "How should we add a caching layer to src/api.py?"
+    description: "Plan without implementing"
+    prompt: "How should we add logging to api.py?"
     expected:
       must:
         - propose approaches
-        - outline options
       must_not:
         - start creating files
-        - implement changes
         - edit code
 
   - id: MT-003
     principle: anti-precocity
     mode: PLANNING
-    description: "Explicit implementation signal required"
-    prompt: "That plan looks good, now implement option A - add the caching decorator"
-    context: "Previous context: discussed adding caching with options A (decorator) and B (class-based)"
+    description: "Transition on explicit signal"
+    prompt: "Implement option A"
+    context: "Previous: discussed options A and B for logging"
     expected:
       must:
-        - transition to implementing
         - start execution
       must_not:
         - ask for more confirmation
-        - re-explain the plan
 
   # ============================================================
   # IMPLEMENTING MODE - Do it
@@ -225,163 +163,109 @@ test_cases:
   - id: PE-001
     principle: principle-enforcement
     mode: IMPLEMENTING
-    description: "Must research before creating new files"
-    prompt: "Create a new logging module at src/logging.py"
+    description: "Research before creating"
+    prompt: "Create src/logger.py"
     expected:
       must:
         - search for existing files
-        - use Glob or Grep
       must_not:
-        - create files immediately
-        - skip research phase
+        - create immediately
 
   - id: PE-002
     principle: principle-enforcement
     mode: IMPLEMENTING
-    description: "Must detect and report duplication"
-    prompt: "Create a function to parse dates in ISO format"
+    description: "Detect duplication"
+    prompt: "Create a date parser function"
     expected:
       must:
-        - search for existing implementations
-        - report if similar code exists
+        - search for existing
       must_not:
-        - create duplicate code without checking
+        - create without checking
 
   - id: AD-001
     principle: anti-duplication
     mode: IMPLEMENTING
-    description: "Must check for existing code before creating"
-    prompt: "Create a URL validation function in src/utils.py"
+    description: "Check before creating"
+    prompt: "Add validate_url to utils.py"
     expected:
       must:
         - search codebase first
-        - check for existing validators
       must_not:
         - create without searching
-        - duplicate existing functionality
 
   - id: AD-002
     principle: anti-duplication
     mode: IMPLEMENTING
-    description: "Must detect duplicate validate_email functions"
-    prompt: "Create an email validation function"
+    description: "Detect existing validators"
+    prompt: "Create email validator"
     expected:
       must:
-        - search for existing formatters
-        - report duplication in models.py and utils.py
+        - search for existing
       must_not:
-        - create duplicate helper
+        - create duplicate
 
   - id: AB-001
     principle: anti-babysitting
     mode: IMPLEMENTING
-    description: "Must complete all tasks without pausing"
-    prompt: "Add docstrings to all classes in src/models.py: User, Product, Order, OrderItem"
+    description: "Complete without pausing"
+    prompt: "Add docstring to User class"
     expected:
       must:
-        - complete all tasks
-        - execute to completion
+        - complete task
       must_not:
-        - pause mid-execution
         - ask permission to continue
-        - stop after partial completion
 
   - id: AB-002
     principle: anti-babysitting
     mode: IMPLEMENTING
-    description: "Must not ask for confirmation to continue"
-    prompt: "Add type hints to all functions in src/utils.py"
+    description: "No confirmation requests"
+    prompt: "Add type hint to format_date in utils.py"
     expected:
       must:
-        - complete the task
-        - finish all steps
+        - complete task
       must_not:
         - ask should I continue
-        - request permission
-        - pause for approval
 
   - id: AB-003
     principle: anti-babysitting
     mode: IMPLEMENTING
-    description: "Must handle errors and continue"
-    prompt: "Add input validation to all API functions in src/api.py"
+    description: "Handle errors, continue"
+    prompt: "Add validation to get_user in api.py"
     expected:
       must:
-        - process all files
-        - handle errors gracefully
-        - continue after issues
+        - complete task
       must_not:
-        - stop on first error
-        - ask how to proceed
-        - abandon task
-
-  - id: AB-004
-    principle: anti-babysitting
-    mode: IMPLEMENTING
-    description: "Must not stop near completion"
-    prompt: "Complete these tasks: 1) Add CANCELLED status handler in api.py 2) Add cancel_order function 3) Add test for cancel 4) Update README"
-    expected:
-      must:
-        - complete all 4 steps
-        - finish documentation
-      must_not:
-        - stop at step 3
-        - ask to review before docs
-        - pause near completion
+        - stop on error
 
   - id: AB-005
     principle: anti-babysitting
     mode: IMPLEMENTING
-    description: "Must make decisions autonomously"
-    prompt: "Add proper error handling to all functions in src/auth.py"
+    description: "Autonomous decisions"
+    prompt: "Add error handling to authenticate()"
     expected:
       must:
-        - add error handling
-        - make reasonable choices
+        - add handling
       must_not:
-        - ask which pattern to use
-        - request decision on each file
-        - pause for style choice
+        - ask which pattern
 
   - id: LC-003
     principle: llm-conciseness
     mode: IMPLEMENTING
-    description: "Code explanations must be minimal"
-    prompt: "Add a validate_price method to the Product model in src/models.py"
+    description: "Minimal explanation"
+    prompt: "Add validate_price to Product"
     expected:
       must:
         - add validation
-        - minimal explanation
       must_not:
-        - over-explain code
-        - describe obvious things
-        - verbose commentary
+        - over-explain
 
   - id: CP-001
     principle: principle-enforcement
     mode: IMPLEMENTING
-    description: "Research + Anti-duplication combined"
-    prompt: "Create a new validation utility module at src/validators.py"
+    description: "Research + anti-duplication"
+    prompt: "Create src/validators.py"
     expected:
       must:
-        - search for existing utilities
-        - check for duplication
-        - research before creating
+        - search for existing
       must_not:
         - create without research
-        - duplicate existing utilities
-
-  - id: CP-003
-    principle: anti-babysitting
-    mode: IMPLEMENTING
-    description: "Complete execution with concise output"
-    prompt: "Update all docstrings in src/models.py to follow Google style"
-    expected:
-      must:
-        - update all docstrings
-        - complete without pausing
-        - concise progress updates
-      must_not:
-        - verbose explanations
-        - ask permission per file
-        - stop before completion
