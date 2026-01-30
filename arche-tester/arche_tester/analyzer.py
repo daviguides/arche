@@ -4,6 +4,7 @@ Evaluates conformity with Arché principles.
 Supports keyword-based (fast) or LLM-based (semantic) analysis.
 """
 
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -132,6 +133,7 @@ class ResponseAnalyzer:
         Returns:
             Complete analysis with conformity results.
         """
+        start_time = time.time()
         print_header("Semantic Analysis", version)
         print_step("Loading test suite and responses...")
 
@@ -270,7 +272,8 @@ class ResponseAnalyzer:
         )
 
         self._save_analysis(version=version, analysis=result)
-        self._print_summary(result)
+        elapsed = time.time() - start_time
+        self._print_summary(result, elapsed_seconds=elapsed)
 
         return result
 
@@ -283,6 +286,7 @@ class ResponseAnalyzer:
         Returns:
             Complete analysis with conformity results.
         """
+        start_time = time.time()
         print_header("Keyword Analysis", version)
         print_step("Loading test suite and responses...")
 
@@ -343,8 +347,8 @@ class ResponseAnalyzer:
         evaluated = total_tests - skipped
         pass_rate = (passed / evaluated * 100) if evaluated > 0 else 0.0
         weighted_rate = (
-            ((passed + partial * 0.5) / total_tests * 100)
-            if total_tests > 0
+            ((passed + partial * 0.5) / evaluated * 100)
+            if evaluated > 0
             else 0.0
         )
 
@@ -355,6 +359,7 @@ class ResponseAnalyzer:
             passed=passed,
             failed=failed,
             partial=partial,
+            skipped=skipped,
             pass_rate=pass_rate,
             weighted_rate=weighted_rate,
             analyses=analyses,
@@ -364,7 +369,8 @@ class ResponseAnalyzer:
         self._save_analysis(version=version, analysis=result)
 
         # Print summary
-        self._print_summary(result)
+        elapsed = time.time() - start_time
+        self._print_summary(result, elapsed_seconds=elapsed)
 
         return result
 
@@ -538,13 +544,25 @@ class ResponseAnalyzer:
 
         print_success(f"Analysis saved: {output_file}")
 
-    def _print_summary(self, analysis: VersionAnalysis) -> None:
+    def _print_summary(
+        self,
+        analysis: VersionAnalysis,
+        elapsed_seconds: float | None = None,
+    ) -> None:
         """Print analysis summary with rich formatting."""
         console.print()
         console.print(create_analysis_summary(analysis))
         console.print()
         console.print(create_results_table(analysis))
         console.print()
+        if elapsed_seconds is not None:
+            minutes, seconds = divmod(int(elapsed_seconds), 60)
+            if minutes > 0:
+                time_str = f"{minutes}m {seconds}s"
+            else:
+                time_str = f"{elapsed_seconds:.1f}s"
+            console.print(f"[dim]Total time: {time_str}[/dim]")
+            console.print()
 
 
 __all__ = ["ResponseAnalyzer"]
