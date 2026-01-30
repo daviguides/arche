@@ -185,3 +185,54 @@ feat(arche-tester): fix fork_session with fixed workspace
 2. ✅ Comparar tempo real vs baseline (13m 29s → 6m 48s = **49.6% mais rápido**)
 3. ✅ Validar que resultados são consistentes (22 testes executados com sucesso)
 4. ✅ Documentar ganho final
+
+---
+
+## Otimização #2: Execução Paralela
+
+### Problema
+Testes rodavam sequencialmente. Com 22 testes × ~18s cada = ~6m48s.
+
+### Solução
+Execução paralela com workspaces isolados:
+
+```python
+# runner.py
+async def _run_single_test(self, test_case, semaphore, progress, task_id):
+    async with semaphore:
+        workspace = self._create_workspace(test_case.id)  # Workspace isolado
+        try:
+            agent = ArcheTestAgent(arche_path=..., cwd=workspace)
+            await agent.load_arche_principles()
+            response, duration = await agent.run_test(...)
+            return TestResponse(...)
+        finally:
+            self._cleanup_workspace(workspace)
+
+# Execução paralela com semáforo
+semaphore = asyncio.Semaphore(self._concurrency)  # Default: 4
+tasks = [self._run_single_test(tc, semaphore, ...) for tc in suite.test_cases]
+responses = await asyncio.gather(*tasks)
+```
+
+### CLI
+```bash
+arche-test run 0.1.0 -c 4  # 4 testes em paralelo (default)
+arche-test run 0.1.0 -c 8  # 8 testes em paralelo
+```
+
+### Fix MT-003
+Teste MT-003 dependia de contexto do teste anterior (AP-004). Corrigido incluindo contexto no próprio prompt:
+
+```yaml
+# Antes (dependia de contexto anterior)
+prompt: "Implement option A"
+context: "Previous: discussed options A and B for logging"
+
+# Depois (auto-contido)
+prompt: "We discussed logging options: A) structured logging with levels, B) minimal logging. Implement option A in api.py"
+```
+
+### Estimativa de Ganho
+Com 4 testes paralelos: ~22 testes / 4 = ~6 batches
+Tempo estimado: 6 batches × ~20s = **~2 minutos** (vs 6m48s sequencial)
