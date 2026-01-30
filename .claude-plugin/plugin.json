@@ -2,6 +2,10 @@
   "name": "arche",
   "version": "0.1.0",
   "description": "Essential behavioral principles for Claude Code",
-  "author": "daviguides",
-  "repository": "https://github.com/daviguides/arche"
+  "author": {
+    "name": "Davi Guides",
+    "url": "https://github.com/daviguides"
+  },
+  "repository": "https://github.com/daviguides/arche",
+  "license": "MIT"
 }
