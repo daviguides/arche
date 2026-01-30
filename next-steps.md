@@ -4,30 +4,6 @@
 
 ---
 
-## Pending Actions
-
-### 1. Update gradient delegation
-
-**File**: `gradient/commands/load-essential.md`
-
-- [ ] Update `/gradient:load-essential` to delegate to `/arche:load-essential`
-
-### 2. Remove legacy specs from gradient
-
-**Remove**: `gradient/gradient/spec/universal-principles/`
-
-```
-├── anti-duplication.md      → now in arche
-├── anti-babysitting.md      → now in arche
-├── anti-precocity.md        → now in arche (split)
-├── llm-conciseness.md       → now in arche
-└── principle-enforcement.md → now in arche
-```
-
-**Rationale**: Arché is now the SSOT for these principles
-
----
-
 ## Completed
 
 - [x] Folder structure (bundle pattern)
@@ -38,6 +14,8 @@
 - [x] install.sh
 - [x] CLAUDE.md
 - [x] design/decisions.md
+- [x] Update `/gradient:load-essential` to delegate to `/arche:load-essential`
+- [x] Remove `universal-principles/` from gradient (SSOT now in arche)
 
 ---
 
