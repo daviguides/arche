@@ -199,20 +199,18 @@ uv run arche-test report 1
 
 ---
 
-## Resultado Final
+## Progresso
 
-**Data**: 2025-01-30
-**Status**: ✅ CONCLUÍDO
+**Última atualização**: 2025-01-30
 
-| Fase | Status |
-|------|--------|
-| Fase 1: Framework comum | ✅ Implementado |
-| Fase 2: Exemplos em context/ | ✅ Implementado |
-| Fase 3: Unificar boundary | ✅ Condensado nos specs |
-| Fase 4: Comprimir seções | ✅ Implementado |
-| Fase 5: Simplificar modes | ⏭️ Não necessário |
+| Fase | Status | Descrição |
+|------|--------|-----------|
+| Fase 1: Framework comum | ✅ Feito | `_spec-framework.md` criado |
+| Fase 2: Exemplos em context/ | ✅ Feito | `context/examples/` com 3 arquivos |
+| Fase 3: Unificar boundary | 🔄 Pendente | `context/guides/mode-execution-guide.md` |
+| Fase 4: Comprimir seções | 🔄 Pendente | Aplicar llm-conciseness aos specs |
+| Fase 5: Simplificar modes | 🔄 Pendente | Consolidar Mode Signal Vocabulary |
 
-**Resumo**:
-- Redução de 32.4% (89.7 KB → 64.9 KB)
-- Pass rate 88.6% (aceitável - variação normal)
-- Fases 1-4 implementadas com sucesso
+**Resultado parcial (após Fases 1-2)**:
+- Redução: 32.4% (89.7 KB → 64.9 KB)
+- Pass rate: 88.6% (aceitável)
