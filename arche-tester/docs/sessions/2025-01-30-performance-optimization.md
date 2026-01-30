@@ -260,3 +260,34 @@ Combinar fork_session com execução paralela usando subdirectories:
 Default alterado para 8 workers paralelos.
 
 **Nota:** Paralelização do `analyze` não funcionou (overhead de spawn > benefício com Haiku).
+
+---
+
+## Análise de Conformidade
+
+### Último Run: 90.9% pass rate (20/22)
+
+**Falhas restantes:**
+
+| Test ID | Princípio | Problema |
+|---------|-----------|----------|
+| **AB-005** | anti-babysitting | Prompt pede `authenticate()` que não existe. Agente perguntou qual função usar. |
+| **PE-001** | principle-enforcement | Prompt "Create src/logger.py" - agente criou sem pesquisar antes. |
+
+### Melhoria: Context-Aware Analysis
+
+Implementado carregamento de princípios Arché no analyzer antes da análise LLM.
+
+```bash
+arche-test analyze 0.1.0  # Agora carrega princípios automaticamente
+```
+
+---
+
+## Próximos Passos
+
+1. **Corrigir AB-005**: Mudar prompt para função existente (`login()`) ou aceitar que perguntar é correto quando há ambiguidade real
+2. **Corrigir PE-001**: Este é bug real - prompt "Create X" deveria fazer agente pesquisar primeiro. Possíveis fixes:
+   - Ajustar prompt para ser mais explícito
+   - Melhorar princípio de research-first no Arché
+3. **Objetivo**: Baseline 100% pass rate
