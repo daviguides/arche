@@ -29,25 +29,28 @@ Target structure (Option C - by category):
 ```
 arche/
 ├── .claude-plugin/
-│   └── plugin.json
-├── design/
-│   └── decisions.md          ✅ Created
-├── spec/
-│   ├── behavior/             # How LLM should act
-│   │   ├── anti-babysitting.md
-│   │   ├── anti-precocity.md        ← PRINCIPLE only
-│   │   └── llm-conciseness.md
-│   ├── knowledge/            # How to handle information
-│   │   └── anti-duplication.md
-│   ├── meta/                 # Governs other principles
-│   │   └── principle-enforcement.md
-│   └── modes/                # Cognitive modes
-│       └── essential-cognitive-modes.md  ← NEW (4 base modes)
-├── context/
-│   └── guides/
-├── prompts/
+│   └── plugin.json               ✅
+├── arche/                        ← BUNDLE
+│   ├── spec/
+│   │   ├── behavior/             # How LLM should act
+│   │   │   ├── anti-babysitting.md    ✅
+│   │   │   ├── anti-precocity.md      ✅ (principle only)
+│   │   │   └── llm-conciseness.md     ✅
+│   │   ├── knowledge/            # How to handle information
+│   │   │   └── anti-duplication.md    ✅
+│   │   ├── meta/                 # Governs other principles
+│   │   │   └── principle-enforcement.md ✅
+│   │   └── modes/                # Cognitive modes
+│   │       └── essential-cognitive-modes.md ✅
+│   ├── context/
+│   │   └── guides/               (placeholder)
+│   └── prompts/
+│       └── load-essential.md     ✅
 ├── commands/
-└── agents/
+│   └── load-essential.md         ✅
+├── design/
+│   └── decisions.md              ✅
+└── agents/                       (future)
 ```
 
 **Size constraint**: Total must stay ≤104KB (current size)
