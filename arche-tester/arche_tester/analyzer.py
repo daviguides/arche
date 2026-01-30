@@ -12,6 +12,7 @@ import yaml
 from rich.live import Live
 
 from arche_tester.agents import AnalyzerAgent
+from arche_tester.config import settings
 from arche_tester.display import (
     console,
     create_analysis_summary,
@@ -154,6 +155,7 @@ class ResponseAnalyzer:
         total = len(responses.responses)
 
         print_step(f"Analyzing {total} test responses with LLM...")
+        print_step(f"Model: [cyan]{settings.analyzer_agent.model.value}[/cyan]")
         console.print()
 
         for idx, resp in enumerate(responses.responses, 1):
