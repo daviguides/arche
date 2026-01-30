@@ -74,19 +74,26 @@ class ArcheTestAgent(BaseAgent):
         self,
         prompt: str,
         context: str | None = None,
+        work_dir: str | None = None,
     ) -> tuple[str, int]:
         """Run a test prompt and return response.
 
         Args:
             prompt: Test prompt to send.
             context: Optional additional context.
+            work_dir: Subdirectory to work in (for fork_session isolation).
 
         Returns:
             Tuple of (response_text, duration_ms).
         """
         full_prompt = prompt
+
+        # Direct agent to work in specific subdirectory
+        if work_dir:
+            full_prompt = f"Work in the `{work_dir}/` directory.\n\n{prompt}"
+
         if context:
-            full_prompt = f"{prompt}\n\nContext:\n{context}"
+            full_prompt = f"{full_prompt}\n\nContext:\n{context}"
 
         start_time = time.time()
         response = await self._call_agent(full_prompt)

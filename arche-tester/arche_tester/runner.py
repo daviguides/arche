@@ -1,7 +1,7 @@
 """Test runner for Arché functional tests.
 
 Executes test suite against isolated mock project environments.
-Supports parallel execution with configurable concurrency.
+Supports parallel execution with fork_session optimization.
 """
 
 import asyncio
@@ -39,8 +39,10 @@ from arche_tester.models import (
 class TestRunner:
     """Runs functional tests against Arché principles.
 
-    Supports parallel execution with isolated workspaces per test.
-    Each test gets its own workspace and agent instance.
+    Uses fork_session + parallel execution:
+    - Load principles once in base session
+    - Fork for each test (parallel, same cwd)
+    - Each test works in its own subdirectory (isolation)
     """
 
     DEFAULT_CONCURRENCY = 4
@@ -77,42 +79,55 @@ class TestRunner:
         data = yaml.safe_load(content)
         return TestSuite.model_validate(data)
 
-    def _create_workspace(self, test_id: str) -> Path:
-        """Create isolated workspace for a test.
-
-        Args:
-            test_id: Test case ID for workspace naming.
+    def _setup_base_workspace(self) -> Path:
+        """Setup base workspace directory.
 
         Returns:
-            Path to the workspace directory.
+            Path to the base workspace (cwd for all sessions).
         """
-        workspace = self._temp_base / f"workspace-{test_id}"
-        if workspace.exists():
-            shutil.rmtree(workspace)
-        shutil.copytree(self._mock_project_path, workspace)
-        return workspace
+        if self._temp_base.exists():
+            shutil.rmtree(self._temp_base)
+        self._temp_base.mkdir(parents=True)
+        return self._temp_base
 
-    def _cleanup_workspace(self, workspace: Path) -> None:
-        """Remove a test workspace."""
-        if workspace.exists():
-            shutil.rmtree(workspace)
+    def _create_test_subdir(self, test_id: str) -> Path:
+        """Create isolated subdirectory for a test.
 
-    def _cleanup_all_workspaces(self) -> None:
-        """Remove all test workspaces."""
+        Args:
+            test_id: Test case ID for subdirectory naming.
+
+        Returns:
+            Path to the test subdirectory.
+        """
+        test_dir = self._temp_base / f"test-{test_id}"
+        if test_dir.exists():
+            shutil.rmtree(test_dir)
+        shutil.copytree(self._mock_project_path, test_dir)
+        return test_dir
+
+    def _cleanup_test_subdir(self, test_dir: Path) -> None:
+        """Remove a test subdirectory."""
+        if test_dir.exists():
+            shutil.rmtree(test_dir)
+
+    def _cleanup_all(self) -> None:
+        """Remove base workspace and all subdirectories."""
         if self._temp_base.exists():
             shutil.rmtree(self._temp_base)
 
     async def _run_single_test(
         self,
         test_case: TestCase,
+        base_session_id: str,
         semaphore: asyncio.Semaphore,
         progress: Progress,
         task_id: TaskID,
     ) -> TestResponse:
-        """Run a single test with its own isolated workspace.
+        """Run a single test using fork_session with isolated subdirectory.
 
         Args:
             test_case: Test case to run.
+            base_session_id: Session ID to fork from.
             semaphore: Concurrency limiter.
             progress: Rich progress instance.
             task_id: Progress task ID.
@@ -121,21 +136,26 @@ class TestRunner:
             TestResponse with result.
         """
         async with semaphore:
-            workspace = self._create_workspace(test_case.id)
+            # Create isolated subdirectory for this test
+            test_dir = self._create_test_subdir(test_case.id)
+            subdir_name = test_dir.name  # e.g., "test-AP-001"
+
             try:
-                # Create agent with principles for this test
+                # Fork from base session (same cwd, principles already loaded)
                 agent = ArcheTestAgent(
                     arche_path=self._arche_path,
-                    cwd=workspace,
+                    cwd=self._temp_base,  # Same cwd as base session
                     verbose=False,
                     skip_cli_check=self._skip_cli_check,
+                    resume=base_session_id,
+                    fork_session=True,
                 )
 
-                # Load principles and run test
-                await agent.load_arche_principles()
+                # Run test, directing agent to work in subdirectory
                 response_text, duration_ms = await agent.run_test(
                     prompt=test_case.prompt,
                     context=test_case.context,
+                    work_dir=subdir_name,  # Tell agent to work here
                 )
                 await agent.disconnect()
 
@@ -149,19 +169,18 @@ class TestRunner:
                     duration_ms=duration_ms,
                 )
             finally:
-                self._cleanup_workspace(workspace)
+                self._cleanup_test_subdir(test_dir)
 
     async def run_suite(
         self,
         version: str,
     ) -> TestResponses:
-        """Run all tests in parallel and save responses.
+        """Run all tests in parallel using fork_session.
 
-        Parallel execution with isolated workspaces:
-        1. Create semaphore to limit concurrency
-        2. Each test gets its own workspace and agent
-        3. Run all tests concurrently (up to concurrency limit)
-        4. Collect and save responses
+        Optimized flow:
+        1. Create base session and load principles once
+        2. Fork for each test (parallel, same cwd)
+        3. Each test works in its own subdirectory
 
         Args:
             version: Arché version being tested.
@@ -178,7 +197,25 @@ class TestRunner:
         print_step(f"Running {total} tests against Arché principles")
         print_step(f"Model: [cyan]{settings.test_agent.model.value}[/cyan]")
         print_step(f"Concurrency: [cyan]{self._concurrency}[/cyan] parallel tests")
-        print_step(f"Mock project: {self._mock_project_path}")
+        print_step(f"Mode: [cyan]fork_session + parallel[/cyan]")
+        console.print()
+
+        # Setup base workspace (cwd for all sessions)
+        self._setup_base_workspace()
+
+        # Create base session and load principles once
+        print_step("Loading Arché principles (base session)...")
+        base_agent = ArcheTestAgent(
+            arche_path=self._arche_path,
+            cwd=self._temp_base,
+            verbose=False,
+            skip_cli_check=self._skip_cli_check,
+        )
+        await base_agent.load_arche_principles()
+        base_session_id = base_agent.session_id
+        await base_agent.disconnect()
+
+        print_step(f"Base session: [dim]{base_session_id[:12]}...[/dim]")
         console.print()
 
         # Create semaphore to limit concurrent tests
@@ -197,16 +234,18 @@ class TestRunner:
             ) as progress:
                 task_id = progress.add_task("Running tests", total=total)
 
-                # Launch all tests concurrently
+                # Launch all tests concurrently (forking from base session)
                 tasks = [
-                    self._run_single_test(test_case, semaphore, progress, task_id)
+                    self._run_single_test(
+                        test_case, base_session_id, semaphore, progress, task_id
+                    )
                     for test_case in suite.test_cases
                 ]
                 responses = await asyncio.gather(*tasks)
 
         finally:
-            # Cleanup any remaining workspaces
-            self._cleanup_all_workspaces()
+            # Cleanup all workspaces
+            self._cleanup_all()
 
         # Calculate total duration
         total_duration_ms = int((time.time() - start_time) * 1000)
