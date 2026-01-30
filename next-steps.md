@@ -1,7 +1,7 @@
 # Next Steps: Arche Plugin Setup
 
-**Status**: Architectural decisions documented
-**Next Session**: Extract and split principles from gradient
+**Status**: Core implementation complete
+**Pending**: Update gradient to delegate to arche
 
 ---
 
@@ -50,6 +50,8 @@ arche/
 │   └── load-essential.md         ✅
 ├── design/
 │   └── decisions.md              ✅
+├── CLAUDE.md                     ✅
+├── install.sh                    ✅
 └── agents/                       (future)
 ```
 
