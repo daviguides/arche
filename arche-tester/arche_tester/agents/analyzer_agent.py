@@ -10,6 +10,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from arche_tester.agents.base_agent import BaseAgent
+from arche_tester.config import ClaudeModel, settings
 from arche_tester.models import BehaviorCheck, Conformity
 
 
@@ -41,6 +42,7 @@ class AnalyzerAgent(BaseAgent):
         cwd: Path | str,
         verbose: bool = True,
         skip_cli_check: bool = False,
+        model: ClaudeModel | None = None,
     ) -> None:
         """Initialize analyzer agent.
 
@@ -48,11 +50,13 @@ class AnalyzerAgent(BaseAgent):
             cwd: Working directory for agent.
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check.
+            model: Claude model (defaults to settings.analyzer_agent.model).
         """
         super().__init__(
             cwd=cwd,
             verbose=verbose,
             skip_cli_check=skip_cli_check,
+            model=model or settings.analyzer_agent.model,
         )
 
     @property

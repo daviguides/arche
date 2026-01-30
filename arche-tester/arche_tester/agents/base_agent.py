@@ -22,6 +22,8 @@ from claude_agent_sdk import (  # type: ignore[import-untyped]
 )
 from rich.console import Console
 
+from arche_tester.config import ClaudeModel
+
 MAX_RETRIES: Final[int] = 3
 
 
@@ -37,6 +39,7 @@ class BaseAgent(ABC):
 
     Subclasses may override:
     - allowed_tools property
+    - model property
     """
 
     def __init__(
@@ -45,6 +48,7 @@ class BaseAgent(ABC):
         verbose: bool = True,
         skip_cli_check: bool = False,
         console: Console | None = None,
+        model: ClaudeModel | None = None,
     ) -> None:
         """Initialize base agent.
 
@@ -53,14 +57,17 @@ class BaseAgent(ABC):
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
             console: Optional Rich console for output.
+            model: Claude model to use (haiku, sonnet, opus).
         """
         self._verbose = verbose
         self._console = console or Console()
+        self._model = model
 
         if not skip_cli_check:
             self._check_claude_cli()
 
         options = ClaudeAgentOptions(
+            model=self._model.value if self._model else None,
             allowed_tools=self.allowed_tools,
             permission_mode="acceptEdits",
             include_partial_messages=True,

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Final
 
 from arche_tester.agents.base_agent import BaseAgent
+from arche_tester.config import ClaudeModel, settings
 
 LOAD_PROMPT_PATH: Final[str] = "prompts/load-essential.md"
 
@@ -23,21 +24,28 @@ class ArcheTestAgent(BaseAgent):
     def __init__(
         self,
         arche_path: Path,
+        cwd: Path | None = None,
         verbose: bool = True,
         skip_cli_check: bool = False,
+        model: ClaudeModel | None = None,
     ) -> None:
         """Initialize test agent.
 
         Args:
             arche_path: Path to arche bundle directory.
+            cwd: Working directory for agent (defaults to arche_path.parent).
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
+            model: Claude model (defaults to settings.test_agent.model).
         """
         self._arche_path = arche_path
+        # Use custom cwd if provided, otherwise default to arche parent
+        working_dir = cwd if cwd is not None else arche_path.parent
         super().__init__(
-            cwd=arche_path.parent,
+            cwd=working_dir,
             verbose=verbose,
             skip_cli_check=skip_cli_check,
+            model=model or settings.test_agent.model,
         )
 
     @property
