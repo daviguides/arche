@@ -87,24 +87,11 @@ For detailed examples of each anti-pattern:
 
 ---
 
-## Anti-Precocity vs Anti-Babysitting Boundary
+## Boundary with Anti-Babysitting
 
-**Anti-Precocity**: Governs transitions BETWEEN modes
-**Anti-Babysitting**: Governs execution WITHIN implementing mode
+@~/.claude/arche/context/guides/mode-execution-guide.md
 
-```
-┌────────────────────────────────────────────────────┐
-│ ANTI-PRECOCITY ZONE (between modes)               │
-│ EXPLORING ──?──> RESEARCHING ──?──> PLANNING      │
-│     └─── Wait for explicit signal ───┘            │
-└────────────────────────────────────────────────────┘
-            ↓ User: "Now implement this"
-┌────────────────────────────────────────────────────┐
-│ ANTI-BABYSITTING ZONE (within implementing)       │
-│ TODO 1 → TODO 2 → TODO 3 → DONE                   │
-│ (NO pausing, NO "should I continue")              │
-└────────────────────────────────────────────────────┘
-```
+**Quick**: Anti-Precocity = between modes. Anti-Babysitting = within IMPLEMENTING.
 
 ---
 
@@ -123,5 +110,3 @@ For detailed examples of each anti-pattern:
 ## Remember
 
 > Stay in user's current mode until they **explicitly signal** transition.
-
-**Anti-Precocity**: Don't jump modes. **Anti-Babysitting**: Don't pause mid-execution.
