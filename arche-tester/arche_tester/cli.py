@@ -88,6 +88,12 @@ def analyze(
         "-d",
         help="Path to data directory",
     ),
+    concurrency: int = typer.Option(
+        4,
+        "--concurrency",
+        "-c",
+        help="Number of parallel analyses (default: 4)",
+    ),
     use_llm: bool = typer.Option(
         True,
         "--use-llm/--no-llm",
@@ -120,6 +126,7 @@ def analyze(
         data_path=data_path,
         use_llm=use_llm,
         skip_cli_check=skip_cli_check,
+        concurrency=concurrency,
     )
 
     if use_llm:
@@ -250,6 +257,7 @@ def baseline(
         data_path=data_path,
         use_llm=use_llm,
         skip_cli_check=skip_cli_check,
+        concurrency=concurrency,
     )
 
     if use_llm:

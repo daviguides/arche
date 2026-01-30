@@ -2,14 +2,23 @@
 
 Evaluates conformity with Arché principles.
 Supports keyword-based (fast) or LLM-based (semantic) analysis.
+Parallel execution for LLM mode.
 """
 
+import asyncio
 import time
 from datetime import datetime
 from pathlib import Path
 
 import yaml
-from rich.live import Live
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TaskID,
+    TextColumn,
+    TimeElapsedColumn,
+)
 
 from arche_tester.agents import AnalyzerAgent
 from arche_tester.config import settings
@@ -18,7 +27,6 @@ from arche_tester.display import (
     create_analysis_summary,
     create_progress_bar,
     create_results_table,
-    create_test_panel,
     print_header,
     print_step,
     print_success,
@@ -45,22 +53,27 @@ class ResponseAnalyzer:
         - keyword: Fast pattern matching using behavior indicators (default).
         - llm: Semantic analysis using Claude Agent SDK for nuanced evaluation.
 
+    LLM mode supports parallel execution for faster analysis.
+
     Attributes:
         _data_path: Path to data directory containing test cases and responses.
         _use_llm: Whether to use LLM-based semantic analysis.
         _skip_cli_check: Whether to skip Claude CLI availability check.
-        _analyzer_agent: Lazy-initialized AnalyzerAgent for LLM mode.
+        _concurrency: Max parallel analyses for LLM mode.
 
     Example:
         analyzer = ResponseAnalyzer(data_path=Path("data"), use_llm=True)
         results = await analyzer.analyze_version_async("0.1.0")
     """
 
+    DEFAULT_CONCURRENCY = 4
+
     def __init__(
         self,
         data_path: Path,
         use_llm: bool = False,
         skip_cli_check: bool = False,
+        concurrency: int | None = None,
     ) -> None:
         """Initialize analyzer.
 
@@ -68,11 +81,12 @@ class ResponseAnalyzer:
             data_path: Path to data directory.
             use_llm: Use LLM-based semantic analysis.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
+            concurrency: Max parallel analyses (default: 4).
         """
         self._data_path = data_path
         self._use_llm = use_llm
         self._skip_cli_check = skip_cli_check
-        self._analyzer_agent: AnalyzerAgent | None = None
+        self._concurrency = concurrency or self.DEFAULT_CONCURRENCY
 
     def load_test_suite(self) -> TestSuite:
         """Load test cases from YAML file.
@@ -115,18 +129,80 @@ class ResponseAnalyzer:
         data = yaml.safe_load(content)
         return TestResponses.model_validate(data)
 
-    def _get_analyzer_agent(self) -> AnalyzerAgent:
-        """Get or create AnalyzerAgent instance (lazy)."""
-        if self._analyzer_agent is None:
-            self._analyzer_agent = AnalyzerAgent(
+    async def _analyze_single_response(
+        self,
+        test_case: TestCase,
+        response: TestResponse,
+        semaphore: asyncio.Semaphore,
+        progress: Progress,
+        task_id: TaskID,
+    ) -> TestAnalysis:
+        """Analyze a single response using LLM (parallel-safe).
+
+        Args:
+            test_case: Test case definition.
+            response: Response to analyze.
+            semaphore: Concurrency limiter.
+            progress: Rich progress instance.
+            task_id: Progress task ID.
+
+        Returns:
+            TestAnalysis with conformity result.
+        """
+        async with semaphore:
+            # Create agent for this analysis
+            agent = AnalyzerAgent(
                 cwd=self._data_path,
-                verbose=False,  # We handle our own display
+                verbose=False,
                 skip_cli_check=self._skip_cli_check,
             )
-        return self._analyzer_agent
+
+            try:
+                # Use LLM for semantic analysis
+                behavior_checks = await agent.analyze_response(
+                    response=response.response,
+                    must_behaviors=test_case.expected.must,
+                    must_not_behaviors=test_case.expected.must_not,
+                )
+            finally:
+                await agent.disconnect()
+
+            # Update progress
+            progress.update(task_id, advance=1)
+
+            # Determine overall conformity
+            non_skipped = [
+                c for c in behavior_checks if c.result != Conformity.SKIPPED
+            ]
+            all_skipped = len(non_skipped) == 0
+
+            if all_skipped:
+                conformity = Conformity.SKIPPED
+            else:
+                all_passed = all(
+                    c.result == Conformity.PASS for c in non_skipped
+                )
+                any_passed = any(
+                    c.result == Conformity.PASS for c in non_skipped
+                )
+
+                if all_passed:
+                    conformity = Conformity.PASS
+                elif any_passed:
+                    conformity = Conformity.PARTIAL
+                else:
+                    conformity = Conformity.FAIL
+
+            return TestAnalysis(
+                test_id=test_case.id,
+                principle=test_case.principle,
+                mode=test_case.mode,
+                conformity=conformity,
+                behavior_checks=behavior_checks,
+            )
 
     async def analyze_version_async(self, version: str) -> VersionAnalysis:
-        """Analyze all responses using LLM-based semantic analysis.
+        """Analyze all responses using LLM-based semantic analysis (parallel).
 
         Args:
             version: Version to analyze.
@@ -145,113 +221,50 @@ class ResponseAnalyzer:
             tc.id: tc for tc in suite.test_cases
         }
 
-        analyses: list[TestAnalysis] = []
-        passed = 0
-        failed = 0
-        partial = 0
-        skipped = 0
-
-        agent = self._get_analyzer_agent()
         total = len(responses.responses)
 
         print_step(f"Analyzing {total} test responses with LLM...")
         print_step(f"Model: [cyan]{settings.analyzer_agent.model.value}[/cyan]")
+        print_step(f"Concurrency: [cyan]{self._concurrency}[/cyan] parallel")
         console.print()
 
-        for idx, resp in enumerate(responses.responses, 1):
-            test_case = test_lookup.get(resp.test_id)
-            if not test_case:
-                continue
+        # Create semaphore for concurrency control
+        semaphore = asyncio.Semaphore(self._concurrency)
 
-            # Show current test panel
-            panel = create_test_panel(
-                test_case=test_case,
-                current=idx,
-                total=total,
-                status="sending",
-                response=resp.response,
-            )
+        # Build tasks for parallel execution
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TextColumn("({task.completed}/{task.total})"),
+            TimeElapsedColumn(),
+            console=console,
+        ) as progress:
+            task_id = progress.add_task("Analyzing", total=total)
 
-            with Live(panel, console=console, refresh_per_second=4) as live:
-                # Update to analyzing
-                live.update(
-                    create_test_panel(
-                        test_case=test_case,
-                        current=idx,
-                        total=total,
-                        status="analyzing",
-                        response=resp.response,
-                    )
-                )
-
-                # Use LLM for semantic analysis
-                behavior_checks = await agent.analyze_response(
-                    response=resp.response,
-                    must_behaviors=test_case.expected.must,
-                    must_not_behaviors=test_case.expected.must_not,
-                )
-
-                # Determine overall conformity (SKIPPED if all checks skipped)
-                non_skipped = [
-                    c for c in behavior_checks if c.result != Conformity.SKIPPED
-                ]
-                all_skipped = len(non_skipped) == 0
-
-                if all_skipped:
-                    conformity = Conformity.SKIPPED
-                    status = "skipped"
-                else:
-                    all_passed = all(
-                        c.result == Conformity.PASS for c in non_skipped
-                    )
-                    any_passed = any(
-                        c.result == Conformity.PASS for c in non_skipped
+            tasks = []
+            for resp in responses.responses:
+                test_case = test_lookup.get(resp.test_id)
+                if test_case:
+                    tasks.append(
+                        self._analyze_single_response(
+                            test_case, resp, semaphore, progress, task_id
+                        )
                     )
 
-                    if all_passed:
-                        conformity = Conformity.PASS
-                        status = "pass"
-                    elif any_passed:
-                        conformity = Conformity.PARTIAL
-                        status = "partial"
-                    else:
-                        conformity = Conformity.FAIL
-                        status = "fail"
+            analyses = await asyncio.gather(*tasks)
 
-                # Update with result
-                live.update(
-                    create_test_panel(
-                        test_case=test_case,
-                        current=idx,
-                        total=total,
-                        status=status,
-                        response=resp.response,
-                    )
-                )
+        # Sort by test_id
+        analyses_sorted = sorted(analyses, key=lambda a: a.test_id)
 
-            analysis = TestAnalysis(
-                test_id=test_case.id,
-                principle=test_case.principle,
-                mode=test_case.mode,
-                conformity=conformity,
-                behavior_checks=behavior_checks,
-            )
-            analyses.append(analysis)
+        # Count results
+        passed = sum(1 for a in analyses_sorted if a.conformity == Conformity.PASS)
+        failed = sum(1 for a in analyses_sorted if a.conformity == Conformity.FAIL)
+        partial = sum(1 for a in analyses_sorted if a.conformity == Conformity.PARTIAL)
+        skipped = sum(1 for a in analyses_sorted if a.conformity == Conformity.SKIPPED)
 
-            if conformity == Conformity.PASS:
-                passed += 1
-            elif conformity == Conformity.FAIL:
-                failed += 1
-            elif conformity == Conformity.SKIPPED:
-                skipped += 1
-            else:
-                partial += 1
-
-        # Disconnect agent
-        await agent.disconnect()
-
-        total_tests = len(analyses)
-        # Exclude skipped from rate calculations
+        total_tests = len(analyses_sorted)
         evaluated = total_tests - skipped
         pass_rate = (passed / evaluated * 100) if evaluated > 0 else 0.0
         weighted_rate = (
@@ -270,7 +283,7 @@ class ResponseAnalyzer:
             skipped=skipped,
             pass_rate=pass_rate,
             weighted_rate=weighted_rate,
-            analyses=analyses,
+            analyses=analyses_sorted,
         )
 
         self._save_analysis(version=version, analysis=result)
