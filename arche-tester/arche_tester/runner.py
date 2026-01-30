@@ -79,8 +79,14 @@ class TestRunner:
         data = yaml.safe_load(content)
         return TestSuite.model_validate(data)
 
-    def _setup_base_workspace(self) -> Path:
-        """Setup base workspace directory.
+    def _setup_base_workspace(self, test_ids: list[str] | None = None) -> Path:
+        """Setup base workspace directory with all test subdirectories.
+
+        Pre-creates all test directories so they exist when the base session
+        is created. This ensures forked sessions can see all directories.
+
+        Args:
+            test_ids: List of test IDs to pre-create directories for.
 
         Returns:
             Path to the base workspace (cwd for all sessions).
@@ -88,10 +94,20 @@ class TestRunner:
         if self._temp_base.exists():
             shutil.rmtree(self._temp_base)
         self._temp_base.mkdir(parents=True)
+
+        # Pre-create all test directories
+        if test_ids:
+            for test_id in test_ids:
+                test_dir = self._temp_base / f"test-{test_id}"
+                shutil.copytree(self._mock_project_path, test_dir)
+
         return self._temp_base
 
     def _create_test_subdir(self, test_id: str) -> Path:
-        """Create isolated subdirectory for a test.
+        """Get or create isolated subdirectory for a test.
+
+        If directory was pre-created by _setup_base_workspace, returns it.
+        Otherwise creates it (fallback for non-parallel execution).
 
         Args:
             test_id: Test case ID for subdirectory naming.
@@ -100,9 +116,8 @@ class TestRunner:
             Path to the test subdirectory.
         """
         test_dir = self._temp_base / f"test-{test_id}"
-        if test_dir.exists():
-            shutil.rmtree(test_dir)
-        shutil.copytree(self._mock_project_path, test_dir)
+        if not test_dir.exists():
+            shutil.copytree(self._mock_project_path, test_dir)
         return test_dir
 
     def _cleanup_test_subdir(self, test_dir: Path) -> None:
@@ -200,8 +215,10 @@ class TestRunner:
         print_step(f"Mode: [cyan]fork_session + parallel[/cyan]")
         console.print()
 
-        # Setup base workspace (cwd for all sessions)
-        self._setup_base_workspace()
+        # Setup base workspace with ALL test directories pre-created
+        # This ensures forked sessions can see all directories
+        test_ids = [tc.id for tc in suite.test_cases]
+        self._setup_base_workspace(test_ids=test_ids)
 
         # Create base session and load principles once
         print_step("Loading Arché principles (base session)...")
