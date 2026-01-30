@@ -252,6 +252,11 @@ Combinar fork_session com execução paralela usando subdirectories:
 |-----------|-------|--------------|-------------|
 | Baseline (sem otimização) | 13m 29s | 52 | - |
 | Sequencial + fork | 6m 48s | 23 | -50% |
-| **Fork + Paralelo (4x)** | **5m 30s** | **23** | **-59%** |
+| Fork + Paralelo (4x) | 5m 30s | 23 | -59% |
+| **Fork + Paralelo (8x)** | **2m 44s** | **23** | **-80%** |
 
-**Nota:** Teste MT-003 levou 3m24s sozinho (implementou logging completo). Sem ele, os outros 21 testes rodaram em ~2 minutos.
+**Resultado: 13.5 min → 2.7 min = 5x mais rápido!**
+
+Default alterado para 8 workers paralelos.
+
+**Nota:** Paralelização do `analyze` não funcionou (overhead de spawn > benefício com Haiku).
