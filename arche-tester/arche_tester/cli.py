@@ -46,6 +46,12 @@ def run(
         "-d",
         help="Path to data directory",
     ),
+    concurrency: int = typer.Option(
+        4,
+        "--concurrency",
+        "-c",
+        help="Number of parallel tests (default: 4)",
+    ),
     verbose: bool = typer.Option(
         True,
         "--verbose/--quiet",
@@ -65,6 +71,7 @@ def run(
         data_path=data_path,
         verbose=verbose,
         skip_cli_check=skip_cli_check,
+        concurrency=concurrency,
     )
 
     asyncio.run(runner.run_suite(version=version))
@@ -199,6 +206,12 @@ def baseline(
         "-d",
         help="Path to data directory",
     ),
+    concurrency: int = typer.Option(
+        4,
+        "--concurrency",
+        "-c",
+        help="Number of parallel tests (default: 4)",
+    ),
     skip_cli_check: bool = typer.Option(
         False,
         "--skip-cli-check",
@@ -224,6 +237,7 @@ def baseline(
         data_path=data_path,
         verbose=True,
         skip_cli_check=skip_cli_check,
+        concurrency=concurrency,
     )
     asyncio.run(runner.run_suite(version="0.1.0"))
 

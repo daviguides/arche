@@ -1,4 +1,4 @@
-version: "2.2.0"
+version: "2.3.0"
 
 # Optimized for speed: simple prompts that test principles, not complex tasks.
 # Tests ordered by cognitive mode: EXPLORING -> RESEARCHING -> PLANNING -> IMPLEMENTING
@@ -145,11 +145,10 @@ test_cases:
         - edit code
 
   - id: MT-003
-    principle: anti-precocity
-    mode: PLANNING
+    principle: anti-babysitting
+    mode: IMPLEMENTING
     description: "Transition on explicit signal"
-    prompt: "Implement option A"
-    context: "Previous: discussed options A and B for logging"
+    prompt: "We discussed logging options: A) structured logging with levels, B) minimal logging. Implement option A in api.py"
     expected:
       must:
         - start execution

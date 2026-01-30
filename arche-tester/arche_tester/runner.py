@@ -1,22 +1,29 @@
 """Test runner for Arché functional tests.
 
 Executes test suite against isolated mock project environments.
+Supports parallel execution with configurable concurrency.
 """
 
+import asyncio
 import shutil
 import time
-import uuid
 from datetime import datetime
 from pathlib import Path
 
 import yaml
-from rich.live import Live
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TaskID,
+    TextColumn,
+    TimeElapsedColumn,
+)
 
 from arche_tester.agents import ArcheTestAgent
 from arche_tester.config import settings
 from arche_tester.display import (
     console,
-    create_test_panel,
     print_header,
     print_step,
     print_success,
@@ -32,11 +39,11 @@ from arche_tester.models import (
 class TestRunner:
     """Runs functional tests against Arché principles.
 
-    Uses fork_session optimization:
-    - Load principles once in base session
-    - Fork for each test (keeps context, isolated state)
-    - Reset workspace between tests (same cwd for fork compatibility)
+    Supports parallel execution with isolated workspaces per test.
+    Each test gets its own workspace and agent instance.
     """
+
+    DEFAULT_CONCURRENCY = 4
 
     def __init__(
         self,
@@ -44,6 +51,7 @@ class TestRunner:
         data_path: Path,
         verbose: bool = True,
         skip_cli_check: bool = False,
+        concurrency: int | None = None,
     ) -> None:
         """Initialize runner.
 
@@ -52,15 +60,15 @@ class TestRunner:
             data_path: Path to data directory.
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
+            concurrency: Max parallel tests (default: 4).
         """
         self._arche_path = arche_path
         self._data_path = data_path
         self._verbose = verbose
         self._skip_cli_check = skip_cli_check
+        self._concurrency = concurrency or self.DEFAULT_CONCURRENCY
         self._mock_project_path = data_path / "mock-project"
         self._temp_base = Path("/tmp/arche-test")
-        # Fixed workspace for fork_session compatibility (same cwd always)
-        self._workspace = self._temp_base / "workspace"
 
     def load_test_suite(self) -> TestSuite:
         """Load test cases from YAML."""
@@ -69,42 +77,91 @@ class TestRunner:
         data = yaml.safe_load(content)
         return TestSuite.model_validate(data)
 
-    def _setup_workspace(self) -> Path:
-        """Setup fixed workspace directory with fresh mock project copy.
+    def _create_workspace(self, test_id: str) -> Path:
+        """Create isolated workspace for a test.
+
+        Args:
+            test_id: Test case ID for workspace naming.
 
         Returns:
             Path to the workspace directory.
         """
-        # Remove existing workspace if present
-        if self._workspace.exists():
-            shutil.rmtree(self._workspace)
+        workspace = self._temp_base / f"workspace-{test_id}"
+        if workspace.exists():
+            shutil.rmtree(workspace)
+        shutil.copytree(self._mock_project_path, workspace)
+        return workspace
 
-        # Copy mock project to workspace
-        shutil.copytree(self._mock_project_path, self._workspace)
+    def _cleanup_workspace(self, workspace: Path) -> None:
+        """Remove a test workspace."""
+        if workspace.exists():
+            shutil.rmtree(workspace)
 
-        return self._workspace
+    def _cleanup_all_workspaces(self) -> None:
+        """Remove all test workspaces."""
+        if self._temp_base.exists():
+            shutil.rmtree(self._temp_base)
 
-    def _reset_workspace(self) -> None:
-        """Reset workspace to clean state (fresh mock project copy)."""
-        if self._workspace.exists():
-            shutil.rmtree(self._workspace)
-        shutil.copytree(self._mock_project_path, self._workspace)
+    async def _run_single_test(
+        self,
+        test_case: TestCase,
+        semaphore: asyncio.Semaphore,
+        progress: Progress,
+        task_id: TaskID,
+    ) -> TestResponse:
+        """Run a single test with its own isolated workspace.
 
-    def _cleanup_workspace(self) -> None:
-        """Remove workspace after all tests complete."""
-        if self._workspace.exists():
-            shutil.rmtree(self._workspace)
+        Args:
+            test_case: Test case to run.
+            semaphore: Concurrency limiter.
+            progress: Rich progress instance.
+            task_id: Progress task ID.
+
+        Returns:
+            TestResponse with result.
+        """
+        async with semaphore:
+            workspace = self._create_workspace(test_case.id)
+            try:
+                # Create agent with principles for this test
+                agent = ArcheTestAgent(
+                    arche_path=self._arche_path,
+                    cwd=workspace,
+                    verbose=False,
+                    skip_cli_check=self._skip_cli_check,
+                )
+
+                # Load principles and run test
+                await agent.load_arche_principles()
+                response_text, duration_ms = await agent.run_test(
+                    prompt=test_case.prompt,
+                    context=test_case.context,
+                )
+                await agent.disconnect()
+
+                # Update progress
+                progress.update(task_id, advance=1)
+
+                return TestResponse(
+                    test_id=test_case.id,
+                    prompt=test_case.prompt,
+                    response=response_text,
+                    duration_ms=duration_ms,
+                )
+            finally:
+                self._cleanup_workspace(workspace)
 
     async def run_suite(
         self,
         version: str,
     ) -> TestResponses:
-        """Run all tests and save responses.
+        """Run all tests in parallel and save responses.
 
-        Optimized flow:
-        1. Create base agent and load principles once
-        2. For each test, fork session (keeps context, isolated state)
-        3. Capture response and cleanup
+        Parallel execution with isolated workspaces:
+        1. Create semaphore to limit concurrency
+        2. Each test gets its own workspace and agent
+        3. Run all tests concurrently (up to concurrency limit)
+        4. Collect and save responses
 
         Args:
             version: Arché version being tested.
@@ -116,96 +173,51 @@ class TestRunner:
         print_header("Functional Tests", version)
 
         suite = self.load_test_suite()
-        responses: list[TestResponse] = []
         total = len(suite.test_cases)
 
         print_step(f"Running {total} tests against Arché principles")
         print_step(f"Model: [cyan]{settings.test_agent.model.value}[/cyan]")
+        print_step(f"Concurrency: [cyan]{self._concurrency}[/cyan] parallel tests")
         print_step(f"Mock project: {self._mock_project_path}")
-        print_step(f"Workspace: {self._workspace}")
         console.print()
 
-        # Setup workspace and load principles once
-        workspace = self._setup_workspace()
-        print_step("Loading Arché principles (base session)...")
+        # Create semaphore to limit concurrent tests
+        semaphore = asyncio.Semaphore(self._concurrency)
 
-        base_agent = ArcheTestAgent(
-            arche_path=self._arche_path,
-            cwd=workspace,
-            verbose=False,
-            skip_cli_check=self._skip_cli_check,
-        )
-        await base_agent.load_arche_principles()
-        base_session_id = base_agent.session_id
-        await base_agent.disconnect()
-
-        print_step(f"Base session: [dim]{base_session_id[:12]}...[/dim]")
-        console.print()
-
-        # Run tests using forked sessions (same cwd = workspace)
+        # Run all tests in parallel with progress bar
         try:
-            for idx, test_case in enumerate(suite.test_cases, 1):
-                # Reset workspace to clean state before each test
-                self._reset_workspace()
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                TextColumn("({task.completed}/{task.total})"),
+                TimeElapsedColumn(),
+                console=console,
+            ) as progress:
+                task_id = progress.add_task("Running tests", total=total)
 
-                # Create forked agent (same cwd as base)
-                agent = ArcheTestAgent(
-                    arche_path=self._arche_path,
-                    cwd=workspace,
-                    verbose=False,
-                    skip_cli_check=self._skip_cli_check,
-                    resume=base_session_id,
-                    fork_session=True,
-                )
-
-                # Show current test panel
-                panel = create_test_panel(
-                    test_case=test_case,
-                    current=idx,
-                    total=total,
-                    status="executing",
-                )
-
-                with Live(panel, console=console, refresh_per_second=4) as live:
-                    response_text, duration_ms = await agent.run_test(
-                        prompt=test_case.prompt,
-                        context=test_case.context,
-                    )
-
-                    # Update to complete
-                    live.update(
-                        create_test_panel(
-                            test_case=test_case,
-                            current=idx,
-                            total=total,
-                            status=f"done ({duration_ms}ms)",
-                            response=response_text,
-                        )
-                    )
-
-                # Disconnect agent
-                await agent.disconnect()
-
-                responses.append(
-                    TestResponse(
-                        test_id=test_case.id,
-                        prompt=test_case.prompt,
-                        response=response_text,
-                        duration_ms=duration_ms,
-                    )
-                )
+                # Launch all tests concurrently
+                tasks = [
+                    self._run_single_test(test_case, semaphore, progress, task_id)
+                    for test_case in suite.test_cases
+                ]
+                responses = await asyncio.gather(*tasks)
 
         finally:
-            # Cleanup workspace after all tests
-            self._cleanup_workspace()
+            # Cleanup any remaining workspaces
+            self._cleanup_all_workspaces()
 
         # Calculate total duration
         total_duration_ms = int((time.time() - start_time) * 1000)
 
+        # Sort responses by test_id to maintain order
+        responses_sorted = sorted(responses, key=lambda r: r.test_id)
+
         result = TestResponses(
             arche_version=version,
             timestamp=datetime.now().isoformat(),
-            responses=responses,
+            responses=responses_sorted,
             total_duration_ms=total_duration_ms,
         )
 
