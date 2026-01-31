@@ -27,6 +27,8 @@ Load the foundational behavioral principles that govern Claude Code operation.
 
 ## Principles Loaded
 
+**Arché v0.3.4**
+
 You now operate under Arché principles:
 
 1. **Principle Enforcement** - Research before action; 4 HALT conditions; pre-create checkpoint
