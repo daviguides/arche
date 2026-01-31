@@ -18,7 +18,9 @@ arche/
 │   │   ├── knowledge/        # How to handle information
 │   │   ├── meta/             # Governs other principles
 │   │   └── modes/            # Essential cognitive modes
-│   ├── context/guides/       # (future)
+│   ├── context/
+│   │   ├── guides/           # Practical compliance procedures
+│   │   └── examples/         # Few-shot examples
 │   └── prompts/
 ├── commands/
 └── design/
@@ -73,3 +75,14 @@ Plus: `essential-cognitive-modes.md` in `spec/modes/`
 - **Size constraint**: Keep total ≤100KB
 - **Philosophy**: Essential only - no bloat
 - **Bundle pattern**: All specs inside `arche/arche/`
+
+---
+
+## Releasing
+
+When creating a new version:
+
+1. Update `.claude-plugin/plugin.json` version field
+2. Commit the version bump
+3. Create annotated tag: `git tag -a vX.Y.Z -m "message"`
+4. Push with tag: `git push && git push origin vX.Y.Z`
