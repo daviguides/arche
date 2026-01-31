@@ -13,6 +13,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # Constants
 DEFAULT_SETTING_SOURCES: Final[list[str]] = ["user", "project", "local"]
 DEFAULT_TEST_WORKSPACE: Final[Path] = Path("/tmp/arche-test")
+ARCHE_PLUGIN_PATH: Final[Path] = Path.home() / ".claude" / "arche"
 
 
 class ClaudeModel(StrEnum):
@@ -38,7 +39,7 @@ class TestAgentSettings(BaseSettings):
     """Settings for ArcheTestAgent (runs test prompts)."""
 
     model: ClaudeModel = ClaudeModel.SONNET
-    allowed_tools: list[str] = Field(default_factory=lambda: ["Read", "Glob", "Grep"])
+    allowed_tools: list[str] = Field(default_factory=lambda: ["Skill", "Read", "Glob", "Grep"])
     permission_mode: str = "bypassPermissions"
     include_partial_messages: bool = True
 
@@ -93,4 +94,5 @@ __all__ = [
     "settings",
     "DEFAULT_SETTING_SOURCES",
     "DEFAULT_TEST_WORKSPACE",
+    "ARCHE_PLUGIN_PATH",
 ]
