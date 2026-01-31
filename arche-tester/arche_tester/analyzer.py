@@ -133,8 +133,17 @@ class ResponseAnalyzer:
         if not self._principles_loaded:
             agent = self._get_analyzer_agent()
             print_step("Loading Arché principles for context-aware analysis...")
-            await agent.load_arche_principles()
+            principles_response = await agent.load_arche_principles()
             self._principles_loaded = True
+
+            # Show principles loaded confirmation
+            console.print()
+            console.print("[green]Principles loaded:[/green]")
+            # Show first few lines as confirmation
+            for line in principles_response.strip().split("\n")[:8]:
+                if line.strip():
+                    console.print(f"  [dim]{line}[/dim]")
+            console.print()
 
     async def analyze_version_async(self, version: str) -> VersionAnalysis:
         """Analyze all responses using LLM-based semantic analysis.

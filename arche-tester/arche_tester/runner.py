@@ -223,11 +223,18 @@ class TestRunner:
             verbose=False,
             skip_cli_check=self._skip_cli_check,
         )
-        await base_agent.load_arche_principles()
+        principles_response = await base_agent.load_arche_principles()
         base_session_id = base_agent.session_id
         await base_agent.disconnect()
 
+        # Show principles loaded confirmation
         print_step(f"Base session: [dim]{base_session_id[:12]}...[/dim]")
+        console.print()
+        console.print("[green]Principles loaded:[/green]")
+        # Show first few lines as confirmation
+        for line in principles_response.strip().split("\n")[:8]:
+            if line.strip():
+                console.print(f"  [dim]{line}[/dim]")
         console.print()
 
         # Create semaphore to limit concurrent tests
