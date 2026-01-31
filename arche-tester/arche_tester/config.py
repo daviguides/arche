@@ -13,7 +13,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # Constants
 DEFAULT_SETTING_SOURCES: Final[list[str]] = ["user", "project", "local"]
 DEFAULT_TEST_WORKSPACE: Final[Path] = Path("/tmp/arche-test")
-ARCHE_PLUGIN_PATH: Final[Path] = Path.home() / ".claude" / "arche"
+# Arche plugin path
+ARCHE_PLUGIN_PATH: Final[Path] = Path.home() / "work" / "sources" / "gradients" / "arche"
 
 
 class ClaudeModel(StrEnum):
