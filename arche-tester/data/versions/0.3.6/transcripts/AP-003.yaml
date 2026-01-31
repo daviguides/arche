@@ -1,0 +1,47 @@
+prompt: How does error handling work in api.py?
+steps:
+- content: I'll analyze the error handling in api.py by first exploring the test-AP-003/
+    directory structure, then examining the api.py file.
+  type: text
+- input:
+    command: ls -la test-AP-003/
+    description: List contents of test-AP-003 directory
+  name: Bash
+  type: tool
+- input:
+    path: test-AP-003
+    pattern: '**/api.py'
+  name: Glob
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-AP-003/src/api.py
+  name: Read
+  type: tool
+- content: "## Error Handling Analysis: api.py\n\n**Error Handling Architecture**:\n\
+    \n### 1. **Custom Exception Hierarchy**\nThree-tiered exception structure:\n\n\
+    - **`APIError`** (base, lines 17-23): Generic API errors with customizable message\
+    \ and HTTP status code (default 400)\n- **`NotFoundError`** (lines 26-30): 404\
+    \ errors for missing resources, auto-formats message as `\"{resource} {id} not\
+    \ found\"`\n- **`ValidationError`** (lines 33-37): 400 errors for invalid input,\
+    \ formats as `\"{field}: {message}\"`\n\n### 2. **Validation Patterns**\n\n**Input\
+    \ Type Validation**:\n- Integer IDs: `isinstance(user_id, int) or user_id <= 0`\
+    \ (lines 43, 87, 136, 146)\n- Boolean flags: `isinstance(in_stock_only, bool)`\
+    \ (line 125)\n- Enums: `isinstance(role, UserRole)` (line 76)\n\n**Required Field\
+    \ Validation**:\n- Dictionary key presence checks: `if \"username\" not in data`\
+    \ (lines 55-58, 97-102, 164-167)\n- Non-empty lists: `len(items) == 0` (line 150)\n\
+    \n**Business Logic Validation**:\n- Email/username format via imported validators\
+    \ (lines 61-66)\n- Price ranges: `data[\"price\"] < 0` (line 109)\n- Stock availability:\
+    \ `product.is_available()` (line 175)\n- Quantity vs stock: `quantity > product.stock`\
+    \ (line 179)\n\n### 3. **Error Propagation**\n\n**Cascading Validation**:\n- `create_order()`\
+    \ calls `get_user()` (line 154) - user validation errors propagate up\n- `create_order()`\
+    \ calls `get_product()` per item (line 174) - product validation errors propagate\
+    \ up\n- `list_orders()` calls `get_user()` when filtering (line 205)\n\n**Context-Aware\
+    \ Messages**:\n- Array item errors include index: `f\"items[{idx}].quantity\"\
+    ` (line 171)\n- Stock mismatch errors include actual values: `f\"requested {quantity}\
+    \ but only {product.stock} in stock\"` (lines 180-183)\n\n### 4. **Error Handling\
+    \ Flow**\n\n```\nUser Input → Validation Check → Raise ValidationError/NotFoundError\n\
+    \                ↓\n         Exception bubbles up\n                ↓\n    Caller\
+    \ catches APIError (expected usage)\n```\n\n**No try/except blocks** - exceptions\
+    \ are meant to be caught by a framework/middleware layer (not shown in this file)."
+  type: text
+test_id: AP-003

@@ -1,0 +1,64 @@
+prompt: Create email validator
+steps:
+- content: '⛔ **HALT - Pre-Create Checkpoint Required**
+
+
+    Before creating any file, I MUST research the codebase per **principle-enforcement**.
+
+
+    **Executing mandatory search sequence:**'
+  type: text
+- input:
+    path: test-AD-002
+    pattern: '**/*valid*'
+  name: Glob
+  type: tool
+- input:
+    path: test-AD-002
+    pattern: '**/*email*'
+  name: Glob
+  type: tool
+- input:
+    -i: true
+    output_mode: files_with_matches
+    path: test-AD-002
+    pattern: email
+  name: Grep
+  type: tool
+- input:
+    -i: true
+    output_mode: files_with_matches
+    path: test-AD-002
+    pattern: validate
+  name: Grep
+  type: tool
+- content: 'Found files mentioning "email" and "validate". Reading to check for existing
+    implementation:'
+  type: text
+- input:
+    file_path: test-AD-002/src/utils.py
+  name: Read
+  type: tool
+- input:
+    file_path: test-AD-002/src/models.py
+  name: Read
+  type: tool
+- input:
+    file_path: test-AD-002/src/api.py
+  name: Read
+  type: tool
+- content: "⛔ **HALT - Duplication Detected**\n\n**Found existing `validate_email()`\
+    \ implementations:**\n\n1. **`test-AD-002/src/utils.py:41-43`**\n   ```python\n\
+    \   def validate_email(email: str) -> bool:\n       \"\"\"Validate email format.\"\
+    \"\"\n       return \"@\" in email and \".\" in email.split(\"@\")[1]\n   ```\n\
+    \n2. **`test-AD-002/src/models.py:85-87`** (100% identical)\n   ```python\n  \
+    \ def validate_email(email: str) -> bool:\n       \"\"\"Validate email format.\"\
+    \"\"\n       return \"@\" in email and \".\" in email.split(\"@\")[1]\n   ```\n\
+    \n**Already in use:**\n- `test-AD-002/src/api.py:52` imports from `models`\n-\
+    \ `test-AD-002/src/api.py:65` uses it for email validation\n\n---\n\n**Per anti-duplication\
+    \ principle, choose approach:**\n\n**A) Extend existing** - Add features to `utils.py:validate_email()`\
+    \ (canonical location)\n\n**B) Refactor duplication** - Consolidate to single\
+    \ source, update imports\n\n**C) Justify new** - Explain why a third implementation\
+    \ is needed\n\nWhich option?"
+  type: text
+test_id: AD-002

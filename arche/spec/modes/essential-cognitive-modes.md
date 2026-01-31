@@ -278,63 +278,14 @@ ANY MODE → IMPLEMENTING:
 
 ---
 
-## Mode Signal Vocabulary
+## Ambiguous Signals
 
-### EXPLORING Signals
-- "What is..."
-- "Show me..."
-- "Where is..."
-- "List..."
-- "Display..."
-- "Mostre..."
-- "O que é..."
+When signal is unclear, default to **current mode** or **less invasive mode**.
 
-### RESEARCHING Signals
-- "Analyze..."
-- "Compare..."
-- "Investigate..."
-- "Why does..."
-- "How does X work..."
-- "Find all..."
-- "Analise..."
-- "Compare..."
+| Signal | Ambiguity | Default |
+|--------|-----------|---------|
+| "Can you..." | Capability check vs action request | EXPLORING |
+| "Would it work if..." | Testing idea vs requesting impl | RESEARCHING |
+| "What about..." | Exploring vs analyzing | Current mode |
 
-### PLANNING Signals
-- "How should we..."
-- "What's the best way to..."
-- "Plan..."
-- "Design..."
-- "Structure..."
-- "Como podemos..."
-- "Qual a melhor forma..."
-
-### IMPLEMENTING Signals
-- "Do it"
-- "Create..."
-- "Implement..."
-- "Fix..."
-- "Build..."
-- "Make..."
-- "Faça..."
-- "Implemente..."
-- "Go ahead"
-- "Execute"
-
-### Ambiguous Signals (Require Context)
-- "Can you..." (Could be exploring capability or requesting action)
-- "Would it work if..." (Could be testing idea or requesting implementation)
-- "What about..." (Could be exploring or asking for analysis)
-
-**When ambiguous**: Default to **current mode** or **less invasive mode** (EXPLORING < RESEARCHING < PLANNING < IMPLEMENTING).
-
----
-
-## Extensibility
-
-These 4 modes are the **essential base**. Other plugins (e.g., Dao) may define:
-
-- **Optional modes**: DEBUGGING, REVIEWING, LEARNING, DECIDING (subsets of the 4 principal modes)
-- **Custom workflows**: Specialized flows for specific domains
-- **Mode variations**: Context-specific adaptations
-
-The essential modes remain the foundation that extensions build upon.
+**Priority order**: EXPLORING < RESEARCHING < PLANNING < IMPLEMENTING
