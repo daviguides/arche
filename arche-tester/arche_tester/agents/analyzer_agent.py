@@ -84,6 +84,7 @@ class AnalyzerAgent(BaseAgent):
         response: str,
         must_behaviors: list[str],
         must_not_behaviors: list[str],
+        transcript: list[dict] | None = None,
     ) -> list[BehaviorCheck]:
         """Analyze response for behavior conformity.
 
@@ -91,10 +92,12 @@ class AnalyzerAgent(BaseAgent):
             response: Agent response text to analyze.
             must_behaviors: Behaviors that must be present.
             must_not_behaviors: Behaviors that must not be present.
+            transcript: Optional transcript for fallback analysis on failure.
 
         Returns:
             List of BehaviorCheck with LLM-based evaluation.
         """
+        # First pass: analyze response only
         prompt = self._build_analysis_prompt(
             response=response,
             must_behaviors=must_behaviors,
@@ -104,11 +107,190 @@ class AnalyzerAgent(BaseAgent):
         result_text = await self._call_agent(prompt)
         result = self._parse_result(result_text)
 
-        return self._convert_to_behavior_checks(
+        checks = self._convert_to_behavior_checks(
             result=result,
             must_behaviors=must_behaviors,
             must_not_behaviors=must_not_behaviors,
         )
+
+        # Second pass: if any FAIL and transcript available, re-analyze with transcript
+        has_failures = any(c.result == Conformity.FAIL for c in checks)
+        if has_failures and transcript:
+            checks = await self._reanalyze_with_transcript(
+                response=response,
+                transcript=transcript,
+                must_behaviors=must_behaviors,
+                must_not_behaviors=must_not_behaviors,
+                initial_checks=checks,
+            )
+
+        return checks
+
+    async def _reanalyze_with_transcript(
+        self,
+        response: str,
+        transcript: list[dict],
+        must_behaviors: list[str],
+        must_not_behaviors: list[str],
+        initial_checks: list[BehaviorCheck],
+    ) -> list[BehaviorCheck]:
+        """Re-analyze failed behaviors using transcript as evidence.
+
+        Only re-evaluates behaviors that failed in initial analysis.
+        """
+        # Get failed behaviors
+        failed_must = [
+            c.behavior for c in initial_checks
+            if c.check_type == "must" and c.result == Conformity.FAIL
+        ]
+        failed_must_not = [
+            c.behavior for c in initial_checks
+            if c.check_type == "must_not" and c.result == Conformity.FAIL
+        ]
+
+        if not failed_must and not failed_must_not:
+            return initial_checks
+
+        # Build transcript summary (tool calls only)
+        tool_calls = [
+            step for step in transcript
+            if step.get("type") == "tool" and step.get("name")
+        ]
+        transcript_summary = self._summarize_transcript(tool_calls)
+
+        prompt = self._build_transcript_analysis_prompt(
+            response=response,
+            transcript_summary=transcript_summary,
+            failed_must=failed_must,
+            failed_must_not=failed_must_not,
+        )
+
+        result_text = await self._call_agent(prompt)
+        result = self._parse_result(result_text)
+
+        # Merge results: update only re-evaluated behaviors
+        eval_lookup = {e.behavior: e for e in result.evaluations}
+        updated_checks: list[BehaviorCheck] = []
+
+        for check in initial_checks:
+            evaluation = eval_lookup.get(check.behavior)
+            if evaluation:
+                # Re-evaluated - use new result
+                if check.check_type == "must":
+                    conformity = Conformity.PASS if evaluation.present else Conformity.FAIL
+                else:  # must_not
+                    conformity = Conformity.FAIL if evaluation.present else Conformity.PASS
+
+                updated_checks.append(
+                    BehaviorCheck(
+                        behavior=check.behavior,
+                        check_type=check.check_type,
+                        result=conformity,
+                        evidence=f"[transcript] {evaluation.evidence}",
+                    )
+                )
+            else:
+                # Keep original
+                updated_checks.append(check)
+
+        return updated_checks
+
+    def _summarize_transcript(self, tool_calls: list[dict]) -> str:
+        """Create concise summary of tool calls from transcript."""
+        lines = []
+        for call in tool_calls[:20]:  # Limit to first 20 calls
+            name = call.get("name", "unknown")
+            inp = call.get("input", {})
+
+            if name == "Glob":
+                lines.append(f"- Glob: {inp.get('pattern', '?')}")
+            elif name == "Grep":
+                lines.append(f"- Grep: {inp.get('pattern', '?')} in {inp.get('path', '.')}")
+            elif name == "Read":
+                path = inp.get("file_path", "?")
+                # Shorten path
+                if "/" in path:
+                    path = "..." + path.split("/")[-2] + "/" + path.split("/")[-1]
+                lines.append(f"- Read: {path}")
+            elif name == "Bash":
+                cmd = inp.get("command", "?")[:50]
+                lines.append(f"- Bash: {cmd}")
+            elif name == "Write":
+                path = inp.get("file_path", "?")
+                if "/" in path:
+                    path = "..." + path.split("/")[-1]
+                lines.append(f"- Write: {path}")
+            elif name == "Edit":
+                path = inp.get("file_path", "?")
+                if "/" in path:
+                    path = "..." + path.split("/")[-1]
+                lines.append(f"- Edit: {path}")
+            else:
+                lines.append(f"- {name}")
+
+        return "\n".join(lines) if lines else "(no tool calls)"
+
+    def _build_transcript_analysis_prompt(
+        self,
+        response: str,
+        transcript_summary: str,
+        failed_must: list[str],
+        failed_must_not: list[str],
+    ) -> str:
+        """Build prompt for transcript-based re-analysis."""
+        behaviors_json = json.dumps(
+            {
+                "must": failed_must,
+                "must_not": failed_must_not,
+            },
+            indent=2,
+        )
+
+        return f"""Re-analyze these FAILED behaviors using the TRANSCRIPT as additional evidence.
+
+The initial analysis only saw the final response. Now you have the transcript showing
+what tools the agent actually used BEFORE producing the response.
+
+## Final Response
+
+```
+{response}
+```
+
+## Transcript (Tool Calls)
+
+```
+{transcript_summary}
+```
+
+## Behaviors to Re-evaluate
+
+```json
+{behaviors_json}
+```
+
+## Instructions
+
+For each behavior, determine if it was actually satisfied based on the TRANSCRIPT:
+- "search for existing" → Did the agent use Glob/Grep/Read BEFORE Write/Edit?
+- "skip research phase" → Did the agent skip search tools and go straight to Write?
+- "reference source file" → Did the agent Read the file before explaining?
+
+Return ONLY valid JSON:
+
+{{
+  "evaluations": [
+    {{
+      "behavior": "exact behavior text",
+      "present": true/false,
+      "confidence": 0.0-1.0,
+      "evidence": "brief description of what transcript shows",
+      "reasoning": "explanation"
+    }}
+  ]
+}}
+
+Evaluate ALL behaviors from both lists."""
 
     def _build_analysis_prompt(
         self,

@@ -119,6 +119,26 @@ class ResponseAnalyzer:
         data = yaml.safe_load(content)
         return TestResponses.model_validate(data)
 
+    def load_transcript(self, version: str, test_id: str) -> list[dict] | None:
+        """Load transcript for a specific test.
+
+        Args:
+            version: Arché version identifier.
+            test_id: Test case ID.
+
+        Returns:
+            List of transcript steps, or None if not available.
+        """
+        transcript_file = (
+            self._data_path / "versions" / version / "transcripts" / f"{test_id}.yaml"
+        )
+        if not transcript_file.exists():
+            return None
+
+        content = transcript_file.read_text()
+        data = yaml.safe_load(content)
+        return data.get("steps", [])
+
     def _get_analyzer_agent(self) -> AnalyzerAgent:
         """Get or create AnalyzerAgent instance (lazy)."""
         if self._analyzer_agent is None:
@@ -205,11 +225,15 @@ class ResponseAnalyzer:
                     )
                 )
 
-                # Use LLM for semantic analysis
+                # Load transcript for fallback analysis
+                transcript = self.load_transcript(version, resp.test_id)
+
+                # Use LLM for semantic analysis (with transcript fallback)
                 behavior_checks = await agent.analyze_response(
                     response=resp.response,
                     must_behaviors=test_case.expected.must,
                     must_not_behaviors=test_case.expected.must_not,
+                    transcript=transcript,
                 )
 
                 # Determine overall conformity (SKIPPED if all checks skipped)

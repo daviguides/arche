@@ -167,16 +167,18 @@ class TranscriptEntry(BaseModel):
     Captures either a text response or a tool call from the agent.
 
     Attributes:
-        type: Either "text" or "tool".
+        type: Either "text", "tool", or "prompt".
         content: Text content (for type="text").
         name: Tool name (for type="tool").
         input: Tool input parameters (for type="tool").
+        full_prompt: Full prompt sent to agent (for type="prompt").
     """
 
-    type: str = Field(description="'text' or 'tool'")
+    type: str = Field(description="'text', 'tool', or 'prompt'")
     content: str | None = Field(default=None, description="Text content")
     name: str | None = Field(default=None, description="Tool name")
     input: dict[str, Any] | None = Field(default=None, description="Tool input")
+    full_prompt: str | None = Field(default=None, description="Full prompt (for type='prompt')")
 
 
 class TestResponse(BaseModel):
