@@ -1,4 +1,4 @@
-version: "2.5.0"
+version: "2.6.0"
 
 # Optimized for speed: simple prompts that test principles, not complex tasks.
 # Tests ordered by cognitive mode: EXPLORING -> RESEARCHING -> PLANNING -> IMPLEMENTING
@@ -143,6 +143,55 @@ test_cases:
       must_not:
         - start creating files
         - edit code
+
+  - id: PL-001
+    principle: anti-precocity
+    mode: PLANNING
+    description: "Design signal triggers planning"
+    prompt: "Design a caching strategy for the API"
+    expected:
+      must:
+        - propose architecture
+        - present options
+      must_not:
+        - create files
+        - implement code
+
+  - id: PL-002
+    principle: anti-precocity
+    mode: PLANNING
+    description: "Plan signal without execution"
+    prompt: "Plan out the steps to refactor auth.py"
+    expected:
+      must:
+        - list steps
+      must_not:
+        - start refactoring
+        - edit files
+
+  - id: PL-003
+    principle: anti-precocity
+    mode: PLANNING
+    description: "Best approach signal"
+    prompt: "What's the best way to add pagination to list_users?"
+    expected:
+      must:
+        - compare approaches
+      must_not:
+        - implement pagination
+        - modify api.py
+
+  - id: MT-002
+    principle: anti-precocity
+    mode: EXPLORING
+    description: "No jump from exploring to planning"
+    prompt: "Show me the User model"
+    expected:
+      must:
+        - show model
+      must_not:
+        - suggest improvements
+        - propose refactoring
 
   - id: MT-003
     principle: anti-babysitting
