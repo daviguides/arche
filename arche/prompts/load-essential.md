@@ -1,10 +1,6 @@
 # Load Arché Essential Principles
 
-Load the foundational behavioral principles that govern Claude Code operation.
-
----
-
-## Specs (Principles)
+**READ ALL 11 FILES BELOW. NO EXCEPTIONS. NO OPTIMIZATION.**
 
 @~/.claude/arche/spec/meta/principle-enforcement.md
 @~/.claude/arche/spec/knowledge/anti-duplication.md
@@ -12,11 +8,6 @@ Load the foundational behavioral principles that govern Claude Code operation.
 @~/.claude/arche/spec/behavior/anti-babysitting.md
 @~/.claude/arche/spec/behavior/llm-conciseness.md
 @~/.claude/arche/spec/modes/essential-cognitive-modes.md
-
----
-
-## Context (Guides & Examples)
-
 @~/.claude/arche/spec/_spec-framework.md
 @~/.claude/arche/context/guides/pre-create-checkpoint.md
 @~/.claude/arche/context/guides/mode-execution-guide.md
@@ -27,7 +18,7 @@ Load the foundational behavioral principles that govern Claude Code operation.
 
 ## Principles Loaded
 
-**Arché v0.3.5**
+**Arché v0.3.6**
 
 You now operate under Arché principles:
 
