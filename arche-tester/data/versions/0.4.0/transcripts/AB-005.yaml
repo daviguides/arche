@@ -1,0 +1,78 @@
+prompt: Add error handling to login() in auth.py
+steps:
+- content: I'll add error handling to the login() function in auth.py. Let me start
+    by researching the existing code.
+  type: text
+- input:
+    command: pwd
+    description: Get current working directory
+  name: Bash
+  type: tool
+- input:
+    pattern: test-AB-005/**/*.py
+  name: Glob
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-AB-005/src/auth.py
+  name: Read
+  type: tool
+- content: '**MODE: IMPLEMENTING**
+
+
+    The login() function currently lacks comprehensive error handling. I''ll add proper
+    error handling for edge cases.'
+  type: text
+- input:
+    file_path: /private/tmp/arche-test/test-AB-005/src/auth.py
+    new_string: "# Login/logout functions\ndef login(username: str, password: str)\
+      \ -> str:\n    \"\"\"Authenticate user and create session.\n\n    Args:\n  \
+      \      username: User's username\n        password: User's password\n\n    Returns:\n\
+      \        Session token string\n\n    Raises:\n        ValueError: If username\
+      \ or password is empty/invalid\n        PermissionError: If credentials are\
+      \ invalid\n        RuntimeError: If user list cannot be retrieved\n    \"\"\"\
+      \n    # Validate inputs\n    if not username or not isinstance(username, str):\n\
+      \        raise ValueError(\"Username must be a non-empty string\")\n    if not\
+      \ password or not isinstance(password, str):\n        raise ValueError(\"Password\
+      \ must be a non-empty string\")\n\n    # Strip whitespace\n    username = username.strip()\n\
+      \n    if not username:\n        raise ValueError(\"Username cannot be empty\
+      \ or whitespace\")\n\n    try:\n        from src.api import list_users\n   \
+      \     users = list_users()\n    except Exception as e:\n        raise RuntimeError(f\"\
+      Failed to retrieve user list: {e}\") from e\n\n    # Find and authenticate user\n\
+      \    for user in users:\n        if user.username == username:\n           \
+      \ # In real app, would check password hash\n            return create_session(user)\n\
+      \n    raise PermissionError(\"Invalid credentials\")"
+    old_string: "# Login/logout functions\ndef login(username: str, password: str)\
+      \ -> str:\n    \"\"\"Authenticate user and create session.\"\"\"\n    from src.api\
+      \ import list_users\n\n    users = list_users()\n    for user in users:\n  \
+      \      if user.username == username:\n            # In real app, would check\
+      \ password hash\n            return create_session(user)\n    raise PermissionError(\"\
+      Invalid credentials\")"
+    replace_all: false
+  name: Edit
+  type: tool
+- content: '✅ **Error handling added to login() function**
+
+
+    **Enhancements:**
+
+    - **Input validation**: Checks for empty/invalid username and password
+
+    - **Type checking**: Validates inputs are strings
+
+    - **Whitespace handling**: Strips and validates username isn''t just whitespace
+
+    - **Exception handling**: Catches errors from list_users() and wraps in RuntimeError
+
+    - **Documentation**: Added comprehensive docstring with Args, Returns, and Raises
+    sections
+
+
+    **Error types:**
+
+    - `ValueError` - Invalid/empty inputs
+
+    - `PermissionError` - Invalid credentials (existing)
+
+    - `RuntimeError` - System errors retrieving users'
+  type: text
+test_id: AB-005

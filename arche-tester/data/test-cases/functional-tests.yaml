@@ -217,7 +217,7 @@ test_cases:
       must:
         - search for existing files
       must_not:
-        - create immediately
+        - skip research phase
 
   - id: PE-002
     principle: principle-enforcement

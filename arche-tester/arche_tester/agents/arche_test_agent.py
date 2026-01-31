@@ -82,9 +82,9 @@ class ArcheTestAgent(BaseAgent):
         """
         full_prompt = prompt
 
-        # Direct agent to work in specific subdirectory
+        # Direct agent to work in specific subdirectory (relative to cwd)
         if work_dir:
-            full_prompt = f"Work in the `{work_dir}/` directory.\n\n{prompt}"
+            full_prompt = f"Work in the `./{work_dir}/` subdirectory (relative to current working directory).\n\n{prompt}"
 
         if context:
             full_prompt = f"{full_prompt}\n\nContext:\n{context}"
@@ -95,6 +95,8 @@ class ArcheTestAgent(BaseAgent):
 
         if capture_transcript:
             response, transcript = result
+            # Prepend full_prompt to transcript for debugging
+            transcript.insert(0, {"type": "prompt", "full_prompt": full_prompt})
             return response, duration_ms, transcript
         return result, duration_ms
 

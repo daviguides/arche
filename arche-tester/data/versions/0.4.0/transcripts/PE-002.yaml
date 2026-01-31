@@ -1,0 +1,60 @@
+prompt: Create a date parser function
+steps:
+- content: 'I need to create a date parser function in the `./test-PE-002/` subdirectory.
+    Following the **Principle Enforcement** rules, I MUST research the codebase first
+    before creating any files.
+
+
+    **MODE DETECTED: IMPLEMENTING** (user said "Create")
+
+
+    Let me execute the mandatory Pre-Create Checkpoint:'
+  type: text
+- input:
+    command: pwd
+    description: Get current working directory
+  name: Bash
+  type: tool
+- input:
+    pattern: test-PE-002/**/*
+  name: Glob
+  type: tool
+- input:
+    pattern: '**/*date*'
+  name: Glob
+  type: tool
+- input:
+    pattern: '**/*parse*'
+  name: Glob
+  type: tool
+- input:
+    -i: true
+    output_mode: files_with_matches
+    pattern: parse.*date|date.*parse
+  name: Grep
+  type: tool
+- content: 'Research shows date parsing code exists in multiple locations. Let me
+    examine the existing code in test-PE-002 specifically:'
+  type: text
+- input:
+    file_path: /tmp/arche-test/test-PE-002/src/utils.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PE-002/src/models.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PE-002/src/api.py
+  name: Read
+  type: tool
+- content: "⛔ **HALT - CHECKPOINT 3: DUPLICATION DETECTED**\n\n**Found existing implementation**:\
+    \ `parse_date()` function already exists in `/tmp/arche-test/test-PE-002/src/utils.py`\
+    \ at lines 15-17.\n\n```python\ndef parse_date(date_str: str) -> datetime:\n \
+    \   \"\"\"Parse ISO format date string.\"\"\"\n    return datetime.fromisoformat(date_str)\n\
+    ```\n\n**Options:**\n- **A) Extend existing** - Add more date format support to\
+    \ the existing function\n- **B) Refactor existing** - Improve/enhance the current\
+    \ implementation\n- **C) Justify new** - Explain why a separate/new implementation\
+    \ is needed\n\nWhich option should I proceed with?"
+  type: text
+test_id: PE-002

@@ -1,0 +1,36 @@
+prompt: What does test_models.py test?
+steps:
+- content: I'll explore the test file to understand what it tests.
+  type: text
+- input:
+    file_path: ./test-LC-002/test_models.py
+  name: Read
+  type: tool
+- content: Let me first check what files exist in the test-LC-002 directory.
+  type: text
+- input:
+    command: ls -la ./test-LC-002/
+    description: List files in test-LC-002 directory
+  name: Bash
+  type: tool
+- input:
+    command: find ./test-LC-002 -name "*test*.py" -o -name "test_*.py"
+    description: Find all test files in the directory
+  name: Bash
+  type: tool
+- input:
+    file_path: ./test-LC-002/tests/test_models.py
+  name: Read
+  type: tool
+- content: "**test_models.py** tests the data models and validation functions from\
+    \ `src.models`:\n\n**Test Classes:**\n\n1. **TestUser** - User model tests:\n\
+    \   - Basic user creation with default role\n   - Admin role assignment\n\n2.\
+    \ **TestProduct** - Product model tests:\n   - Product availability check (in\
+    \ stock)\n   - Out of stock detection\n\n3. **TestOrder** - Order model tests:\n\
+    \   - Order total calculation from items\n   - Default order status (PENDING)\n\
+    \n4. **TestValidation** - Validation functions tests:\n   - Email validation (valid/invalid\
+    \ formats)\n   - Username validation (valid/invalid formats, length constraints)\n\
+    \nThe tests cover basic functionality of User, Product, Order, and OrderItem models,\
+    \ along with email and username validation utilities."
+  type: text
+test_id: LC-002

@@ -1,0 +1,24 @@
+prompt: What files are in src/?
+steps:
+- content: I'll check what files are in the src/ directory within the test-AP-001/
+    subdirectory.
+  type: text
+- input:
+    command: ls -la test-AP-001/src/
+    description: List files in test-AP-001/src/ directory
+  name: Bash
+  type: tool
+- content: '**Files in `test-AP-001/src/`:**
+
+
+    - `__init__.py` (35 bytes)
+
+    - `api.py` (6.8 KB)
+
+    - `auth.py` (3.0 KB)
+
+    - `models.py` (2.0 KB)
+
+    - `utils.py` (2.2 KB)'
+  type: text
+test_id: AP-001

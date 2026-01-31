@@ -1,0 +1,70 @@
+prompt: How does auth.py work?
+steps:
+- content: '**MODE: EXPLORING**
+
+
+    Let me search for and read the auth.py file in the test-AD-003 subdirectory.'
+  type: text
+- input:
+    command: pwd
+    description: Check current working directory
+  name: Bash
+  type: tool
+- input:
+    path: ./test-AD-003
+    pattern: '**/auth.py'
+  name: Glob
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-AD-003/src/auth.py
+  name: Read
+  type: tool
+- content: '**auth.py Overview:**
+
+
+    This module handles authentication and authorization with the following components:
+
+
+    **Password Security:**
+
+    - `hash_password()` - SHA-256 hashing with secret key salt
+
+    - `verify_password()` - Validates password against hash
+
+
+    **Session Management:**
+
+    - In-memory session storage (`_sessions` dict)
+
+    - `create_session()` - Generates secure token, stores user data, 24-hour expiration
+
+    - `get_session()` - Retrieves session, auto-deletes expired ones
+
+    - `invalidate_session()` - Removes session (logout)
+
+
+    **Authorization Guards:**
+
+    - `require_auth()` - Validates token exists and is valid
+
+    - `require_role()` - Checks user has specific role
+
+    - `require_admin()` - Shortcut for admin role check
+
+
+    **User Operations:**
+
+    - `login()` - Authenticates username/password, creates session
+
+    - `logout()` - Invalidates session token
+
+    - `get_current_user()` - Fetches User object from session
+
+
+    **Configuration:**
+
+    - 24-hour session duration
+
+    - Uses `User` and `UserRole` from `src.models`'
+  type: text
+test_id: AD-003

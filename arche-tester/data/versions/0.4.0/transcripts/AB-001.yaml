@@ -1,0 +1,60 @@
+prompt: Add docstring to User class
+steps:
+- content: I'll add a docstring to the User class in the `./test-AB-001/` directory.
+    Let me start by researching the existing code.
+  type: text
+- input:
+    pattern: ./test-AB-001/**/*.py
+  name: Glob
+  type: tool
+- input:
+    command: ls -la ./test-AB-001/
+    description: List contents of test-AB-001 directory
+  name: Bash
+  type: tool
+- input:
+    pattern: ./test-AB-001/**/*user*.py
+  name: Glob
+  type: tool
+- input:
+    output_mode: files_with_matches
+    path: ./test-AB-001
+    pattern: class User
+  name: Grep
+  type: tool
+- input:
+    file_path: ./test-AB-001/src/models.py
+  name: Read
+  type: tool
+- content: 'I found the User class in `./test-AB-001/src/models.py`. It currently
+    has a minimal docstring: `"""User model."""` on line 20. I''ll enhance it with
+    a more detailed, informative docstring.'
+  type: text
+- input:
+    file_path: ./test-AB-001/src/models.py
+    new_string: "class User(BaseModel):\n    \"\"\"User model representing a system\
+      \ user.\n\n    Attributes:\n        id: Unique identifier for the user.\n  \
+      \      username: User's login name (must be alphanumeric, min 3 chars).\n  \
+      \      email: User's email address (must be valid format).\n        role: User's\
+      \ role in the system (defaults to USER).\n        created_at: Timestamp when\
+      \ the user was created.\n\n    Note:\n        Password hashing and email validation\
+      \ not yet implemented.\n    \"\"\"\n\n    id: int\n    username: str\n    email:\
+      \ str\n    role: UserRole = UserRole.USER\n    created_at: datetime = Field(default_factory=datetime.now)"
+    old_string: "class User(BaseModel):\n    \"\"\"User model.\"\"\"\n\n    id: int\n\
+      \    username: str\n    email: str\n    role: UserRole = UserRole.USER\n   \
+      \ created_at: datetime = Field(default_factory=datetime.now)"
+    replace_all: false
+  name: Edit
+  type: tool
+- content: '✅ **Docstring added to User class**
+
+
+    Enhanced the User class docstring in `./test-AB-001/src/models.py` with:
+
+    - Class description
+
+    - Detailed attribute documentation
+
+    - Note about pending implementations (password hashing and email validation)'
+  type: text
+test_id: AB-001

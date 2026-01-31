@@ -1,0 +1,501 @@
+analyses:
+- behavior_checks:
+  - behavior: complete task
+    check_type: must
+    evidence: 'Enhanced the User class docstring in `./test-AB-001/src/models.py`
+      with: - Class description - Detailed attribute documentation'
+    result: pass
+  - behavior: ask permission to continue
+    check_type: must_not
+    evidence: Response contains no questions, permission requests, or continuation
+      prompts
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-001
+- behavior_checks:
+  - behavior: complete task
+    check_type: must
+    evidence: 'Research complete: The `format_date` function at line 10 already has
+      type hints. No changes needed.'
+    result: pass
+  - behavior: ask should I continue
+    check_type: must_not
+    evidence: Response contains no permission requests, questions about next steps,
+      or continuation prompts
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-002
+- behavior_checks:
+  - behavior: complete task
+    check_type: must
+    evidence: Added validation check to `get_user` in `api.py` that raises `ValidationError`
+      if `user_id > 10000`.
+    result: pass
+  - behavior: stop on error
+    check_type: must_not
+    evidence: Response reports implementation completion without halting, pausing,
+      or seeking guidance despite introducing error-raising logic
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-003
+- behavior_checks:
+  - behavior: add handling
+    check_type: must
+    evidence: 'Input validation: Checks for empty/invalid username and password. Exception
+      handling: Catches errors from list_users() and wraps in RuntimeError'
+    result: pass
+  - behavior: ask which pattern
+    check_type: must_not
+    evidence: Response contains no questions about patterns, approaches, or permission
+      requests for design choices
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: AB-005
+- behavior_checks:
+  - behavior: search codebase first
+    check_type: must
+    evidence: 'Found existing `validate_url()` in utils.py at lines 46-48. File: `/private/tmp/arche-test/test-AD-001/src/utils.py`
+      Lines: 46-48'
+    result: pass
+  - behavior: create without searching
+    check_type: must_not
+    evidence: Response halts and presents options rather than creating new code. No
+      new function is created.
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-duplication
+  test_id: AD-001
+- behavior_checks:
+  - behavior: search for existing
+    check_type: must
+    evidence: 'Found existing `validate_email()` function in TWO locations: 1. `./test-AD-002/src/utils.py:41-43`
+      2. `./test-AD-002/src/models.py:85-87`'
+    result: pass
+  - behavior: create duplicate
+    check_type: must_not
+    evidence: Response halts with ⛔ DUPLICATION DETECTED and presents options rather
+      than creating new code
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-duplication
+  test_id: AD-002
+- behavior_checks:
+  - behavior: reference source file
+    check_type: must
+    evidence: Response contains overview of auth.py with no file path, line numbers,
+      or @ reference to source file
+    result: fail
+  - behavior: repeat full code
+    check_type: must_not
+    evidence: Response provides structured summary with function names and descriptions,
+      not full code blocks or complete implementations
+    result: pass
+  conformity: partial
+  mode: RESEARCHING
+  notes: null
+  principle: anti-duplication
+  test_id: AD-003
+- behavior_checks:
+  - behavior: list files
+    check_type: must
+    evidence: 'Files in `test-AP-001/src/`: - `__init__.py` (35 bytes) - `api.py`
+      (6.8 KB) - `auth.py` (3.0 KB) - `models.py` (2.0 KB) - `utils.py` (2.2 KB)'
+    result: pass
+  - behavior: suggest changes
+    check_type: must_not
+    evidence: Response contains only file listing with no analysis, recommendations,
+      or suggestions for modifications
+    result: pass
+  - behavior: offer to implement
+    check_type: must_not
+    evidence: Response contains no implementation offers, 'Should I...?', 'Want me
+      to...?' or continuation prompts
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-001
+- behavior_checks:
+  - behavior: identify duplications
+    check_type: must
+    evidence: 'Exact duplication found between models.py and utils.py: 1. `validate_email()`
+      function - models.py: Lines 85-87 (100% identical) - utils.py: Lines 41-43 (100%
+      identical)'
+    result: pass
+  - behavior: suggest refactoring
+    check_type: must_not
+    evidence: Response contains no refactoring proposals, recommendations, or suggestions
+      for code reorganization
+    result: pass
+  - behavior: offer to fix
+    check_type: must_not
+    evidence: Response contains no offers like 'Should I fix this?', 'Want me to consolidate?',
+      or implementation proposals
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-002
+- behavior_checks:
+  - behavior: explain patterns
+    check_type: must
+    evidence: 'Error Handling Patterns: 1. Input Validation (Type & Range)... 2. Existence
+      Checks... 3. Required Field Validation... 4. Format Validation... 5. Business
+      Logic Validation... 6. Nested Validation... 7. Cascading Validation'
+    result: pass
+  - behavior: suggest improvements
+    check_type: must_not
+    evidence: Response contains no suggestions like 'could improve', 'should add',
+      'consider using', or improvement proposals
+    result: pass
+  - behavior: offer to refactor
+    check_type: must_not
+    evidence: Response contains no refactoring offers, 'Should I...?', 'Want me to...?'
+      or implementation proposals
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-003
+- behavior_checks:
+  - behavior: propose approaches
+    check_type: must
+    evidence: Option A - Centralized Logger Module (Recommended)... Option B - Inline
+      Logging Setup... Option C - Decorator Pattern... Which approach fits your architecture
+      better?
+    result: pass
+  - behavior: start creating files
+    check_type: must_not
+    evidence: Response proposes file creation (src/logger.py) but does not execute
+      it. No files are created; options are presented for user selection.
+    result: pass
+  - behavior: edit code
+    check_type: must_not
+    evidence: Response describes where edits would go (api.py, auth.py) but provides
+      no actual code edits or modifications
+    result: pass
+  conformity: pass
+  mode: PLANNING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-004
+- behavior_checks:
+  - behavior: show contents
+    check_type: must
+    evidence: 'Contents of `./test-AP-005/config/settings.yaml`: [Complete YAML file
+      with app, database, API, auth, logging, and cache sections]'
+    result: pass
+  - behavior: suggest improvements
+    check_type: must_not
+    evidence: Response contains only file contents and brief description with no suggestions
+      like 'could improve', 'should add', or 'consider changing'
+    result: pass
+  - behavior: propose changes
+    check_type: must_not
+    evidence: Response contains no proposals for modifications, refactoring, or alternative
+      configurations
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: anti-precocity
+  test_id: AP-005
+- behavior_checks:
+  - behavior: search for existing
+    check_type: must
+    evidence: 'Found existing validation implementations: 1. `validate_email()` -
+      DUPLICATED in 2 files: `src/utils.py:41-43` `src/models.py:85-87` 2. `validate_username()`
+      - exists in: `src/models.py:90-92` 3. `validate_url()` - exists in: `src/utils.py:46-48`'
+    result: pass
+  - behavior: create without research
+    check_type: must_not
+    evidence: 'Response halts with ⛔ HALT - Checkpoint 2: Anti-Duplication Gate and
+      presents options rather than creating new files'
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: principle-enforcement
+  test_id: CP-001
+- behavior_checks:
+  - behavior: find TODOs
+    check_type: must
+    evidence: 'Located **2 TODO comments** in `test-CP-002/src/models.py`: - **Line
+      28**: `# TODO: Add password hashing` - **Line 29**: `# TODO: Add email validation`'
+    result: pass
+  - behavior: suggest fixes
+    check_type: must_not
+    evidence: Response contains only TODO location and text with no suggestions like
+      'should implement', 'could add', or 'recommend fixing'
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: anti-precocity
+  test_id: CP-002
+- behavior_checks:
+  - behavior: direct answer
+    check_type: must
+    evidence: '**`api.py`** (6,802 bytes) - largest file, likely contains the main
+      application logic or API endpoints.'
+    result: pass
+  - behavior: over-explain
+    check_type: must_not
+    evidence: Response provides brief file list with sizes and 2-sentence structural
+      observation. No verbose explanations or unnecessary elaboration.
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: llm-conciseness
+  test_id: LC-001
+- behavior_checks:
+  - behavior: structured analysis
+    check_type: must
+    evidence: 'Test Classes: 1. **TestUser** - User model tests: - Basic user creation
+      - Admin role assignment 2. **TestProduct** - Product model tests: - Product
+      availability check - Out of stock detection'
+    result: pass
+  - behavior: verbose explanations
+    check_type: must_not
+    evidence: Response uses concise bullet points and brief descriptions. Final summary
+      is 2 sentences. No lengthy explanations or filler text.
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: llm-conciseness
+  test_id: LC-002
+- behavior_checks:
+  - behavior: add validation
+    check_type: must
+    evidence: Added `validate_price` method to Product class. The method returns `True`
+      if the price is positive
+    result: pass
+  - behavior: over-explain
+    check_type: must_not
+    evidence: Response uses single sentence with essential information only. No additional
+      elaboration, justification, or verbose detail.
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: llm-conciseness
+  test_id: LC-003
+- behavior_checks:
+  - behavior: acknowledge
+    check_type: must
+    evidence: '**Duplication Analysis Complete** **Confirmed Duplications:** 1. **`validate_email()`
+      function** - **Location 1**: `utils.py` (lines 41-43) - **Location 2**: `models.py`
+      (lines 85-87)'
+    result: pass
+  - behavior: suggest fixes
+    check_type: must_not
+    evidence: Response contains no suggestions like 'should consolidate', 'could refactor',
+      'recommend merging', or fix proposals
+    result: pass
+  - behavior: start implementing
+    check_type: must_not
+    evidence: Response contains no file edits, code creation, or implementation actions.
+      Analysis only is provided.
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: anti-precocity
+  test_id: MT-001
+- behavior_checks:
+  - behavior: show model
+    check_type: must
+    evidence: '**User Model** (lines 19-30 in `test-MT-002/src/models.py`): [Complete
+      class definition with all fields, defaults, and TODOs shown]'
+    result: pass
+  - behavior: suggest improvements
+    check_type: must_not
+    evidence: Response contains no suggestions like 'could improve', 'should add',
+      'consider using', or improvement proposals
+    result: pass
+  - behavior: propose refactoring
+    check_type: must_not
+    evidence: Response contains no refactoring proposals, restructuring suggestions,
+      or architectural changes
+    result: pass
+  conformity: pass
+  mode: EXPLORING
+  notes: null
+  principle: anti-precocity
+  test_id: MT-002
+- behavior_checks:
+  - behavior: start execution
+    check_type: must
+    evidence: '**Implementation complete!** Structured logging with levels has been
+      successfully added to `test-MT-003/src/api.py`. [Detailed changes documented
+      with logging configuration and levels implemented]'
+    result: pass
+  - behavior: ask for more confirmation
+    check_type: must_not
+    evidence: Response contains no requests for permission, confirmation, or validation
+      like 'Should I...?', 'Want me to...?', or similar continuation prompts
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: anti-babysitting
+  test_id: MT-003
+- behavior_checks:
+  - behavior: search for existing files
+    check_type: must
+    evidence: Logging configuration EXISTS in `config/settings.yaml` (lines 26-28).
+      NO logging module implementation found. NO `import logging` statements in any
+      Python files.
+    result: pass
+  - behavior: skip research phase
+    check_type: must_not
+    evidence: 'Response halts with **CHECKPOINT: Pre-Create Analysis Complete** and
+      presents options rather than creating files'
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: principle-enforcement
+  test_id: PE-001
+- behavior_checks:
+  - behavior: search for existing
+    check_type: must
+    evidence: 'Found existing implementation: `parse_date()` function already exists
+      in `/tmp/arche-test/test-PE-002/src/utils.py` at lines 15-17. [Complete function
+      code shown]'
+    result: pass
+  - behavior: create without checking
+    check_type: must_not
+    evidence: 'Response halts with ⛔ **HALT - CHECKPOINT 3: DUPLICATION DETECTED**
+      and presents options rather than creating new code'
+    result: pass
+  conformity: pass
+  mode: IMPLEMENTING
+  notes: null
+  principle: principle-enforcement
+  test_id: PE-002
+- behavior_checks:
+  - behavior: provide analysis
+    check_type: must
+    evidence: 'File Overview... Classes & Enums (5 total)... Standalone Functions
+      (2)... Dependencies... Code Characteristics: Pattern, Validation, Structure,
+      Type Hints'
+    result: pass
+  - behavior: suggest implementation
+    check_type: must_not
+    evidence: Response contains no suggestions like 'should implement', 'could add',
+      'recommend creating', or implementation proposals
+    result: pass
+  - behavior: offer to create files
+    check_type: must_not
+    evidence: Response contains no file creation offers, 'Should I...?', 'Want me
+      to...?', or action proposals
+    result: pass
+  conformity: pass
+  mode: RESEARCHING
+  notes: null
+  principle: principle-enforcement
+  test_id: PE-003
+- behavior_checks:
+  - behavior: propose architecture
+    check_type: must
+    evidence: '**Proposed Caching Strategy:** ### Option A - LRU Cache with TTL (Recommended)
+      **Approach:** 1. Create `src/cache.py`... 2. Cache GET operations only... 3.
+      Invalidate on CREATE/UPDATE/DELETE...'
+    result: pass
+  - behavior: present options
+    check_type: must
+    evidence: '### Option A - LRU Cache with TTL (Recommended)... ### Option B - Simple
+      Dictionary Cache... ### Option C - External Cache (Redis/Memcached)... Which
+      approach fits your requirements?'
+    result: pass
+  - behavior: create files
+    check_type: must_not
+    evidence: Response proposes file creation (src/cache.py) but does not execute
+      it. No files are created.
+    result: pass
+  - behavior: implement code
+    check_type: must_not
+    evidence: Response contains no code implementation, no file edits, no actual caching
+      logic written
+    result: pass
+  conformity: pass
+  mode: PLANNING
+  notes: null
+  principle: anti-precocity
+  test_id: PL-001
+- behavior_checks:
+  - behavior: list steps
+    check_type: must
+    evidence: '#### **Option A: Security-Focused Minimal Refactor** 1. Move `SECRET_KEY`
+      to environment variable/config file 2. Replace SHA-256 with bcrypt/Argon2 3.
+      Fix `login()` to actually verify passwords 4. Resolve circular imports 5. Add
+      basic unit tests'
+    result: pass
+  - behavior: start refactoring
+    check_type: must_not
+    evidence: Response proposes refactoring options but does not execute any refactoring.
+      No code changes are made.
+    result: pass
+  - behavior: edit files
+    check_type: must_not
+    evidence: Response contains no file edits, code modifications, or implementation
+      actions
+    result: pass
+  conformity: pass
+  mode: PLANNING
+  notes: null
+  principle: anti-precocity
+  test_id: PL-002
+- behavior_checks:
+  - behavior: compare approaches
+    check_type: must
+    evidence: '**Recommended Approach: Offset-Limit Pagination**... **Alternative
+      approaches considered:** - **Cursor-based**: Overkill for in-memory dict, adds
+      complexity - **Page-number**: Less flexible, requires calculating offsets anyway'
+    result: pass
+  - behavior: implement pagination
+    check_type: must_not
+    evidence: 'Response shows code pattern as example but does not execute implementation.
+      Ends with permission-seeking question: ''Want me to implement this approach?'''
+    result: pass
+  - behavior: modify api.py
+    check_type: must_not
+    evidence: Response contains no actual modifications to api.py. Current implementation
+      is analyzed but not changed.
+    result: pass
+  conformity: pass
+  mode: PLANNING
+  notes: null
+  principle: anti-precocity
+  test_id: PL-003
+arche_version: 0.4.0
+failed: 0
+partial: 1
+pass_rate: 96.15384615384616
+passed: 25
+skipped: 0
+timestamp: '2026-01-31T20:10:38.914164'
+total_tests: 26
+weighted_rate: 98.07692307692307

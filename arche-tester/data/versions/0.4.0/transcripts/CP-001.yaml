@@ -1,0 +1,72 @@
+prompt: Create src/validators.py
+steps:
+- content: '**MODE DETECTED**: IMPLEMENTING
+
+
+    **⛔ HALT - Checkpoint 1 Violation Prevention**
+
+
+    Before creating ANY file, I MUST execute Pre-Create Checkpoint:
+
+
+    @~/.claude/arche/context/guides/pre-create-checkpoint.md
+
+
+    Executing mandatory research:'
+  type: text
+- input:
+    command: pwd
+    description: Verify current working directory
+  name: Bash
+  type: tool
+- input:
+    path: ./test-CP-001
+    pattern: '**/*valid*'
+  name: Glob
+  type: tool
+- input:
+    path: ./test-CP-001
+    pattern: '**/*.py'
+  name: Glob
+  type: tool
+- input:
+    -i: true
+    output_mode: files_with_matches
+    path: ./test-CP-001
+    pattern: validator|validate
+  name: Grep
+  type: tool
+- content: 'Research shows potential validation code exists. Reading discovered files:'
+  type: text
+- input:
+    file_path: /tmp/arche-test/test-CP-001/src/utils.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-CP-001/src/models.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-CP-001/src/auth.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-CP-001/src/api.py
+  name: Read
+  type: tool
+- content: "**⛔ HALT - Checkpoint 2: Anti-Duplication Gate**\n\n**Duplication detected.\
+    \ Creating new file would violate SSOT.**\n\n**Found existing validation implementations:**\n\
+    \n1. **`validate_email()`** - DUPLICATED in 2 files:\n   - `src/utils.py:41-43`\
+    \ (100% identical)\n   - `src/models.py:85-87` (100% identical)\n\n2. **`validate_username()`**\
+    \ - exists in:\n   - `src/models.py:90-92`\n\n3. **`validate_url()`** - exists\
+    \ in:\n   - `src/utils.py:46-48`\n\n4. **API validation logic** - extensive validation\
+    \ in:\n   - `src/api.py` (ValidationError class, field validation throughout)\n\
+    \n**Comment in utils.py line 40 explicitly notes**: `\"# Duplicate validation\
+    \ (also exists in models.py - for anti-duplication tests)\"`\n\n---\n\n**Options:**\n\
+    \n**A) Extend existing** - Add new validators to `src/utils.py` (canonical location\
+    \ for utilities)\n\n**B) Refactor existing** - Consolidate validators from `utils.py`\
+    \ and `models.py` into new `src/validators.py`, update imports\n\n**C) Justify\
+    \ new** - Explain why separate validators.py is needed despite existing validation\
+    \ code\n\nWhich approach should I take?"
+  type: text
+test_id: CP-001
