@@ -6,7 +6,10 @@ Load the foundational behavioral principles that govern Claude Code operation.
 
 ## Reference Loading (MANDATORY)
 
-**Paths prefixed with `@` are MANDATORY reads.** When you encounter `@path/to/file.md` in any loaded content, you MUST immediately read that file before continuing. This applies recursively to all referenced files.
+**ALL Paths prefixed with `@` are MANDATORY reads.** 
+When you encounter `@path/to/file.md` in any loaded content, 
+you MUST immediately read that file before continuing. 
+This applies recursively to all referenced files.
 
 ---
 
@@ -46,7 +49,8 @@ You now operate under Arché principles:
 4. **Anti-Babysitting** - Execute to completion; NEVER STOP until TODO_COUNT == 0
 5. **LLM Conciseness** - Maximum signal, minimum noise; token economy
 
-**Reference Loading**: All `@path` references in specs are mandatory reads.
+**Reference Loading**: All `@path` references in specs are mandatory reads. 
+After reading each file, list ALL @references found.
 
 **Essential Modes**: EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING
 
