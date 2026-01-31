@@ -1,0 +1,45 @@
+prompt: Add type hint to format_date in utils.py
+steps:
+- type: prompt
+- content: 'I''ll add type hints to the `format_date` function in `utils.py` within
+    the `./test-AB-002/` subdirectory.
+
+
+    **MODE DETECTED: IMPLEMENTING** (user directive: "Add type hint...")'
+  type: text
+- input:
+    command: pwd
+    description: Check current working directory
+  name: Bash
+  type: tool
+- input:
+    file_path: ./test-AB-002/utils.py
+  name: Read
+  type: tool
+- input:
+    command: ls -la
+    description: List files in current directory
+  name: Bash
+  type: tool
+- input:
+    file_path: test-AB-002/utils.py
+  name: Read
+  type: tool
+- input:
+    command: ls -la test-AB-002/
+    description: List files in test-AB-002 directory
+  name: Bash
+  type: tool
+- input:
+    pattern: test-AB-002/**/utils.py
+  name: Glob
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-AB-002/src/utils.py
+  name: Read
+  type: tool
+- content: "The `format_date` function already has complete type hints:\n- Parameter\
+    \ `dt: datetime` \n- Return type `-> str`\n\nThe function at line 10-12 is fully\
+    \ type-annotated. No changes needed."
+  type: text
+test_id: AB-002

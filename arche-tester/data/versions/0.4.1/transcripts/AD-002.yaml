@@ -1,0 +1,51 @@
+prompt: Create email validator
+steps:
+- type: prompt
+- content: I'll create an email validator in the `./test-AD-002/` directory. First,
+    let me research what already exists to comply with the pre-create checkpoint.
+  type: text
+- input:
+    pattern: test-AD-002/**/*valid*
+  name: Glob
+  type: tool
+- input:
+    pattern: test-AD-002/**/*email*
+  name: Glob
+  type: tool
+- input:
+    output_mode: files_with_matches
+    path: test-AD-002
+    pattern: email
+  name: Grep
+  type: tool
+- input:
+    output_mode: files_with_matches
+    path: test-AD-002
+    pattern: validat
+  name: Grep
+  type: tool
+- content: 'Found files containing "email" and "validat". Let me examine them:'
+  type: text
+- input:
+    file_path: test-AD-002/src/utils.py
+  name: Read
+  type: tool
+- input:
+    file_path: test-AD-002/src/models.py
+  name: Read
+  type: tool
+- input:
+    file_path: test-AD-002/src/api.py
+  name: Read
+  type: tool
+- content: "⛔ **HALT - Duplication Detected**\n\nFound existing `validate_email()`\
+    \ function in **TWO** locations:\n\n1. **test-AD-002/src/utils.py:41-43** (100%\
+    \ identical)\n2. **test-AD-002/src/models.py:85-87** (100% identical)\n\nBoth\
+    \ implementations:\n```python\ndef validate_email(email: str) -> bool:\n    \"\
+    \"\"Validate email format.\"\"\"\n    return \"@\" in email and \".\" in email.split(\"\
+    @\")[1]\n```\n\n**Options:**\n- **A) Extend existing** - Add more validation logic\
+    \ to one of the existing functions\n- **B) Refactor existing** - Consolidate the\
+    \ duplication (move to single location, update imports)\n- **C) Justify new**\
+    \ - Explain why a third implementation is needed\n\nWhich approach do you want?"
+  type: text
+test_id: AD-002

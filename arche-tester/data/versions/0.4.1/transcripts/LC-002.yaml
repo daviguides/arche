@@ -1,0 +1,43 @@
+prompt: What does test_models.py test?
+steps:
+- type: prompt
+- content: I'll explore the test_models.py file in the test-LC-002 subdirectory to
+    understand what it tests.
+  type: text
+- input:
+    file_path: ./test-LC-002/test_models.py
+  name: Read
+  type: tool
+- content: 'Let me first check what''s in the test-LC-002 directory:'
+  type: text
+- input:
+    command: ls -la ./test-LC-002/
+    description: List contents of test-LC-002 directory
+  name: Bash
+  type: tool
+- content: 'Now let me check the tests directory:'
+  type: text
+- input:
+    pattern: test-LC-002/tests/**/*.py
+  name: Glob
+  type: tool
+- content: 'Found it! Now let me read the test_models.py file:'
+  type: text
+- input:
+    file_path: /private/tmp/arche-test/test-LC-002/tests/test_models.py
+  name: Read
+  type: tool
+- content: "**test_models.py** tests data models and validation functions from `src.models`:\n\
+    \n**Test Classes:**\n1. **TestUser** - User model creation and roles\n   - Basic\
+    \ user creation with default USER role\n   - Admin user creation with ADMIN role\n\
+    \n2. **TestProduct** - Product model and availability\n   - Product availability\
+    \ check (stock > 0)\n   - Out-of-stock detection (stock == 0)\n\n3. **TestOrder**\
+    \ - Order model and calculations\n   - Order total calculation from multiple OrderItems\n\
+    \   - Default order status is PENDING\n\n4. **TestValidation** - Email and username\
+    \ validation functions\n   - Valid email formats (`test@example.com`, `user@domain.org`)\n\
+    \   - Invalid email formats (no `@`, missing domain)\n   - Valid usernames (alphanumeric,\
+    \ 3+ chars)\n   - Invalid usernames (too short, special chars)\n\n**Models tested:**\
+    \ User, Product, Order, OrderItem, UserRole, OrderStatus\n**Functions tested:**\
+    \ `validate_email()`, `validate_username()`"
+  type: text
+test_id: LC-002

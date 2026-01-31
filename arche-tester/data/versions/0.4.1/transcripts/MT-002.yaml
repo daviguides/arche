@@ -1,0 +1,36 @@
+prompt: Show me the User model
+steps:
+- type: prompt
+- content: I'll search for the User model in the `./test-MT-002/` directory.
+  type: text
+- input:
+    path: ./test-MT-002
+    pattern: '**/models.py'
+  name: Glob
+  type: tool
+- input:
+    path: ./test-MT-002
+    pattern: '**/user*.py'
+  name: Glob
+  type: tool
+- input:
+    output_mode: files_with_matches
+    path: ./test-MT-002
+    pattern: class User
+  name: Grep
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-MT-002/src/models.py
+  name: Read
+  type: tool
+- content: "**User model** (lines 19-30 in `test-MT-002/src/models.py`):\n\n```python\n\
+    class User(BaseModel):\n    \"\"\"User model.\"\"\"\n\n    id: int\n    username:\
+    \ str\n    email: str\n    role: UserRole = UserRole.USER\n    created_at: datetime\
+    \ = Field(default_factory=datetime.now)\n\n    # TODO: Add password hashing\n\
+    \    # TODO: Add email validation\n```\n\n**Associated enum** (lines 11-16):\n\
+    \n```python\nclass UserRole(str, Enum):\n    \"\"\"User roles in the system.\"\
+    \"\"\n\n    ADMIN = \"admin\"\n    USER = \"user\"\n    GUEST = \"guest\"\n```\n\
+    \nThe User model is a Pydantic model with basic fields and two pending TODOs for\
+    \ password hashing and email validation."
+  type: text
+test_id: MT-002

@@ -1,0 +1,152 @@
+prompt: Design a caching strategy for the API
+steps:
+- type: prompt
+- content: 'I''ll design a caching strategy for the API in the `./test-PL-001/` subdirectory.
+
+
+    **MODE: PLANNING**
+
+
+    Let me first research the existing API implementation to understand the architecture
+    before designing the caching strategy.'
+  type: text
+- input:
+    command: cd ./test-PL-001 && pwd
+    description: Verify test directory exists
+  name: Bash
+  type: tool
+- input:
+    path: ./test-PL-001
+    pattern: '**/*.{js,ts,py,go,java,rb}'
+  name: Glob
+  type: tool
+- input:
+    path: ./test-PL-001
+    pattern: '**/*api*'
+  name: Glob
+  type: tool
+- input:
+    path: ./test-PL-001
+    pattern: '**/*cache*'
+  name: Glob
+  type: tool
+- input:
+    command: ls -la
+    description: List current directory contents
+  name: Bash
+  type: tool
+- input:
+    command: find /tmp/arche-test/test-PL-001 -type f 2>/dev/null | head -20
+    description: Find files in test directory
+  name: Bash
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PL-001/src/api.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PL-001/src/models.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PL-001/src/utils.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PL-001/config/settings.yaml
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PL-001/pyproject.toml
+  name: Read
+  type: tool
+- content: "Now I have a complete understanding of the API structure. Let me design\
+    \ a comprehensive caching strategy.\n\n---\n\n## API Caching Strategy Design\n\
+    \n### Current Architecture Analysis\n\n**Technology Stack**: Python with Pydantic\
+    \ models, in-memory storage  \n**Endpoints**: Users (3), Products (3), Orders\
+    \ (3)  \n**Existing Cache Config**: `settings.yaml` has basic cache settings (TTL:\
+    \ 300s, max_size: 1000)\n\n---\n\n### Caching Strategy Options\n\n#### **Option\
+    \ A: Multi-Layer Caching (Recommended)**\n\n**Architecture**:\n1. **L1 - In-Memory\
+    \ Cache** (application-level)\n   - LRU cache with TTL per endpoint type\n   -\
+    \ Fast lookups (<1ms), no network overhead\n   - Suitable for frequently accessed,\
+    \ relatively static data\n\n2. **L2 - Redis Cache** (distributed)\n   - Shared\
+    \ across multiple API instances\n   - Handles cache invalidation across services\n\
+    \   - Supports pub/sub for cache invalidation events\n\n3. **Cache-Aside Pattern**\n\
+    \   - Check cache → if miss → fetch from DB → populate cache\n\n**Endpoint-Specific\
+    \ Strategy**:\n\n```\nget_user(id)         → L1: 5min TTL  | L2: 15min TTL\nlist_users(role)\
+    \     → L1: 2min TTL  | L2: 5min TTL\nget_product(id)      → L1: 10min TTL | L2:\
+    \ 30min TTL\nlist_products(...)   → L1: 3min TTL  | L2: 10min TTL\nget_order(id)\
+    \        → L1: 1min TTL  | L2: 3min TTL\nlist_orders(user_id) → No cache (frequently\
+    \ changing)\n```\n\n**Invalidation Rules**:\n- `create_user` → invalidate `list_users()`\
+    \ cache\n- `create_product` → invalidate `list_products()` cache\n- `create_order`\
+    \ → invalidate `list_orders(user_id)` and `get_user(id)` caches\n- Updates/deletes\
+    \ → invalidate specific resource + related lists\n\n**Pros**: Best performance,\
+    \ scales horizontally, handles cache consistency  \n**Cons**: More complex, requires\
+    \ Redis infrastructure  \n**Cost**: Medium setup, low operational complexity\n\
+    \n---\n\n#### **Option B: Simple In-Memory Cache**\n\n**Architecture**:\n- Single\
+    \ LRU cache using `functools.lru_cache` or `cachetools`\n- TTL-based expiration\
+    \ per cache key\n- Decorator pattern for easy application\n\n**Implementation**:\n\
+    ```python\n@cache_with_ttl(ttl=300)  # 5 minutes\ndef get_user(user_id: int) ->\
+    \ User:\n    ...\n```\n\n**Cache Keys**: `{function_name}:{args_hash}`\n\n**Invalidation**:\
+    \ Time-based only (no manual invalidation)\n\n**Pros**: Simple, zero infrastructure,\
+    \ fast for single instance  \n**Cons**: No sharing across instances, stale data\
+    \ risk, memory limits  \n**Cost**: Low setup, low complexity\n\n---\n\n#### **Option\
+    \ C: HTTP Cache Headers**\n\n**Architecture**:\n- Return proper `Cache-Control`,\
+    \ `ETag`, `Last-Modified` headers\n- Let clients/CDN/reverse-proxy handle caching\n\
+    - Server validates with `If-None-Match` / `If-Modified-Since`\n\n**Headers Strategy**:\n\
+    ```\nGET /users/{id}     → Cache-Control: max-age=300, public\nGET /products \
+    \      → Cache-Control: max-age=180, public\nGET /orders/{id}    → Cache-Control:\
+    \ no-cache, must-revalidate\nPOST/PUT/DELETE     → Cache-Control: no-store\n```\n\
+    \n**ETags**: Hash of serialized response body\n\n**Pros**: Offloads caching to\
+    \ infrastructure, reduces bandwidth, standard approach  \n**Cons**: No control\
+    \ over client behavior, requires CDN for best results  \n**Cost**: Very low setup,\
+    \ infrastructure-dependent\n\n---\n\n### **Recommended Hybrid Approach**\n\nCombine\
+    \ Option A (in-memory L1) + Option C (HTTP headers):\n\n**Layer 1 - Application\
+    \ Cache**:\n- Cache expensive operations (list queries, aggregations)\n- Use `cachetools.TTLCache`\
+    \ with LRU eviction\n- Targeted invalidation on writes\n\n**Layer 2 - HTTP Headers**:\n\
+    - Add proper cache headers for all GET endpoints\n- Use ETags for conditional\
+    \ requests\n- Allow client/proxy caching where safe\n\n**Why Hybrid?**\n- Reduces\
+    \ server load (application cache)\n- Reduces bandwidth (HTTP cache)\n- Maintains\
+    \ control (invalidation logic)\n- Postpones Redis investment until needed\n\n\
+    ---\n\n### Cache Key Design\n\n**Pattern**: `{resource_type}:{operation}:{params_hash}`\n\
+    \n**Examples**:\n```\nuser:get:42              → get_user(42)\nuser:list:role=admin\
+    \     → list_users(role=ADMIN)\nproduct:list:in_stock=1  → list_products(in_stock_only=True)\n\
+    order:get:123            → get_order(123)\n```\n\n**Benefits**: Human-readable,\
+    \ supports wildcards for invalidation, collision-free\n\n---\n\n### Invalidation\
+    \ Strategy\n\n**Write-Through Invalidation**:\n```python\ncreate_user(...)  →\
+    \ Clear: user:list:*\ncreate_product(...) → Clear: product:list:*\ncreate_order(...)\
+    \   → Clear: order:list:user={user_id}, user:get:{user_id}\n```\n\n**Event-Based**\
+    \ (if using Redis):\n- Publish invalidation events to Redis pub/sub\n- All instances\
+    \ subscribe and clear local caches\n- Eventual consistency (~100ms delay)\n\n\
+    ---\n\n### Cache Warming Strategy\n\n**Cold Start Problem**: First request always\
+    \ misses cache\n\n**Solutions**:\n1. **On-Demand Warming**: First request populates\
+    \ cache (acceptable for most)\n2. **Scheduled Warming**: Cron job pre-populates\
+    \ popular keys (e.g., `list_products()`)\n3. **Read-Ahead**: When fetching single\
+    \ item, speculatively cache related data\n\n**Recommendation**: Start with on-demand,\
+    \ add scheduled for top 10 queries if needed\n\n---\n\n### Monitoring & Observability\n\
+    \n**Metrics to Track**:\n- Cache hit/miss ratio per endpoint\n- Average cache\
+    \ lookup time\n- Cache size and eviction rate\n- Cache invalidation frequency\n\
+    \n**Alerting**:\n- Hit ratio < 50% → Investigate TTL settings\n- Eviction rate\
+    \ > 20% → Increase cache size\n- Lookup time > 5ms → Check cache implementation\n\
+    \n---\n\n### Trade-Offs Summary\n\n| Aspect | Option A (Multi-Layer) | Option\
+    \ B (In-Memory) | Option C (HTTP) | Hybrid (A+C) |\n|--------|------------------------|----------------------|-----------------|--------------|\n\
+    | **Performance** | Excellent | Good | Varies | Excellent |\n| **Consistency**\
+    \ | Good (with invalidation) | Poor (TTL only) | Poor (client-dependent) | Good\
+    \ |\n| **Scalability** | Excellent | Poor | Excellent | Good |\n| **Complexity**\
+    \ | High | Low | Medium | Medium |\n| **Infrastructure** | Redis required | None\
+    \ | CDN optional | None initially |\n| **Best For** | Production, multi-instance\
+    \ | Single instance, dev/test | Public APIs, static content | Most scenarios |\n\
+    \n---\n\n### Implementation Priority\n\n**Phase 1** (Quick Win):\n1. Add in-memory\
+    \ TTL cache to read endpoints\n2. Implement cache key design\n3. Add basic invalidation\
+    \ on writes\n\n**Phase 2** (HTTP Optimization):\n1. Add `Cache-Control` headers\n\
+    2. Implement ETag generation\n3. Handle conditional requests\n\n**Phase 3** (Scale):\n\
+    1. Add Redis layer when horizontal scaling needed\n2. Implement pub/sub invalidation\n\
+    3. Add cache warming for top queries\n\n---\n\n### Configuration Schema\n\n```yaml\n\
+    cache:\n  enabled: true\n  backend: \"memory\"  # memory | redis\n  \n  memory:\n\
+    \    max_size: 1000\n    algorithm: \"lru\"\n  \n  redis:\n    host: \"localhost\"\
+    \n    port: 6379\n    db: 0\n  \n  ttl:\n    default: 300\n    user_get: 300\n\
+    \    user_list: 120\n    product_get: 600\n    product_list: 180\n    order_get:\
+    \ 60\n    order_list: 0  # no cache\n  \n  http_headers:\n    enabled: true\n\
+    \    use_etags: true\n```"
+  type: text
+test_id: PL-001
