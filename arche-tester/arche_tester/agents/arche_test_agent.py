@@ -6,6 +6,7 @@ and collects responses for analysis.
 
 import time
 from pathlib import Path
+from typing import Any
 
 from arche_tester.agents.base_agent import BaseAgent
 from arche_tester.config import ClaudeModel, settings
@@ -65,16 +66,19 @@ class ArcheTestAgent(BaseAgent):
         prompt: str,
         context: str | None = None,
         work_dir: str | None = None,
-    ) -> tuple[str, int]:
+        capture_transcript: bool = False,
+    ) -> tuple[str, int] | tuple[str, int, list[dict[str, Any]]]:
         """Run a test prompt and return response.
 
         Args:
             prompt: Test prompt to send.
             context: Optional additional context.
             work_dir: Subdirectory to work in (for fork_session isolation).
+            capture_transcript: If True, return transcript of all steps.
 
         Returns:
-            Tuple of (response_text, duration_ms).
+            Tuple of (response_text, duration_ms) or
+            (response_text, duration_ms, transcript) if capture_transcript=True.
         """
         full_prompt = prompt
 
@@ -86,10 +90,13 @@ class ArcheTestAgent(BaseAgent):
             full_prompt = f"{full_prompt}\n\nContext:\n{context}"
 
         start_time = time.time()
-        response = await self._call_agent(full_prompt)
+        result = await self._call_agent(full_prompt, capture_transcript=capture_transcript)
         duration_ms = int((time.time() - start_time) * 1000)
 
-        return response, duration_ms
+        if capture_transcript:
+            response, transcript = result
+            return response, duration_ms, transcript
+        return result, duration_ms
 
 
 __all__ = ["ArcheTestAgent"]

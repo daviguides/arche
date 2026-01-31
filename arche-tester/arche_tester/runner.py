@@ -34,6 +34,7 @@ from arche_tester.models import (
     TestResponse,
     TestResponses,
     TestSuite,
+    TranscriptEntry,
 )
 
 
@@ -54,6 +55,7 @@ class TestRunner:
         verbose: bool = True,
         skip_cli_check: bool = True,
         concurrency: int | None = None,
+        capture_transcripts: bool = False,
     ) -> None:
         """Initialize runner.
 
@@ -62,11 +64,13 @@ class TestRunner:
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
             concurrency: Max parallel tests (default: 8).
+            capture_transcripts: Capture full transcript of agent steps.
         """
         self._data_path = data_path
         self._verbose = verbose
         self._skip_cli_check = skip_cli_check
         self._concurrency = concurrency or self.DEFAULT_CONCURRENCY
+        self._capture_transcripts = capture_transcripts
         self._mock_project_path = data_path / "mock-project"
         self._temp_base = settings.test_workspace
 
@@ -146,7 +150,7 @@ class TestRunner:
             task_id: Progress task ID.
 
         Returns:
-            TestResponse with result.
+            TestResponse with result (and transcript if enabled).
         """
         async with semaphore:
             # Create isolated subdirectory for this test
@@ -165,21 +169,33 @@ class TestRunner:
                 )
 
                 # Run test, directing agent to work in subdirectory
-                response_text, duration_ms = await agent.run_test(
+                result = await agent.run_test(
                     prompt=test_case.prompt,
                     context=test_case.context,
-                    work_dir=subdir_name,  # Tell agent to work here
+                    work_dir=subdir_name,
+                    capture_transcript=self._capture_transcripts,
                 )
                 await agent.disconnect()
 
                 # Update progress
                 progress.update(task_id, advance=1)
 
+                # Unpack result based on whether transcripts are captured
+                if self._capture_transcripts:
+                    response_text, duration_ms, raw_transcript = result
+                    transcript = [
+                        TranscriptEntry(**entry) for entry in raw_transcript
+                    ]
+                else:
+                    response_text, duration_ms = result
+                    transcript = None
+
                 return TestResponse(
                     test_id=test_case.id,
                     prompt=test_case.prompt,
                     response=response_text,
                     duration_ms=duration_ms,
+                    transcript=transcript,
                 )
             finally:
                 self._cleanup_test_subdir(test_dir)
@@ -211,6 +227,8 @@ class TestRunner:
         print_step(f"Model: [cyan]{settings.test_agent.model.value}[/cyan]")
         print_step(f"Concurrency: [cyan]{self._concurrency}[/cyan] parallel tests")
         print_step(f"Mode: [cyan]fork_session + parallel[/cyan]")
+        if self._capture_transcripts:
+            print_step("Transcripts: [cyan]enabled[/cyan]")
         console.print()
 
         # Setup base workspace with ALL test directories pre-created
@@ -298,12 +316,41 @@ class TestRunner:
         version: str,
         responses: TestResponses,
     ) -> None:
-        """Save responses to YAML file."""
+        """Save responses to YAML file, with optional transcripts."""
         version_dir = self._data_path / "versions" / version
         version_dir.mkdir(parents=True, exist_ok=True)
 
+        # Save transcripts separately if enabled
+        if self._capture_transcripts:
+            transcripts_dir = version_dir / "transcripts"
+            transcripts_dir.mkdir(exist_ok=True)
+
+            for response in responses.responses:
+                if response.transcript:
+                    transcript_file = transcripts_dir / f"{response.test_id}.yaml"
+                    transcript_data = {
+                        "test_id": response.test_id,
+                        "prompt": response.prompt,
+                        "steps": [entry.model_dump(mode="json", exclude_none=True)
+                                  for entry in response.transcript],
+                    }
+                    with transcript_file.open("w") as f:
+                        yaml.dump(
+                            transcript_data,
+                            f,
+                            default_flow_style=False,
+                            allow_unicode=True,
+                        )
+
+            print_success(f"Transcripts saved: {transcripts_dir}/")
+
+        # Save responses without transcripts (keep file clean)
         output_file = version_dir / "responses.yaml"
-        data = responses.model_dump(mode="json")
+        # Create a copy without transcripts for cleaner YAML
+        responses_clean = responses.model_copy(deep=True)
+        for resp in responses_clean.responses:
+            resp.transcript = None
+        data = responses_clean.model_dump(mode="json", exclude_none=True)
 
         with output_file.open("w") as f:
             yaml.dump(data, f, default_flow_style=False, allow_unicode=True)

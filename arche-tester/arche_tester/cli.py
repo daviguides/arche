@@ -57,6 +57,12 @@ def run(
         "-s/-S",
         help="Skip Claude CLI check (default: skip)",
     ),
+    transcripts: bool = typer.Option(
+        False,
+        "--transcripts/--no-transcripts",
+        "-t/-T",
+        help="Capture full transcripts of agent steps (for debugging)",
+    ),
 ) -> None:
     """Run functional tests for a version."""
     runner = TestRunner(
@@ -64,6 +70,7 @@ def run(
         verbose=verbose,
         skip_cli_check=skip_cli_check,
         concurrency=concurrency,
+        capture_transcripts=transcripts,
     )
 
     asyncio.run(runner.run_suite(version=version))

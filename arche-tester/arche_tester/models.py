@@ -15,6 +15,8 @@ Example:
 """
 
 from enum import Enum
+from typing import Any
+
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -159,6 +161,24 @@ class TestSuite(BaseModel):
     test_cases: list[TestCase]
 
 
+class TranscriptEntry(BaseModel):
+    """Single entry in a test transcript.
+
+    Captures either a text response or a tool call from the agent.
+
+    Attributes:
+        type: Either "text" or "tool".
+        content: Text content (for type="text").
+        name: Tool name (for type="tool").
+        input: Tool input parameters (for type="tool").
+    """
+
+    type: str = Field(description="'text' or 'tool'")
+    content: str | None = Field(default=None, description="Text content")
+    name: str | None = Field(default=None, description="Tool name")
+    input: dict[str, Any] | None = Field(default=None, description="Tool input")
+
+
 class TestResponse(BaseModel):
     """Response captured from an agent for a test case.
 
@@ -170,6 +190,7 @@ class TestResponse(BaseModel):
         response: The raw response text from the agent.
         duration_ms: Response time in milliseconds, if measured.
         tokens_used: Number of tokens consumed, if available.
+        transcript: Full transcript of agent steps (optional).
     """
 
     test_id: str
@@ -177,6 +198,10 @@ class TestResponse(BaseModel):
     response: str
     duration_ms: int | None = None
     tokens_used: int | None = None
+    transcript: list[TranscriptEntry] | None = Field(
+        default=None,
+        description="Full transcript of agent steps",
+    )
 
 
 class TestResponses(BaseModel):

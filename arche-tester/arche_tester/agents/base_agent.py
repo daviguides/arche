@@ -5,12 +5,13 @@ Provides common functionality for all agents:
 - Connection management (lazy)
 - Verbose logging
 - Agent SDK calls with streaming
+- Transcript capture for debugging
 """
 
 import subprocess
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Final
+from typing import Any, Final
 
 from claude_agent_sdk import (  # type: ignore[import-untyped]
     AssistantMessage,
@@ -153,14 +154,19 @@ class BaseAgent(ABC):
         if self._verbose:
             self._console.print(f"  [{style}]{message}[/{style}]")
 
-    async def _call_agent(self, prompt: str) -> str:
+    async def _call_agent(
+        self,
+        prompt: str,
+        capture_transcript: bool = False,
+    ) -> str | tuple[str, list[dict[str, Any]]]:
         """Call Agent SDK and collect response.
 
         Args:
             prompt: Prompt to send.
+            capture_transcript: If True, return (response, transcript) tuple.
 
         Returns:
-            Response text (last text block).
+            Response text (last text block), or tuple with transcript if requested.
 
         Raises:
             ValueError: If no text in response.
@@ -171,6 +177,7 @@ class BaseAgent(ABC):
         await self._client.query(prompt)
 
         text_blocks: list[str] = []
+        transcript: list[dict[str, Any]] = []
         tool_count = 0
 
         async for message in self._client.receive_messages():
@@ -180,9 +187,20 @@ class BaseAgent(ABC):
                         text_blocks.append(block.text)
                         preview = block.text[:80].replace("\n", " ")
                         self._log(f"TextBlock: {preview}...")
+                        if capture_transcript:
+                            transcript.append({
+                                "type": "text",
+                                "content": block.text,
+                            })
                     elif isinstance(block, ToolUseBlock):
                         tool_count += 1
                         self._log(f"Tool: {block.name}", "cyan")
+                        if capture_transcript:
+                            transcript.append({
+                                "type": "tool",
+                                "name": block.name,
+                                "input": block.input,
+                            })
 
             elif isinstance(message, ResultMessage):
                 self._session_id = message.session_id
@@ -196,7 +214,10 @@ class BaseAgent(ABC):
                 f"[{self.agent_name}] No text in agent response"
             )
 
-        return text_blocks[-1]
+        response = text_blocks[-1]
+        if capture_transcript:
+            return response, transcript
+        return response
 
 
 __all__ = ["BaseAgent", "DependencyError", "MAX_RETRIES"]
