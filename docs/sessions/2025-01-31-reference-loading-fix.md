@@ -175,6 +175,7 @@ c3fa199 feat(v0.3.6): remove hierarchy, enforce all 11 files mandatory
 
 ## Próximos Passos
 
+- [ ] Tornar `--transcripts` o padrão no arche-tester (cli.py default=True)
 - [ ] Rodar arche-tester v0.3.6 com transcripts
 - [ ] Validar se PE-001 passa com pre-create-checkpoint carregado
 - [ ] Se pass rate ≥85%, considerar v0.3.6 como nova baseline
