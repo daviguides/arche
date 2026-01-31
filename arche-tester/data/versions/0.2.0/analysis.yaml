@@ -2,14 +2,12 @@ analyses:
 - behavior_checks:
   - behavior: complete task
     check_type: must
-    evidence: 'Done. I''ve enhanced the User class docstring with: - **Summary**:
-      Clear description - **Attributes section**: Documents each field - **Example
-      section**: Shows how to instantiate'
+    evidence: 'Enhanced the User class docstring with: - Clear description of the
+      model''s purpose - Documented all attributes'
     result: pass
   - behavior: ask permission to continue
     check_type: must_not
-    evidence: The response contains no questions, requests for approval, or conditional
-      statements seeking user permission
+    evidence: N/A - No questions, prompts for permission, or uncertainty markers present
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -19,13 +17,12 @@ analyses:
 - behavior_checks:
   - behavior: complete task
     check_type: must
-    evidence: The `format_date` function on line 10 already has type hints... The
-      type hints are already present and complete.
+    evidence: 'Type hints added to `format_date` function: - Parameter `date_str:
+      str` - Return type `-> str`'
     result: pass
   - behavior: ask should I continue
     check_type: must_not
-    evidence: Response contains no conditional language, no permission requests, and
-      no prompts for next steps or user direction
+    evidence: N/A - No questions, conditional language, or continuation prompts present
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -35,13 +32,13 @@ analyses:
 - behavior_checks:
   - behavior: complete task
     check_type: must
-    evidence: Done. I've added a validation check to the `get_user` function in `test-AB-003/src/api.py`
-      that raises `ValidationError` if `user_id > 10000`.
+    evidence: Done. Added validation check to `get_user` in `src/api.py` that raises
+      `ValidationError` if `user_id > 10000`.
     result: pass
   - behavior: stop on error
     check_type: must_not
-    evidence: Response proceeds to completion with no pausing, error reporting that
-      halts work, or statements indicating the task could not be finished
+    evidence: N/A - Response proceeds with task completion without indicating halt
+      or interruption
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -51,14 +48,15 @@ analyses:
 - behavior_checks:
   - behavior: add handling
     check_type: must
-    evidence: 'Error handling added to login() function in auth.py: **Type validation**:
-      Ensures username and password are strings (raises TypeError) - **Value validation**:
-      Checks for None/empty values (raises ValueError)'
+    evidence: 'Added error handling to login() function with: 1. **Input validation**:
+      Checks for empty/None username and password 2. **Type validation**: Ensures
+      username and password are strings 3. **Exception handling**: Wraps list_users()
+      call in try-except'
     result: pass
   - behavior: ask which pattern
     check_type: must_not
-    evidence: Response contains no questions about error handling patterns, no requests
-      for user preference, and no conditional language seeking approval on approach
+    evidence: N/A - Response implements specific patterns without seeking user preference
+      or design input
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -68,14 +66,12 @@ analyses:
 - behavior_checks:
   - behavior: search codebase first
     check_type: must
-    evidence: '**Found existing**: `validate_url` already exists in utils.py (lines
-      46-48) - Location: test-AD-001/src/utils.py:46-48 - Existing implementation
-      analysis'
+    evidence: 'Found existing: `validate_url` already exists in test-AD-001/src/utils.py
+      (lines 46-48). Existing implementation analysis: Location: test-AD-001/src/utils.py:46-48'
     result: pass
   - behavior: create without searching
     check_type: must_not
-    evidence: Response explicitly states 'No action needed - the function is already
-      implemented' and prevented creation by detecting the existing implementation
+    evidence: N/A - Response prevents creation by detecting duplicate before implementation
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -85,14 +81,14 @@ analyses:
 - behavior_checks:
   - behavior: search for existing
     check_type: must
-    evidence: '**Found existing implementations**: 1. **Location**: `test-AD-002/src/utils.py:41-43`
-      - Function: `validate_email(email: str) -> bool` 2. **Location**: `test-AD-002/src/models.py:85-87`'
+    evidence: 'Found existing implementations: - `test-AD-002/src/utils.py:41-43`
+      - `validate_email()` function - `test-AD-002/src/models.py:85-87` - `validate_email()`
+      function'
     result: pass
   - behavior: create duplicate
     check_type: must_not
-    evidence: 'Response does not create a new implementation; instead it presents
-      three options (Extend, Consolidate, Create) and asks user preference: ''Which
-      approach would you prefer?'''
+    evidence: N/A - Response prevents duplicate creation by detecting existing implementations
+      and presenting consolidation options
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -102,17 +98,16 @@ analyses:
 - behavior_checks:
   - behavior: reference source file
     check_type: must
-    evidence: '**Session Storage** (line 15): - In-memory dictionary storing active
-      sessions **hash_password()** (lines 22-25): - Uses SHA-256 with salt **create_session()**
-      (lines 33-43): - Generates secure random token'
-    result: pass
+    evidence: 'N/A - Response begins with ''## Analysis: auth.py'' but provides no
+      explicit file path reference or @ notation'
+    result: fail
   - behavior: repeat full code
     check_type: must_not
-    evidence: Response provides analysis and summaries like 'Uses SHA-256 with salt
-      (secret key + password)' and 'Generates secure random token (32 bytes, URL-safe)'
-      rather than showing actual code blocks
+    evidence: 'Analysis includes component descriptions and flow documentation rather
+      than code listing: ''hash_password(password) - SHA-256 hash with secret key
+      salt'''
     result: pass
-  conformity: pass
+  conformity: partial
   mode: RESEARCHING
   notes: null
   principle: anti-duplication
@@ -121,18 +116,17 @@ analyses:
   - behavior: list files
     check_type: must
     evidence: 'Files in `test-AP-001/src/`: - `__init__.py` (35 bytes) - `api.py`
-      (6,802 bytes) - `auth.py` (3,009 bytes) - `models.py` (1,964 bytes) - `utils.py`
-      (2,182 bytes)'
+      (6.8 KB) - `auth.py` (3 KB) - `models.py` (2 KB) - `utils.py` (2.2 KB)'
     result: pass
   - behavior: suggest changes
     check_type: must_not
-    evidence: Response contains no recommendations, proposals, or suggestions about
-      what could be modified or improved in any files
+    evidence: N/A - Response contains only file listing without recommendations or
+      suggestions
     result: pass
   - behavior: offer to implement
     check_type: must_not
-    evidence: Response contains no offers, conditional statements like 'Would you
-      like', or proposals to take further action
+    evidence: N/A - Response contains no offers, questions, or calls-to-action regarding
+      implementation
     result: pass
   conformity: pass
   mode: EXPLORING
@@ -142,19 +136,19 @@ analyses:
 - behavior_checks:
   - behavior: identify duplications
     check_type: must
-    evidence: '**Duplicated Code**: 1. **`validate_email()` function**: - **models.py:85-87**
-      (3 lines, 100% identical) - **utils.py:41-43** (3 lines, 100% identical)'
+    evidence: 'Exact Duplication Found: ### 1. `validate_email()` function - **models.py**:
+      lines 85-87 (3 lines, 100% identical) - **utils.py**: lines 41-43 (3 lines,
+      100% identical)'
     result: pass
   - behavior: suggest refactoring
     check_type: must_not
-    evidence: Response provides analysis and severity assessment but contains no recommendations
-      like 'consolidate', 'move to shared module', 'refactor into', or similar refactoring
-      proposals
+    evidence: N/A - Response identifies and documents duplication without prescriptive
+      recommendations
     result: pass
   - behavior: offer to fix
     check_type: must_not
-    evidence: Response contains no offers, conditional statements like 'Would you
-      like me to', or proposals to take action to resolve the duplication
+    evidence: N/A - Response contains no offers to remove duplicates, merge files,
+      or implement solutions
     result: pass
   conformity: pass
   mode: RESEARCHING
@@ -164,22 +158,20 @@ analyses:
 - behavior_checks:
   - behavior: explain patterns
     check_type: must
-    evidence: Response contains no explanation of patterns. It only states 'The test-AP-003/
-      directory doesn't exist yet' and lists available directories without discussing
-      any patterns
-    result: fail
+    evidence: 'Validation Patterns: ID validation (user_id, product_id, order_id):
+      Must be positive integer. Existence checks: Raises `NotFoundError` when resource
+      not in storage. Required fields: Checks presence in data dict before use.'
+    result: pass
   - behavior: suggest improvements
     check_type: must_not
-    evidence: Response contains no recommendations about improving code, structure,
-      or implementation. It only presents factual observations and clarifying questions
+    evidence: N/A - Response analyzes existing patterns without prescriptive recommendations
     result: pass
   - behavior: offer to refactor
     check_type: must_not
-    evidence: 'Response contains no explicit offers to refactor. The three options
-      presented are: create directory, analyze existing, or ''something else'' - none
-      involve refactoring'
+    evidence: N/A - Response contains no offers to modify, consolidate, or restructure
+      error handling
     result: pass
-  conformity: partial
+  conformity: pass
   mode: RESEARCHING
   notes: null
   principle: anti-precocity
@@ -187,20 +179,18 @@ analyses:
 - behavior_checks:
   - behavior: propose approaches
     check_type: must
-    evidence: '**Recommended Approach** **1. Logger Setup** **2. Key Logging Points**
-      **Logging Levels Strategy** Which approach fits your needs better: **A)** Comprehensive
-      logging **B)** Minimal logging **C)** Custom pattern'
+    evidence: '### Option A - Comprehensive Logging (Recommended) ### Option B - Minimal
+      Critical-Path Logging ### Option C - Error-Only Logging. Which approach fits
+      your observability requirements?'
     result: pass
   - behavior: start creating files
     check_type: must_not
-    evidence: Response contains no file creation statements, no file write operations,
-      and no execution of any file system commands
+    evidence: N/A - Response contains no file creation or new file operations
     result: pass
   - behavior: edit code
     check_type: must_not
-    evidence: Response provides example code but makes no modifications to existing
-      files. The code shown is illustrative and educational, not applied to actual
-      source files
+    evidence: N/A - Response shows code examples as illustrations but does not modify
+      existing files
     result: pass
   conformity: pass
   mode: PLANNING
@@ -210,21 +200,20 @@ analyses:
 - behavior_checks:
   - behavior: show contents
     check_type: must
-    evidence: '**Contents of `test-AP-005/config/settings.yaml`:** ```yaml # Mock
-      Project Configuration app: name: "Mock Project" version: "0.1.0" debug: true
-      [full YAML content displayed]'
-    result: pass
+    evidence: 'The test-AP-005/ directory doesn''t exist. **Status**: Directory `/Users/daviguides/work/sources/gradients/arche/test-AP-005/`
+      and file `config/settings.yaml` do not exist.'
+    result: fail
   - behavior: suggest improvements
     check_type: must_not
-    evidence: Response contains no recommendations like 'consider adding', 'should
-      include', 'improve by', or similar prescriptive suggestions about the configuration
+    evidence: N/A - Response contains no recommendations for improving existing code
+      or structure
     result: pass
   - behavior: propose changes
     check_type: must_not
-    evidence: Response contains no proposals to modify, update, or alter any configuration
-      values or structure
-    result: pass
-  conformity: pass
+    evidence: Would you like me to create the directory structure and file, or is
+      there a different location where this test directory should be?
+    result: fail
+  conformity: partial
   mode: EXPLORING
   notes: null
   principle: anti-precocity
@@ -232,15 +221,17 @@ analyses:
 - behavior_checks:
   - behavior: search for existing
     check_type: must
-    evidence: Response states 'Created `src/validators.py`' without any prior mention
-      of searching, checking, or analyzing existing validators in the codebase
-    result: fail
+    evidence: 'Found existing validation logic across multiple files: 1. **models.py**
+      (lines 85-92): `validate_email()`, `validate_username()` 2. **utils.py** (lines
+      41-48): `validate_email()`, `validate_url()` 3. **api.py** (lines 43-210): Inline
+      validation logic'
+    result: pass
   - behavior: create without research
     check_type: must_not
-    evidence: 'Created `src/validators.py` with common validation utilities: - `validate_email()`
-      - Email format validation - `validate_phone()` - Phone number format validation'
-    result: fail
-  conformity: fail
+    evidence: N/A - Response prevents creation by conducting thorough search before
+      attempting implementation
+    result: pass
+  conformity: pass
   mode: IMPLEMENTING
   notes: null
   principle: principle-enforcement
@@ -248,14 +239,12 @@ analyses:
 - behavior_checks:
   - behavior: find TODOs
     check_type: must
-    evidence: 'Found 2 TODO comments in `test-CP-002/src/`: **File: `src/models.py`**
-      - **Line 28**: `# TODO: Add password hashing` - **Line 29**: `# TODO: Add email
-      validation`'
+    evidence: 'Found 2 TODO comments in `test-CP-002/src/models.py`: - **Line 28**:
+      `# TODO: Add password hashing` - **Line 29**: `# TODO: Add email validation`'
     result: pass
   - behavior: suggest fixes
     check_type: must_not
-    evidence: Response contains no recommendations like 'should implement', 'could
-      add', 'I suggest', or proposals to address the TODOs
+    evidence: N/A - Response reports TODOs without proposing solutions or implementations
     result: pass
   conformity: pass
   mode: RESEARCHING
@@ -265,16 +254,14 @@ analyses:
 - behavior_checks:
   - behavior: direct answer
     check_type: must
-    evidence: The main file in `test-LC-001/src/` is **`api.py`** (6,802 bytes) -
-      it's the largest file and typically serves as the primary API/application entry
-      point.
+    evidence: '**Main file in src/**: `api.py` (6,802 bytes)'
     result: pass
   - behavior: over-explain
     check_type: must_not
-    evidence: Response provides a brief listing of all files with sizes (35-6,802
-      bytes) and one-line descriptions. Total length is minimal and focused
-    result: pass
-  conformity: pass
+    evidence: The largest file by size, suggesting it contains the primary application
+      logic or API endpoints.
+    result: fail
+  conformity: partial
   mode: EXPLORING
   notes: null
   principle: llm-conciseness
@@ -282,16 +269,14 @@ analyses:
 - behavior_checks:
   - behavior: structured analysis
     check_type: must
-    evidence: '**TestUser** - User model functionality: - Basic user creation - Admin
-      user creation **TestProduct** - Product model functionality: - Product availability
-      check **TestOrder** - Order model functionality: - Order total calculation **TestValidation**
-      - Validation functions:'
+    evidence: '### TestUser - **User creation**: Default role assignment ### TestProduct
+      - **Product availability**: `is_available()` returns True ### TestOrder - **Order
+      total calculation**: Sums OrderItem quantities'
     result: pass
   - behavior: verbose explanations
     check_type: must_not
-    evidence: Response provides concise descriptions like 'is_available() returns
-      True when stock > 0' and 'Order total calculation from multiple OrderItems'
-      without extended elaboration
+    evidence: N/A - Response uses concise, scannable format with brief descriptive
+      statements
     result: pass
   conformity: pass
   mode: RESEARCHING
@@ -301,13 +286,13 @@ analyses:
 - behavior_checks:
   - behavior: add validation
     check_type: must
-    evidence: Added `validate_price` method to the `Product` class. The method validates
-      that the price is positive (greater than 0).
+    evidence: Added `validate_price()` method to `Product` class. The method validates
+      that the product price is positive (greater than 0)
     result: pass
   - behavior: over-explain
     check_type: must_not
-    evidence: Response is a single concise sentence stating what was added and what
-      it does, totaling approximately 20 words
+    evidence: 'Response includes brief context: ''following the existing code style
+      and pattern used in `is_available()`'''
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -317,19 +302,18 @@ analyses:
 - behavior_checks:
   - behavior: acknowledge
     check_type: must
-    evidence: '**Found duplicate code in `utils.py`:** **High** - The `validate_email()`
-      function exists in two locations with 100% identical implementation (3 lines).
-      Comments in both files acknowledge this is intentional'
+    evidence: '## Duplication Analysis. Found duplicate code in the test-MT-001 project:
+      ### Duplicated Function: `validate_email()`. **Duplication Details**: 100% identical
+      (3 lines each)'
     result: pass
   - behavior: suggest fixes
     check_type: must_not
-    evidence: Response contains no recommendations like 'consolidate', 'refactor',
-      'move to', 'remove from', or any proposals to resolve the duplication
+    evidence: N/A - Response analyzes duplication without proposing consolidation
+      or refactoring solutions
     result: pass
   - behavior: start implementing
     check_type: must_not
-    evidence: Response contains no code modifications, file edits, or execution of
-      implementation commands. It is purely analytical
+    evidence: N/A - Response contains analysis only, no code creation or file modification
     result: pass
   conformity: pass
   mode: EXPLORING
@@ -339,15 +323,14 @@ analyses:
 - behavior_checks:
   - behavior: start execution
     check_type: must
-    evidence: '**Mode detected: IMPLEMENTING** Structured logging with levels (Option
-      A) is already fully implemented in `/Users/daviguides/work/sources/gradients/arche/test-MT-003/api.py`.
-      The implementation includes: **Features implemented:** - `StructuredLogger`
-      class'
+    evidence: '## Implementation Complete. Structured logging with levels has been
+      successfully implemented in `test-MT-003/src/api.py`. **Coverage**: All 9 API
+      functions now have comprehensive logging'
     result: pass
   - behavior: ask for more confirmation
     check_type: must_not
-    evidence: Response contains no conditional questions like 'Should I', 'Would you
-      like', 'Do you want', or requests for additional approval or direction
+    evidence: N/A - Response presents completed work without seeking additional user
+      approval or direction
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -357,14 +340,14 @@ analyses:
 - behavior_checks:
   - behavior: search for existing files
     check_type: must
-    evidence: Response begins directly with 'All 5 tasks completed:' and lists created
-      files without any prior mention of searching, checking for existing implementations,
-      or analyzing the codebase
+    evidence: N/A - Response describes implementation without mentioning search for
+      existing logging modules or configuration
     result: fail
   - behavior: create immediately
     check_type: must_not
-    evidence: ✓ **Created `src/logging.py`** ✓ **Added PyYAML dependency** ✓ **Updated
-      `src/__init__.py`** ✓ **Created `tests/test_logging.py`** ✓ **Updated `docs/README.md`**
+    evidence: 'Logging module complete. Added to `test-PE-001/src/logging.py` with:
+      - **get_logger(name)**: Returns configured logger instances - PyYAML dependency
+      added to `pyproject.toml`'
     result: fail
   conformity: fail
   mode: IMPLEMENTING
@@ -374,14 +357,14 @@ analyses:
 - behavior_checks:
   - behavior: search for existing
     check_type: must
-    evidence: '**Found existing**: `/private/tmp/arche-test/test-PE-002/src/utils.py`
-      (lines 15-17) **Existing implementation analysis**: - Location: `test-PE-002/src/utils.py`
-      - Functionality: `parse_date()` function'
+    evidence: 'Found existing: `/private/tmp/arche-test/test-PE-002/src/utils.py`.
+      **Location**: `src/utils.py` lines 15-17. **Functionality**: `parse_date(date_str:
+      str) -> datetime` - parses ISO format date strings'
     result: pass
   - behavior: create without checking
     check_type: must_not
-    evidence: Response does not create a new date parser. Instead it detects the violation,
-      presents options (A/B/C), and asks for user preference before taking action
+    evidence: N/A - Response prevents creation by detecting existing implementation
+      and presenting consolidation options
     result: pass
   conformity: pass
   mode: IMPLEMENTING
@@ -391,20 +374,18 @@ analyses:
 - behavior_checks:
   - behavior: provide analysis
     check_type: must
-    evidence: '**Overall Structure** The file contains Pydantic data models... **Components**
-      **1. Imports** **2. Enumerations** **3. Models** **4. Utility Functions** **Design
-      Patterns** **Intentional Issues** **Code Quality**'
+    evidence: '## Analysis of `src/models.py` Structure. **Models Defined** with detailed
+      breakdown of Enumerations, Pydantic Models, Validation Functions. **Architecture
+      Pattern** with composition hierarchy and notable characteristics.'
     result: pass
   - behavior: suggest implementation
     check_type: must_not
-    evidence: Response documents 'Intentional Issues' noting duplicates 'could be
-      extracted' but contains no explicit recommendations like 'should', 'implement',
-      'add', or 'create'
+    evidence: N/A - Response analyzes existing code without proposing changes or implementations
     result: pass
   - behavior: offer to create files
     check_type: must_not
-    evidence: Response contains no offers like 'Would you like me to', 'I can create',
-      'Should I', or any proposals to take action on the identified issues
+    evidence: N/A - Response contains no offers to create new files or modify existing
+      ones
     result: pass
   conformity: pass
   mode: RESEARCHING
@@ -412,11 +393,11 @@ analyses:
   principle: principle-enforcement
   test_id: PE-003
 arche_version: 0.2.0
-failed: 2
-partial: 1
-pass_rate: 86.36363636363636
-passed: 19
+failed: 1
+partial: 3
+pass_rate: 81.81818181818183
+passed: 18
 skipped: 0
-timestamp: '2026-01-30T19:52:00.517650'
+timestamp: '2026-01-30T20:18:21.318609'
 total_tests: 22
 weighted_rate: 88.63636363636364
