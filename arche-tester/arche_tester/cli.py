@@ -58,10 +58,10 @@ def run(
         help="Skip Claude CLI check (default: skip)",
     ),
     transcripts: bool = typer.Option(
-        False,
+        True,
         "--transcripts/--no-transcripts",
         "-t/-T",
-        help="Capture full transcripts of agent steps (for debugging)",
+        help="Capture full transcripts of agent steps (default: enabled)",
     ),
 ) -> None:
     """Run functional tests for a version."""
@@ -217,6 +217,12 @@ def baseline(
         "-l/-L",
         help="Use LLM-based semantic analysis (default) or keyword matching",
     ),
+    transcripts: bool = typer.Option(
+        True,
+        "--transcripts/--no-transcripts",
+        "-t/-T",
+        help="Capture full transcripts of agent steps (default: enabled)",
+    ),
 ) -> None:
     """Run baseline tests (v0.1.0) and analyze."""
     print_header("Baseline Execution", "0.1.0")
@@ -230,6 +236,7 @@ def baseline(
         verbose=True,
         skip_cli_check=skip_cli_check,
         concurrency=concurrency,
+        capture_transcripts=transcripts,
     )
     asyncio.run(runner.run_suite(version="0.1.0"))
 
