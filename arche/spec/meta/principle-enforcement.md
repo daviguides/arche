@@ -58,6 +58,9 @@ read {discovered-file-path}     # Understand existing code
 ❌ User: "Create auth module" → LLM immediately creates auth.py
 ✅ User: "Create auth module" → LLM searches first, finds existing, asks how to proceed
 
+For detailed compliance procedure and examples:
+@~/.claude/arche/context/guides/pre-create-checkpoint.md
+
 ### Checkpoint 2: Anti-Duplication Gate
 
 If similar code exists → HALT and report:
