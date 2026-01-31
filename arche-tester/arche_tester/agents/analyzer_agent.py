@@ -30,9 +30,6 @@ class AnalysisResult(BaseModel):
     evaluations: list[BehaviorEvaluation]
 
 
-LOAD_PROMPT_PATH = "prompts/load-essential.md"
-
-
 class AnalyzerAgent(BaseAgent):
     """Agent for semantic behavior analysis.
 
@@ -47,7 +44,6 @@ class AnalyzerAgent(BaseAgent):
         verbose: bool = True,
         skip_cli_check: bool = False,
         model: ClaudeModel | None = None,
-        arche_path: Path | None = None,
     ) -> None:
         """Initialize analyzer agent.
 
@@ -56,7 +52,6 @@ class AnalyzerAgent(BaseAgent):
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check.
             model: Claude model (defaults to settings.analyzer_agent.model).
-            arche_path: Path to Arché bundle (for loading principles).
         """
         super().__init__(
             cwd=cwd,
@@ -65,23 +60,14 @@ class AnalyzerAgent(BaseAgent):
             model=model or settings.analyzer_agent.model,
             permission_mode=settings.analyzer_agent.permission_mode,
         )
-        self._arche_path = arche_path
 
     async def load_arche_principles(self) -> str:
-        """Load Arché principles into agent context.
+        """Load Arché principles using the installed plugin.
 
         Returns:
             Response confirming principles loaded.
-
-        Raises:
-            ValueError: If arche_path not provided.
         """
-        if not self._arche_path:
-            raise ValueError("arche_path required to load principles")
-
-        load_prompt = self._arche_path / LOAD_PROMPT_PATH
-        prompt = f"Load Arche principles from: {load_prompt}"
-        return await self._call_agent(prompt)
+        return await self._call_agent("/arche:load-essential")
 
     @property
     def agent_name(self) -> str:

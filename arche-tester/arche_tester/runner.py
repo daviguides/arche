@@ -49,7 +49,6 @@ class TestRunner:
 
     def __init__(
         self,
-        arche_path: Path,
         data_path: Path,
         verbose: bool = True,
         skip_cli_check: bool = False,
@@ -58,19 +57,17 @@ class TestRunner:
         """Initialize runner.
 
         Args:
-            arche_path: Path to arche bundle.
             data_path: Path to data directory.
             verbose: Enable detailed logging.
             skip_cli_check: Skip Claude CLI check (for nested sessions).
-            concurrency: Max parallel tests (default: 4).
+            concurrency: Max parallel tests (default: 8).
         """
-        self._arche_path = arche_path
         self._data_path = data_path
         self._verbose = verbose
         self._skip_cli_check = skip_cli_check
         self._concurrency = concurrency or self.DEFAULT_CONCURRENCY
         self._mock_project_path = data_path / "mock-project"
-        self._temp_base = Path("/tmp/arche-test")
+        self._temp_base = settings.test_workspace
 
     def load_test_suite(self) -> TestSuite:
         """Load test cases from YAML."""
@@ -158,8 +155,7 @@ class TestRunner:
             try:
                 # Fork from base session (same cwd, principles already loaded)
                 agent = ArcheTestAgent(
-                    arche_path=self._arche_path,
-                    cwd=self._temp_base,  # Same cwd as base session
+                    cwd=self._temp_base,
                     verbose=False,
                     skip_cli_check=self._skip_cli_check,
                     resume=base_session_id,
@@ -223,7 +219,6 @@ class TestRunner:
         # Create base session and load principles once
         print_step("Loading Arché principles (base session)...")
         base_agent = ArcheTestAgent(
-            arche_path=self._arche_path,
             cwd=self._temp_base,
             verbose=False,
             skip_cli_check=self._skip_cli_check,

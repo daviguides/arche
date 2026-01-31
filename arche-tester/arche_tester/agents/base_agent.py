@@ -22,7 +22,7 @@ from claude_agent_sdk import (  # type: ignore[import-untyped]
 )
 from rich.console import Console
 
-from arche_tester.config import ClaudeModel
+from arche_tester.config import ClaudeModel, settings
 
 MAX_RETRIES: Final[int] = 3
 
@@ -81,6 +81,7 @@ class BaseAgent(ABC):
             cwd=self._cwd,
             resume=resume,
             fork_session=fork_session,
+            setting_sources=settings.claude_options.setting_sources,
         )
 
         self._client = ClaudeSDKClient(options=options)

@@ -5,9 +5,14 @@ Uses pydantic-settings for type-safe environment variable loading.
 
 from enum import StrEnum
 from pathlib import Path
+from typing import Final
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Constants
+DEFAULT_SETTING_SOURCES: Final[list[str]] = ["user", "project", "local"]
+DEFAULT_TEST_WORKSPACE: Final[Path] = Path("/tmp/arche-test")
 
 
 class ClaudeModel(StrEnum):
@@ -21,10 +26,18 @@ class ClaudeModel(StrEnum):
     OPUS = "opus"
 
 
+class ClaudeOptions(BaseSettings):
+    """Claude SDK options."""
+
+    setting_sources: list[str] = Field(
+        default_factory=lambda: list(DEFAULT_SETTING_SOURCES)
+    )
+
+
 class TestAgentSettings(BaseSettings):
     """Settings for ArcheTestAgent (runs test prompts)."""
 
-    model: ClaudeModel = ClaudeModel.SONNET  # Good balance of speed/quality
+    model: ClaudeModel = ClaudeModel.SONNET
     allowed_tools: list[str] = Field(default_factory=lambda: ["Read", "Glob", "Grep"])
     permission_mode: str = "bypassPermissions"
     include_partial_messages: bool = True
@@ -33,8 +46,8 @@ class TestAgentSettings(BaseSettings):
 class AnalyzerAgentSettings(BaseSettings):
     """Settings for AnalyzerAgent (evaluates responses)."""
 
-    model: ClaudeModel = ClaudeModel.HAIKU  # Fast, sufficient for classification
-    allowed_tools: list[str] = Field(default_factory=list)  # No tools needed
+    model: ClaudeModel = ClaudeModel.HAIKU
+    allowed_tools: list[str] = Field(default_factory=list)
     permission_mode: str = "bypassPermissions"
     include_partial_messages: bool = True
 
@@ -49,15 +62,15 @@ class TesterSettings(BaseSettings):
         extra="ignore",
     )
 
+    # Claude SDK options
+    claude_options: ClaudeOptions = Field(default_factory=ClaudeOptions)
+
     # Agent configurations
     test_agent: TestAgentSettings = Field(default_factory=TestAgentSettings)
     analyzer_agent: AnalyzerAgentSettings = Field(default_factory=AnalyzerAgentSettings)
 
     # Paths
-    arche_path: Path = Field(
-        default=Path("../arche"),
-        description="Path to arche bundle directory",
-    )
+    test_workspace: Path = DEFAULT_TEST_WORKSPACE
     data_path: Path = Field(
         default=Path("data"),
         description="Path to test data directory",
@@ -73,8 +86,11 @@ settings = TesterSettings()
 
 __all__ = [
     "ClaudeModel",
+    "ClaudeOptions",
     "TestAgentSettings",
     "AnalyzerAgentSettings",
     "TesterSettings",
     "settings",
+    "DEFAULT_SETTING_SOURCES",
+    "DEFAULT_TEST_WORKSPACE",
 ]
