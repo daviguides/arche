@@ -5,6 +5,7 @@ Display components (panels, tables, progress bars) are defined here.
 Basic console output functions are in utils.py but re-exported for compatibility.
 """
 
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.progress import (
     BarColumn,
@@ -42,6 +43,16 @@ def create_progress_bar() -> Progress:
         TimeElapsedColumn(),
         console=console,
         expand=False,
+    )
+
+
+def create_principles_panel(response: str) -> Panel:
+    """Create panel showing loaded principles with markdown formatting."""
+    return Panel(
+        Markdown(response),
+        title="[green]Principles Loaded[/green]",
+        border_style="green",
+        padding=(1, 2),
     )
 
 

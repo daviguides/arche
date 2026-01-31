@@ -24,6 +24,7 @@ from arche_tester.agents import ArcheTestAgent
 from arche_tester.config import settings
 from arche_tester.display import (
     console,
+    create_principles_panel,
     print_header,
     print_step,
     print_success,
@@ -51,7 +52,7 @@ class TestRunner:
         self,
         data_path: Path,
         verbose: bool = True,
-        skip_cli_check: bool = False,
+        skip_cli_check: bool = True,
         concurrency: int | None = None,
     ) -> None:
         """Initialize runner.
@@ -154,10 +155,11 @@ class TestRunner:
 
             try:
                 # Fork from base session (same cwd, principles already loaded)
+                # skip_cli_check=True: base agent already verified CLI
                 agent = ArcheTestAgent(
                     cwd=self._temp_base,
                     verbose=False,
-                    skip_cli_check=self._skip_cli_check,
+                    skip_cli_check=True,
                     resume=base_session_id,
                     fork_session=True,
                 )
@@ -230,11 +232,7 @@ class TestRunner:
         # Show principles loaded confirmation
         print_step(f"Base session: [dim]{base_session_id[:12]}...[/dim]")
         console.print()
-        console.print("[green]Principles loaded:[/green]")
-        # Show first few lines as confirmation
-        for line in principles_response.strip().split("\n")[:8]:
-            if line.strip():
-                console.print(f"  [dim]{line}[/dim]")
+        console.print(create_principles_panel(principles_response))
         console.print()
 
         # Create semaphore to limit concurrent tests

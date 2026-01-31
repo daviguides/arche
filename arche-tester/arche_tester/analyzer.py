@@ -16,6 +16,7 @@ from arche_tester.config import settings
 from arche_tester.display import (
     console,
     create_analysis_summary,
+    create_principles_panel,
     create_progress_bar,
     create_results_table,
     create_test_panel,
@@ -62,7 +63,7 @@ class ResponseAnalyzer:
         self,
         data_path: Path,
         use_llm: bool = False,
-        skip_cli_check: bool = False,
+        skip_cli_check: bool = True,
     ) -> None:
         """Initialize analyzer.
 
@@ -138,11 +139,7 @@ class ResponseAnalyzer:
 
             # Show principles loaded confirmation
             console.print()
-            console.print("[green]Principles loaded:[/green]")
-            # Show first few lines as confirmation
-            for line in principles_response.strip().split("\n")[:8]:
-                if line.strip():
-                    console.print(f"  [dim]{line}[/dim]")
+            console.print(create_principles_panel(principles_response))
             console.print()
 
     async def analyze_version_async(self, version: str) -> VersionAnalysis:

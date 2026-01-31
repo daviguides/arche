@@ -52,10 +52,10 @@ def run(
         help="Enable verbose output",
     ),
     skip_cli_check: bool = typer.Option(
-        False,
-        "--skip-cli-check",
-        "-s",
-        help="Skip Claude CLI check (for nested sessions)",
+        True,
+        "--skip-cli-check/--check-cli",
+        "-s/-S",
+        help="Skip Claude CLI check (default: skip)",
     ),
 ) -> None:
     """Run functional tests for a version."""
@@ -87,10 +87,10 @@ def analyze(
         help="Use LLM-based semantic analysis (default) or keyword matching",
     ),
     skip_cli_check: bool = typer.Option(
-        False,
-        "--skip-cli-check",
-        "-s",
-        help="Skip Claude CLI check (for nested sessions)",
+        True,
+        "--skip-cli-check/--check-cli",
+        "-s/-S",
+        help="Skip Claude CLI check (default: skip)",
     ),
 ) -> None:
     """Analyze test responses for a version."""
@@ -199,10 +199,10 @@ def baseline(
         help="Number of parallel tests (default: 8)",
     ),
     skip_cli_check: bool = typer.Option(
-        False,
-        "--skip-cli-check",
-        "-s",
-        help="Skip Claude CLI check (for nested sessions)",
+        True,
+        "--skip-cli-check/--check-cli",
+        "-s/-S",
+        help="Skip Claude CLI check (default: skip)",
     ),
     use_llm: bool = typer.Option(
         True,

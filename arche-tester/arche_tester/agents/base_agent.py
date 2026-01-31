@@ -46,7 +46,7 @@ class BaseAgent(ABC):
         self,
         cwd: Path | str,
         verbose: bool = True,
-        skip_cli_check: bool = False,
+        skip_cli_check: bool = True,
         console: Console | None = None,
         model: ClaudeModel | None = None,
         permission_mode: str = "bypassPermissions",

@@ -22,7 +22,7 @@ class ArcheTestAgent(BaseAgent):
         self,
         cwd: Path,
         verbose: bool = True,
-        skip_cli_check: bool = False,
+        skip_cli_check: bool = True,
         model: ClaudeModel | None = None,
         resume: str | None = None,
         fork_session: bool = False,

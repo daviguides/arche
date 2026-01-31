@@ -42,7 +42,7 @@ class AnalyzerAgent(BaseAgent):
         self,
         cwd: Path | str,
         verbose: bool = True,
-        skip_cli_check: bool = False,
+        skip_cli_check: bool = True,
         model: ClaudeModel | None = None,
     ) -> None:
         """Initialize analyzer agent.
