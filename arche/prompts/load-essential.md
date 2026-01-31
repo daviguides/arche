@@ -27,7 +27,7 @@ Load the foundational behavioral principles that govern Claude Code operation.
 
 ## Principles Loaded
 
-**Arché v0.3.4**
+**Arché v0.3.5**
 
 You now operate under Arché principles:
 
