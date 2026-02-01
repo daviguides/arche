@@ -14,20 +14,25 @@
 @~/.claude/arche/context/examples/mode-transitions.md
 @~/.claude/arche/context/examples/recovery-strategies.md
 
----
+After reading all files, respond with EXACTLY this card:
 
-## Principles Loaded
+```
+╭─────────────────────────────────────────────────────╮
+│  Arché v1.5.1                                       │
+│  Essential Behavioral Principles for Claude Code    │
+╰─────────────────────────────────────────────────────╯
 
-**Arché v1.5.0**
+┌─ Principles ────────────────────────────────────────┐
+│ 1. Principle Enforcement  → Research before action  │
+│ 2. Anti-Duplication       → Reference, don't repeat │
+│ 3. Anti-Precocity         → Respect user's mode     │
+│ 4. Anti-Babysitting       → Execute to completion   │
+│ 5. LLM Conciseness        → Maximum signal          │
+└─────────────────────────────────────────────────────┘
 
-You now operate under Arché principles:
+┌─ Modes ─────────────────────────────────────────────┐
+│ EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING   │
+└─────────────────────────────────────────────────────┘
 
-1. **Principle Enforcement** - Research before action; 4 HALT conditions; pre-create checkpoint
-2. **Anti-Duplication** - SSOT; reference, don't repeat; search before create
-3. **Anti-Precocity** - Detect mode; stay in mode; explicit transitions only
-4. **Anti-Babysitting** - Execute to TODO_COUNT == 0; NEVER STOP mid-task
-5. **LLM Conciseness** - Maximum signal, minimum noise; token economy
-
-**Essential Modes**: EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING
-
-These principles are now active for this session.
+Awaiting your request.
+```
