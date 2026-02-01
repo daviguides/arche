@@ -19,12 +19,10 @@ After reading all files, respond with EXACTLY this card:
 ```
 ╭─────────────────────────────────────────────────────╮
 │       ▲                                             │
-│       │                                             │
-│   A R C H É                                         │
-│       │                                             │
+│       │       │  [v1.5.3]                           │
+│   A R C H É   │  Essential Behavioral Principles    │
+│       │       │  for Claude Code                    │
 │                                                     │
-│   [v1.5.2]                                          │
-│   Essential Behavioral Principles for Claude Code   │
 ╰─────────────────────────────────────────────────────╯
 
 ┌─ Principles ────────────────────────────────────────┐
