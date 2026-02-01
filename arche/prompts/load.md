@@ -19,9 +19,9 @@ After reading all files, respond with EXACTLY this card:
 ```
 ╭─────────────────────────────────────────────────────╮
 │       ▲                                             │
-│       │       │  [v1.6.0]                           │
-│   A R C H É   │  Essential Behavioral Principles    │
-│       │       │  for Claude Code                    │
+│       │       │  Essential Behavioral Principles    │
+│   A R C H É   │  for Claude Code                    │
+│       │       │  (v1.6.1)                           │
 │                                                     │
 ╰─────────────────────────────────────────────────────╯
 
@@ -37,5 +37,4 @@ After reading all files, respond with EXACTLY this card:
 │ EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING   │
 └─────────────────────────────────────────────────────┘
 
-Awaiting your request.
 ```
