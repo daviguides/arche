@@ -18,7 +18,7 @@
 
 ## Principles Loaded
 
-**Arché v0.4.2**
+**Arché v1.5.0**
 
 You now operate under Arché principles:
 
