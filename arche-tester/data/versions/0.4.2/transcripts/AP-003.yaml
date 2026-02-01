@@ -1,0 +1,52 @@
+prompt: How does error handling work in api.py?
+steps:
+- full_prompt: 'Work in the `./test-AP-003/` subdirectory (relative to current working
+    directory).
+
+
+    How does error handling work in api.py?'
+  type: prompt
+- content: I'll analyze the error handling in api.py within the ./test-AP-003/ directory.
+  type: text
+- input:
+    file_path: ./test-AP-003/api.py
+  name: Read
+  type: tool
+- input:
+    command: ls -la ./test-AP-003/
+    description: Check if test-AP-003 directory exists
+  name: Bash
+  type: tool
+- input:
+    path: ./test-AP-003
+    pattern: '**/api.py'
+  name: Glob
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-AP-003/src/api.py
+  name: Read
+  type: tool
+- content: "**Error Handling in api.py**\n\nThe file uses a **hierarchical custom\
+    \ exception system** with consistent raise patterns throughout:\n\n**Exception\
+    \ Hierarchy:**\n```\nAPIError (base)\n├── NotFoundError (404)\n└── ValidationError\
+    \ (400)\n```\n\n**Error Handling Patterns:**\n\n1. **Custom Exception Classes**\
+    \ (lines 17-37):\n   - `APIError`: Base with `message` and `status_code` attributes\n\
+    \   - `NotFoundError`: 404 errors for missing resources\n   - `ValidationError`:\
+    \ 400 errors for invalid input\n\n2. **Input Validation** - Errors raised for:\n\
+    \   - Type checking (`isinstance()`)\n   - Range validation (positive integers,\
+    \ non-negative numbers)\n   - Required field presence\n   - Format validation\
+    \ (via `validate_email`, `validate_username`)\n   - Business logic (stock availability,\
+    \ quantity limits)\n\n3. **Validation Locations:**\n   - **ID parameters**: Must\
+    \ be positive integers (lines 43-44, 87-88, 136-137)\n   - **Required fields**:\
+    \ Missing fields raise errors (lines 55-58, 97-102)\n   - **Data types**: Type\
+    \ mismatches caught (lines 105-106, 109-110, 125-126)\n   - **Nested structures**:\
+    \ Array items validated with indexed error messages (lines 160-183)\n\n4. **Error\
+    \ Message Format:**\n   - `ValidationError`: `\"{field}: {message}\"` format\n\
+    \   - `NotFoundError`: `\"{Resource} {id} not found\"` format\n   - Nested errors\
+    \ use dot notation: `\"items[0].product_id\"`\n\n5. **Cascading Validation** (line\
+    \ 154, 205):\n   - Calls to `get_user()` and `get_product()` propagate their exceptions\n\
+    \   - Allows resource existence checks to bubble up naturally\n\n**No try-except\
+    \ blocks** — all errors raised directly to caller for handling at higher level\
+    \ (presumably HTTP framework layer)."
+  type: text
+test_id: AP-003

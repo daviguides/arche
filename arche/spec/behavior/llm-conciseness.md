@@ -2,7 +2,6 @@
 
 **Dogmatic principles for token economy in LLM-optimized content.**
 
----
 
 ## Core Philosophy
 
@@ -14,7 +13,6 @@ Information density = unique concepts / total tokens.
 
 Token economy is virtue. Every wasted token = lost context window space.
 
----
 
 ## Mandatory Rules
 
@@ -79,7 +77,6 @@ Test: "If I remove emoji, does meaning change?" NO → Prohibited.
 - `>` Blockquote: Core principles, TL;DR
 - `---`: ONLY major topic transitions (< 3 per doc)
 
----
 
 ## Detection: Red Flags
 
@@ -91,7 +88,6 @@ Test: "If I remove emoji, does meaning change?" NO → Prohibited.
 - Prose describing code
 - HR overuse (> 3 per doc)
 
----
 
 ## Anti-Patterns
 
@@ -123,7 +119,6 @@ Test: "If I remove emoji, does meaning change?" NO → Prohibited.
 ✅ Use validation.
 ```
 
----
 
 ## Validation
 
@@ -136,7 +131,6 @@ Test: "If I remove emoji, does meaning change?" NO → Prohibited.
 - [ ] HRs < 3 per document?
 - [ ] Lists only for real options?
 
----
 
 ## Remember
 

@@ -2,7 +2,6 @@
 
 **REGRA DOGMÁTICA**: This meta-principle governs HOW to apply all other principles.
 
----
 
 ## Core Rule: Research Before Implementation
 
@@ -18,7 +17,6 @@ THEN proceed with implementation
 
 **VIOLATION = HALT IMMEDIATELY AND REPORT TO USER**
 
----
 
 ## 4 HALT Conditions
 
@@ -42,7 +40,6 @@ THEN proceed with implementation
 - **Check**: Can detect EXPLORING/RESEARCHING/PLANNING/IMPLEMENTING?
 - **If NO**: HALT → Ask user to clarify mode
 
----
 
 ## 4 Mandatory Checkpoints
 
@@ -91,7 +88,6 @@ while TODO_COUNT(pending) > 0:
 report_all_completed()
 ```
 
----
 
 ## Priority Order
 
@@ -102,14 +98,12 @@ When principles conflict:
 4. **anti-babysitting**
 5. **llm-conciseness**
 
----
 
 ## Language Standards
 
 ❌ FORBIDDEN: "should", "recommended", "consider", "might"
 ✅ REQUIRED: "MUST", "HALT", "NEVER", "VIOLATION"
 
----
 
 ## Validation
 
@@ -122,7 +116,6 @@ When principles conflict:
 - [ ] Mode detected?
 - [ ] Response aligned with mode?
 
----
 
 ## Remember
 

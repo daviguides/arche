@@ -1,0 +1,56 @@
+prompt: Add validate_url to utils.py
+steps:
+- full_prompt: 'Work in the `./test-AD-001/` subdirectory (relative to current working
+    directory).
+
+
+    Add validate_url to utils.py'
+  type: prompt
+- content: 'I need to add `validate_url` to `utils.py` in the `./test-AD-001/` directory.
+    Following the principle-enforcement checkpoint, I must research first before creating
+    or modifying files.
+
+
+    **MODE DETECTED: IMPLEMENTING** (user directive: "Add validate_url")
+
+
+    Let me research the codebase first:'
+  type: text
+- input:
+    pattern: test-AD-001/**/*.py
+  name: Glob
+  type: tool
+- input:
+    output_mode: files_with_matches
+    path: test-AD-001
+    pattern: validate_url
+  name: Grep
+  type: tool
+- input:
+    output_mode: content
+    path: test-AD-001
+    pattern: def validate
+  name: Grep
+  type: tool
+- content: '⛔ **HALT - Checkpoint 2: Anti-Duplication Gate**
+
+
+    Found existing `validate_url` in `test-AD-001/src/utils.py` at line 46.
+
+
+    Let me read the file to confirm:'
+  type: text
+- input:
+    file_path: /private/tmp/arche-test/test-AD-001/src/utils.py
+  name: Read
+  type: tool
+- content: "**Found existing implementation**: `validate_url()` already exists in\
+    \ `test-AD-001/src/utils.py` at lines 46-48.\n\nCurrent implementation:\n```python\n\
+    def validate_url(url: str) -> bool:\n    \"\"\"Validate URL format.\"\"\"\n  \
+    \  return url.startswith(\"http://\") or url.startswith(\"https://\")\n```\n\n\
+    **Options**:\n- **A) Extend** — Add functionality to existing function\n- **B)\
+    \ Refactor** — Improve/modify existing implementation  \n- **C) Justify new**\
+    \ — Explain why duplicate is needed\n\nThe function already exists. Please specify\
+    \ what you'd like to do."
+  type: text
+test_id: AD-001

@@ -1,0 +1,61 @@
+prompt: Add a logging module to the project
+steps:
+- full_prompt: 'Work in the `./test-PE-001/` subdirectory (relative to current working
+    directory).
+
+
+    Add a logging module to the project'
+  type: prompt
+- content: 'I''ll add a logging module to the project. Let me follow the principle
+    enforcement procedure: first research the codebase, then proceed.'
+  type: text
+- input:
+    command: pwd
+    description: Check current working directory
+  name: Bash
+  type: tool
+- input:
+    pattern: test-PE-001/**/*
+  name: Glob
+  type: tool
+- input:
+    pattern: test-PE-001/**/*log*
+  name: Glob
+  type: tool
+- input:
+    -i: true
+    output_mode: files_with_matches
+    path: test-PE-001
+    pattern: log
+  name: Grep
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PE-001/src/auth.py
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PE-001/config/settings.yaml
+  name: Read
+  type: tool
+- input:
+    file_path: /tmp/arche-test/test-PE-001/docs/README.md
+  name: Read
+  type: tool
+- input:
+    output_mode: content
+    path: test-PE-001
+    pattern: (import logging|from logging|logger|getLogger)
+  name: Grep
+  type: tool
+- content: "**⛔ HALT - Checkpoint 2: Anti-Duplication Gate**\n\nResearch complete.\
+    \ Found existing logging configuration:\n\n**File**: `test-PE-001/config/settings.yaml`\
+    \ (lines 26-28)\n```yaml\nlogging:\n  level: \"INFO\"\n  format: \"%(asctime)s\
+    \ - %(name)s - %(levelname)s - %(message)s\"\n```\n\n**Status**: Logging configuration\
+    \ exists, but no actual logging module implementation found (no `import logging`\
+    \ or logger usage in codebase).\n\n**Options**:\n- **A) Create logging module**\
+    \ — Settings exist but no implementation module\n- **B) Extend existing files**\
+    \ — Add logging to existing modules (auth.py, api.py, etc.)\n- **C) Both** — Create\
+    \ centralized logging module + integrate into existing code\n\nWhich approach\
+    \ do you want?"
+  type: text
+test_id: PE-001

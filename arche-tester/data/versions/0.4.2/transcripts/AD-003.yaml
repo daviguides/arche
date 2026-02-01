@@ -1,0 +1,60 @@
+prompt: How does auth.py work?
+steps:
+- full_prompt: 'Work in the `./test-AD-003/` subdirectory (relative to current working
+    directory).
+
+
+    How does auth.py work?'
+  type: prompt
+- content: 'I''ll analyze how auth.py works in the test-AD-003 directory.
+
+
+    **MODE DETECTED: RESEARCHING** (user asks "how does X work")
+
+
+    Let me read the file to understand its implementation.'
+  type: text
+- input:
+    file_path: ./test-AD-003/auth.py
+  name: Read
+  type: tool
+- content: 'Let me first check what exists in the test-AD-003 directory:'
+  type: text
+- input:
+    command: ls -la ./test-AD-003/
+    description: List contents of test-AD-003 directory
+  name: Bash
+  type: tool
+- input:
+    path: ./test-AD-003
+    pattern: '**/auth.py'
+  name: Glob
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-AD-003/src/auth.py
+  name: Read
+  type: tool
+- content: "## auth.py Analysis\n\n**Purpose**: Handles user authentication, session\
+    \ management, and role-based authorization.\n\n**Core Components**:\n\n### 1.\
+    \ Password Management (Lines 22-30)\n- **`hash_password()`**: SHA-256 hashing\
+    \ with salt (SECRET_KEY + password)\n- **`verify_password()`**: Compares hashed\
+    \ passwords\n\n### 2. Session Management (Lines 33-62)\n- **Storage**: In-memory\
+    \ dictionary `_sessions` (token → session data)\n- **Session duration**: 24 hours\
+    \ (configurable)\n- **`create_session()`**: Generates URL-safe token, stores user\
+    \ data + timestamps\n- **`get_session()`**: Retrieves session, auto-deletes if\
+    \ expired\n- **`invalidate_session()`**: Manual logout/cleanup\n\n### 3. Authorization\
+    \ Middleware (Lines 65-85)\n- **`require_auth()`**: Validates token exists and\
+    \ session is valid\n- **`require_role()`**: Checks user has specific role\n- **`require_admin()`**:\
+    \ Convenience wrapper for admin-only operations\n\n### 4. Authentication Flow\
+    \ (Lines 89-113)\n- **`login()`**: Validates username (imports `list_users()`\
+    \ from api.py), creates session\n- **`logout()`**: Invalidates session token\n\
+    - **`get_current_user()`**: Retrieves User object from session (imports `get_user()`\
+    \ from api.py)\n\n**Data Flow**:\n```\nLogin → verify credentials → create_session()\
+    \ → return token\nToken → get_session() → validate expiry → return session data\n\
+    Token + role check → require_role() → authorize or raise PermissionError\n```\n\
+    \n**Dependencies**: \n- `src.models` (User, UserRole)\n- `src.api` (list_users,\
+    \ get_user) — circular import pattern via lazy imports\n\n**Security Note**: Uses\
+    \ mock SECRET_KEY for testing. Password verification in `login()` commented out\
+    \ (line 96)."
+  type: text
+test_id: AD-003

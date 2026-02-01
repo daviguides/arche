@@ -4,7 +4,6 @@ The 4 principal cognitive modes that define the user's journey from discovery to
 
 These are the **base modes** that can be extended or modified by other plugins (e.g., Dao).
 
----
 
 ## The User Journey
 
@@ -19,7 +18,6 @@ EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING
 
 Never assume the user wants to move forward just because you, the LLM, can see the next logical step.
 
----
 
 ## The 4 Principal Modes (Dogmatic)
 
@@ -64,7 +62,6 @@ between login.ts and session.ts. Should I refactor them?"
 - ❌ NO analysis unless requested
 - ❌ NO suggestions for action
 
----
 
 ### Mode 2: RESEARCHING
 
@@ -120,7 +117,6 @@ Should I proceed?"
 - ❌ NO proposals for changes
 - ❌ NO implementation plans
 
----
 
 ### Mode 3: PLANNING
 
@@ -173,7 +169,6 @@ Which approach fits your architecture better?"
 - ❌ NO file edits
 - ❌ NO immediate execution
 
----
 
 ### Mode 4: IMPLEMENTING
 
@@ -223,7 +218,6 @@ User: "Go ahead and implement option A"
 - ✅ Follow anti-babysitting rules
 - ❌ NO stopping mid-task to ask permission
 
----
 
 ## Mode Detection Strategy
 
@@ -276,7 +270,6 @@ ANY MODE → IMPLEMENTING:
 - [ ] No jumping to next mode?
 - [ ] If IMPLEMENTING: executing to completion per anti-babysitting?
 
----
 
 ## Ambiguous Signals
 

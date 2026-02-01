@@ -1,0 +1,32 @@
+prompt: What is the main file in src/?
+steps:
+- full_prompt: 'Work in the `./test-LC-001/` subdirectory (relative to current working
+    directory).
+
+
+    What is the main file in src/?'
+  type: prompt
+- content: I'll explore the `./test-LC-001/src/` directory to find the main file.
+  type: text
+- input:
+    command: ls -la ./test-LC-001/src/
+    description: List files in test-LC-001/src directory
+  name: Bash
+  type: tool
+- content: 'Files in `./test-LC-001/src/`:
+
+    - `__init__.py`
+
+    - `api.py` (largest at 6802 bytes)
+
+    - `auth.py`
+
+    - `models.py`
+
+    - `utils.py`
+
+
+    The main file is **`api.py`** — it''s the largest file and typically serves as
+    the primary entry point for API applications.'
+  type: text
+test_id: LC-001

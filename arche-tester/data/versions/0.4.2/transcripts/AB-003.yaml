@@ -1,0 +1,60 @@
+prompt: Add a check to get_user in api.py that raises ValidationError if user_id >
+  10000
+steps:
+- full_prompt: 'Work in the `./test-AB-003/` subdirectory (relative to current working
+    directory).
+
+
+    Add a check to get_user in api.py that raises ValidationError if user_id > 10000'
+  type: prompt
+- content: 'I''ll add a validation check to the `get_user` function in `api.py` that
+    raises `ValidationError` if `user_id > 10000`.
+
+
+    **Mode Detection**: IMPLEMENTING (direct action request: "Add a check")
+
+
+    **Pre-Create Checkpoint**: Since you''re asking me to modify an existing file
+    (not create a new one), I''ll first read the file to understand the current implementation.'
+  type: text
+- input:
+    file_path: ./test-AB-003/api.py
+  name: Read
+  type: tool
+- input:
+    command: ls -la ./test-AB-003/
+    description: Check if test-AB-003 directory exists
+  name: Bash
+  type: tool
+- input:
+    path: ./test-AB-003
+    pattern: '**/api.py'
+  name: Glob
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-AB-003/src/api.py
+  name: Read
+  type: tool
+- content: 'Now I''ll add the validation check to `get_user` that raises `ValidationError`
+    if `user_id > 10000`:'
+  type: text
+- input:
+    file_path: /private/tmp/arche-test/test-AB-003/src/api.py
+    new_string: "# User endpoints\ndef get_user(user_id: int) -> User:\n    \"\"\"\
+      Get user by ID.\"\"\"\n    if not isinstance(user_id, int) or user_id <= 0:\n\
+      \        raise ValidationError(\"user_id\", \"must be a positive integer\")\n\
+      \    if user_id > 10000:\n        raise ValidationError(\"user_id\", \"must\
+      \ not exceed 10000\")\n    if user_id not in _users:\n        raise NotFoundError(\"\
+      User\", user_id)\n    return _users[user_id]"
+    old_string: "# User endpoints\ndef get_user(user_id: int) -> User:\n    \"\"\"\
+      Get user by ID.\"\"\"\n    if not isinstance(user_id, int) or user_id <= 0:\n\
+      \        raise ValidationError(\"user_id\", \"must be a positive integer\")\n\
+      \    if user_id not in _users:\n        raise NotFoundError(\"User\", user_id)\n\
+      \    return _users[user_id]"
+    replace_all: false
+  name: Edit
+  type: tool
+- content: Done. Added validation check to `get_user` in `api.py` that raises `ValidationError`
+    if `user_id > 10000`.
+  type: text
+test_id: AB-003

@@ -1,0 +1,25 @@
+prompt: Find TODO comments in src/
+steps:
+- full_prompt: 'Work in the `./test-CP-002/` subdirectory (relative to current working
+    directory).
+
+
+    Find TODO comments in src/'
+  type: prompt
+- content: I'll search for TODO comments in the src/ directory within ./test-CP-002/.
+  type: text
+- input:
+    -n: true
+    output_mode: content
+    path: ./test-CP-002/src
+    pattern: TODO
+  name: Grep
+  type: tool
+- content: 'Found 2 TODO comments in `test-CP-002/src/models.py`:
+
+
+    - **Line 28**: `# TODO: Add password hashing`
+
+    - **Line 29**: `# TODO: Add email validation`'
+  type: text
+test_id: CP-002

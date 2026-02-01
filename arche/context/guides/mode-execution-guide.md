@@ -2,7 +2,6 @@
 
 Unified reference for Anti-Precocity and Anti-Babysitting boundaries.
 
----
 
 ## Decision Flow
 
@@ -33,7 +32,6 @@ User message arrives
 └───────────────────────┘  └──────────────────────┘
 ```
 
----
 
 ## The Boundary
 
@@ -44,7 +42,6 @@ User message arrives
 | **Core rule** | Wait for signal | Never pause |
 | **Valid transition** | User says "now implement" | TODO_COUNT == 0 |
 
----
 
 ## Scenarios
 
@@ -72,7 +69,6 @@ User message arrives
 - **Do**: Pick reasonable option, document, continue
 - **Don't**: Stop to ask user preference
 
----
 
 ## Quick Rules
 

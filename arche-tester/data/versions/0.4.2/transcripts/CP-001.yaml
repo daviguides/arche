@@ -1,0 +1,100 @@
+prompt: Create src/validators.py
+steps:
+- full_prompt: 'Work in the `./test-CP-001/` subdirectory (relative to current working
+    directory).
+
+
+    Create src/validators.py'
+  type: prompt
+- content: 'I need to execute the Pre-Create Checkpoint before creating any file.
+
+
+    **MODE: IMPLEMENTING**
+
+
+    Executing Pre-Create Checkpoint:'
+  type: text
+- input:
+    path: ./test-CP-001
+    pattern: '**/*valid*'
+  name: Glob
+  type: tool
+- input:
+    output_mode: files_with_matches
+    path: ./test-CP-001
+    pattern: valid
+  name: Grep
+  type: tool
+- input:
+    path: ./test-CP-001
+    pattern: '**/*.py'
+  name: Glob
+  type: tool
+- content: 'Found existing files with "valid" pattern. Reading to check for duplication:'
+  type: text
+- input:
+    file_path: /private/tmp/arche-test/test-CP-001/src/utils.py
+  name: Read
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-CP-001/src/models.py
+  name: Read
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-CP-001/src/api.py
+  name: Read
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-CP-001/src/auth.py
+  name: Read
+  type: tool
+- content: '⛔ **HALT - DUPLICATION DETECTED**
+
+
+    Found existing validation functions in codebase:
+
+
+    **`validate_email()` — exists in TWO locations:**
+
+    - `test-CP-001/src/utils.py:41` (lines 41-43)
+
+    - `test-CP-001/src/models.py:85` (lines 85-87)
+
+
+    **`validate_username()` — exists in:**
+
+    - `test-CP-001/src/models.py:90` (lines 90-92)
+
+
+    **`validate_url()` — exists in:**
+
+    - `test-CP-001/src/utils.py:46` (lines 46-48)
+
+
+    **Additional validation in API layer:**
+
+    - `test-CP-001/src/api.py` — contains extensive validation logic for users, products,
+    orders (lines 40-209)
+
+
+    ---
+
+
+    **Options:**
+
+
+    **A) Extend existing** — Add new validators to `src/utils.py` (existing validation
+    location)
+
+
+    **B) Refactor existing** — Consolidate all validation from `utils.py` + `models.py`
+    into new `src/validators.py`, update imports
+
+
+    **C) Justify new file** — Explain why creating separate `validators.py` is needed
+    despite existing validation code
+
+
+    Which approach?'
+  type: text
+test_id: CP-001

@@ -4,7 +4,6 @@
 
 **Purpose**: Eliminate the "babysitting problem" where LLMs stop mid-execution to ask for permission/validation when they should execute autonomously until completion.
 
----
 
 ## Core Principle: NEVER STOP
 
@@ -34,7 +33,6 @@ report_all_tasks_completed()
 
 **Translation**: If ANY task is pending, CONTINUE. Don't ask. Don't pause. Don't seek validation.
 
----
 
 ## The Three Forbidden Pauses
 
@@ -71,7 +69,6 @@ LLMs tend to pause at three critical moments. ALL are FORBIDDEN.
 
 **Why it's ESPECIALLY WRONG**: 95% done is NOT useful. Git protects everything. FINISH THE JOB.
 
----
 
 ## Rationale: Why Stopping Is ALWAYS Worse
 
@@ -92,7 +89,6 @@ Hours of wasted time >> Seconds to revert
 
 > Imperfect progress > Perfect pause
 
----
 
 ## Recovery & Examples
 
@@ -107,7 +103,6 @@ For detailed recovery strategies and few-shot examples:
 - Test failures → Mark and CONTINUE (if not blocking)
 - Uncertainty → Implement something reasonable, CONTINUE
 
----
 
 ## Validation Rule
 
@@ -130,7 +125,6 @@ For detailed recovery strategies and few-shot examples:
 - API error (retry or mock)
 - "Almost done" (FINISH IT!)
 
----
 
 ## Validation
 
@@ -141,7 +135,6 @@ For detailed recovery strategies and few-shot examples:
 - [ ] If pending > 0: Is this a HARD blocker?
 - [ ] If not hard blocker: CONTINUE with recovery strategy
 
----
 
 ## Remember
 

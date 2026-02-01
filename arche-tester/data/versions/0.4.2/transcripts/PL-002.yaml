@@ -1,0 +1,87 @@
+prompt: Plan out the steps to refactor auth.py
+steps:
+- full_prompt: 'Work in the `./test-PL-002/` subdirectory (relative to current working
+    directory).
+
+
+    Plan out the steps to refactor auth.py'
+  type: prompt
+- content: 'I''m detecting your mode and will respond accordingly.
+
+
+    **Mode Detection**: "Plan out the steps" → **PLANNING mode**
+
+
+    Before I create a refactoring plan, I need to research the codebase first (per
+    principle-enforcement checkpoint).
+
+
+    Let me search for and understand the existing auth.py file:'
+  type: text
+- input:
+    path: ./test-PL-002
+    pattern: '**/auth.py'
+  name: Glob
+  type: tool
+- input:
+    path: ./test-PL-002
+    pattern: '**/*.py'
+  name: Glob
+  type: tool
+- input:
+    -i: true
+    output_mode: files_with_matches
+    path: ./test-PL-002
+    pattern: auth|login|session|password
+  name: Grep
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-PL-002/src/auth.py
+  name: Read
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-PL-002/src/models.py
+  name: Read
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-PL-002/src/utils.py
+  name: Read
+  type: tool
+- input:
+    file_path: /private/tmp/arche-test/test-PL-002/src/api.py
+  name: Read
+  type: tool
+- content: "Now I'll create a refactoring plan based on my analysis of auth.py and\
+    \ related code.\n\n## Refactoring Plan for auth.py\n\n### Current State Analysis\n\
+    \n**Issues identified**:\n1. **Security vulnerability**: Hardcoded `SECRET_KEY`\
+    \ in code\n2. **Weak password hashing**: SHA-256 with simple salting (should use\
+    \ bcrypt/argon2)\n3. **Circular import**: `login()` and `get_current_user()` import\
+    \ from `src.api` at runtime\n4. **Missing password verification**: `login()` has\
+    \ TODO comment but doesn't verify passwords\n5. **In-memory session storage**:\
+    \ Will lose all sessions on restart\n6. **No session cleanup**: Expired sessions\
+    \ accumulate in memory\n7. **Tight coupling**: Auth logic mixed with session management\n\
+    \n### Refactoring Options\n\n**Option A - Minimal Security Fix (Conservative)**:\n\
+    1. Extract configuration to `config/settings.yaml` or environment variables\n\
+    2. Implement actual password verification in `login()`\n3. Add proper password\
+    \ hashing (bcrypt or argon2)\n4. Fix circular import by restructuring dependencies\n\
+    5. Add session cleanup mechanism\n\n**Estimated effort**: 30-45 minutes\n**Risk**:\
+    \ Low\n**Benefit**: Addresses critical security issues\n\n**Option B - Comprehensive\
+    \ Restructure (Recommended)**:\n1. All fixes from Option A\n2. Split auth.py into\
+    \ separate modules:\n   - `auth/password.py` - password hashing/verification\n\
+    \   - `auth/session.py` - session management\n   - `auth/permissions.py` - authorization\
+    \ logic\n   - `auth/handlers.py` - login/logout functions\n3. Create abstract\
+    \ `SessionStore` interface with in-memory implementation\n4. Add session cleanup\
+    \ background task\n5. Remove circular dependencies via dependency injection\n\n\
+    **Estimated effort**: 1.5-2 hours\n**Risk**: Medium (requires updating imports\
+    \ across codebase)\n**Benefit**: Better maintainability, testability, extensibility\n\
+    \n**Option C - Production-Ready (Future-proof)**:\n1. All fixes from Option B\n\
+    2. Add persistent session storage (Redis/database interface)\n3. Implement refresh\
+    \ tokens\n4. Add rate limiting for login attempts\n5. Add audit logging for auth\
+    \ events\n6. Implement password policies (length, complexity)\n\n**Estimated effort**:\
+    \ 3-4 hours\n**Risk**: High (significant changes)\n**Benefit**: Production-grade\
+    \ authentication\n\n### Recommended Approach\n\n**Option B** - provides balance\
+    \ between immediate security fixes and long-term maintainability without over-engineering\
+    \ for a mock project.\n\nWhich option aligns with your needs? Or would you prefer\
+    \ a hybrid approach?"
+  type: text
+test_id: PL-002

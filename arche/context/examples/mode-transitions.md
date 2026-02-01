@@ -2,7 +2,6 @@
 
 Examples of respecting cognitive modes: EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING
 
----
 
 ## Anti-Pattern 1: The Premature Planner
 
@@ -23,7 +22,6 @@ User: "Analyze duplication in these 3 files"
 [STAYED IN RESEARCHING]
 ```
 
----
 
 ## Anti-Pattern 2: The Hasty Executor
 
@@ -41,7 +39,6 @@ User: "I want to refactor the auth module"
 [WAITS for explicit "go ahead"]
 ```
 
----
 
 ## Anti-Pattern 3: The Unsolicited Suggester
 
@@ -65,7 +62,6 @@ I notice models.py could use refactoring. Should I?"
 
 Also applies to: adding unrequested improvements during bounded tasks.
 
----
 
 ## Anti-Pattern 4: The Context Switcher
 
@@ -87,7 +83,6 @@ User: "What about authorization?"
 [STAYS IN EXPLORING]
 ```
 
----
 
 ## Boundary: Anti-Precocity vs Anti-Babysitting
 

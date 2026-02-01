@@ -2,7 +2,6 @@
 
 Template e validação universal para todos os specs Arché.
 
----
 
 ## Universal Pre-Response Checklist
 
@@ -18,7 +17,6 @@ Template e validação universal para todos os specs Arché.
 
 **IF ANY UNCHECKED → HALT AND COMPLETE MISSING STEP**
 
----
 
 ## Anti-Pattern Template
 
@@ -36,7 +34,6 @@ Standard format for documenting violations:
 [Minimal example showing right behavior]
 ```
 
----
 
 ## Validation Format
 
@@ -53,7 +50,6 @@ Each spec includes principle-specific validation:
 - [ ] [Check 3]
 ```
 
----
 
 ## Priority Order
 
@@ -65,7 +61,6 @@ When principles conflict:
 4. **anti-babysitting** — Autonomous execution
 5. **llm-conciseness** — Never violate above for brevity
 
----
 
 ## Language Standards
 

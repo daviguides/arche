@@ -1,0 +1,35 @@
+prompt: Show me the User model
+steps:
+- full_prompt: 'Work in the `./test-MT-002/` subdirectory (relative to current working
+    directory).
+
+
+    Show me the User model'
+  type: prompt
+- content: I'll search for the User model in the `./test-MT-002/` subdirectory.
+  type: text
+- input:
+    path: ./test-MT-002
+    pattern: '**/User.*'
+  name: Glob
+  type: tool
+- input:
+    output_mode: files_with_matches
+    path: ./test-MT-002
+    pattern: class User|interface User|type User|model User
+  name: Grep
+  type: tool
+- input:
+    file_path: ./test-MT-002/src/models.py
+  name: Read
+  type: tool
+- content: "**User Model** (lines 19-30 in `test-MT-002/src/models.py`):\n\n```python\n\
+    class User(BaseModel):\n    \"\"\"User model.\"\"\"\n\n    id: int\n    username:\
+    \ str\n    email: str\n    role: UserRole = UserRole.USER\n    created_at: datetime\
+    \ = Field(default_factory=datetime.now)\n\n    # TODO: Add password hashing\n\
+    \    # TODO: Add email validation\n```\n\n**Fields:**\n- `id` — integer identifier\n\
+    - `username` — string\n- `email` — string  \n- `role` — UserRole enum (ADMIN/USER/GUEST),\
+    \ defaults to USER\n- `created_at` — datetime with auto-generation\n\n**Pending\
+    \ TODOs:** password hashing, email validation"
+  type: text
+test_id: MT-002

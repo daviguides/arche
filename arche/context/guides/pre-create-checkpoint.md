@@ -2,7 +2,6 @@
 
 For the rule this implements: @~/.claude/arche/spec/meta/principle-enforcement.md
 
----
 
 ## Compliance Procedure
 
@@ -22,7 +21,6 @@ Options: A) Extend existing  B) Refactor existing  C) Justify why new is needed
 
 **Only proceed to create** if search returned no relevant results.
 
----
 
 ## Violation vs Compliance
 
@@ -41,7 +39,6 @@ User: "Create email validator"
    5. Wait for user decision before proceeding
 ```
 
----
 
 ## Common Triggers
 
@@ -50,7 +47,6 @@ Apply this checkpoint when user says:
 - "Make a new...", "Implement..."
 - Any request that would result in new file creation
 
----
 
 ## Remember
 

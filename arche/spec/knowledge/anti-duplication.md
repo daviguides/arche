@@ -2,7 +2,6 @@
 
 **SSOT: Single Source of Truth** - Every piece of information exists in exactly **one** authoritative location.
 
----
 
 ## Core Rule
 
@@ -15,7 +14,6 @@ Information → Copy A, Copy B, Copy C
 
 **Benefits**: Update once propagate everywhere, no conflicting versions, one place to look.
 
----
 
 ## Detection: Red Flags
 
@@ -36,7 +34,6 @@ Information → Copy A, Copy B, Copy C
 - Am I explaining syntax already in specs?
 - Could I reference instead of repeating?
 
----
 
 ## Prevention
 
@@ -58,7 +55,6 @@ For format syntax:
 
 **Reference, don't duplicate.**
 
----
 
 ## No 'Related' Sections
 
@@ -82,7 +78,6 @@ For format syntax:
    [Load workflows handle connections]
 ```
 
----
 
 ## Refactoring Duplication
 
@@ -91,7 +86,6 @@ For format syntax:
 3. **Replace with references**: `@./bundle/specs/xyz.md`
 4. **Validate**: All references resolve, no info lost
 
----
 
 ## Layer Rules
 
@@ -99,7 +93,6 @@ For format syntax:
 **CONTEXT**: No syntax definitions, reference specs for rules
 **PROMPTS**: Mostly `@` references, < 5 lines inline
 
----
 
 ## Anti-Patterns
 
@@ -120,7 +113,6 @@ For format syntax:
 ### Quick Reference Files
 Eliminate entirely. For LLMs: no value (process full specs equally fast).
 
----
 
 ## Validation
 
@@ -132,7 +124,6 @@ Eliminate entirely. For LLMs: no value (process full specs equally fast).
 - [ ] Is this the SSOT?
 - [ ] No "Related" sections?
 
----
 
 ## Remember
 

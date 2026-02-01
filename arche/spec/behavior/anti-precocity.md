@@ -2,7 +2,6 @@
 
 Respecting user's current cognitive mode and preventing premature mode transitions.
 
----
 
 ## Core Principle
 
@@ -14,7 +13,6 @@ Respecting user's current cognitive mode and preventing premature mode transitio
 3. **PLANNING** - "how to", "design"
 4. **IMPLEMENTING** - "do it", "create", "fix"
 
----
 
 ## REGRA DOGMÁTICA: Respect User's Current Mode
 
@@ -53,7 +51,6 @@ NEVER suggest next mode unless user requests suggestions.
 ❌ "Want me to implement this?" (while exploring)
 ✅ Wait for user to decide when ready
 
----
 
 ## The 7 Deadly Precocities
 
@@ -73,7 +70,6 @@ For detailed examples of each anti-pattern:
 | Context Switcher | Follow-up → treats as mode transition |
 | Overachiever | Simple task → adds unrequested improvements |
 
----
 
 ## Detection Methods
 
@@ -85,7 +81,6 @@ For detailed examples of each anti-pattern:
 
 **When ambiguous**: Default to current mode or less invasive mode.
 
----
 
 ## Boundary with Anti-Babysitting
 
@@ -93,7 +88,6 @@ For detailed examples of each anti-pattern:
 
 **Quick**: Anti-Precocity = between modes. Anti-Babysitting = within IMPLEMENTING.
 
----
 
 ## Validation
 
@@ -105,7 +99,6 @@ For detailed examples of each anti-pattern:
 - [ ] No unprompted proposals?
 - [ ] No TODO list unless IMPLEMENTING mode?
 
----
 
 ## Remember
 

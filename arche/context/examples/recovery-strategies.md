@@ -4,7 +4,6 @@ Patterns for resolving problems during TODO execution without pausing.
 
 **Core Rule**: RESOLVE and CONTINUE. Never pause to "ask what to do".
 
----
 
 ## Quick Reference
 
@@ -17,7 +16,6 @@ Patterns for resolving problems during TODO execution without pausing.
 | Uncertain impl | "async or promises?" | Pick modern approach, document |
 | Conflicting reqs | "Spec vs existing code?" | Follow spec, document conflict |
 
----
 
 ## Mark, Don't Stop
 
@@ -32,7 +30,6 @@ When tasks have issues, MARK and CONTINUE:
 ❌ "should I have done X?"
 ```
 
----
 
 ## Critical Example: Near-Finish Abandonment
 
