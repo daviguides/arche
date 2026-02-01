@@ -118,9 +118,9 @@ print_header() {
   box_empty
   # 53 visible chars between borders. Count: text + trailing spaces = 53
   printf "${CYAN}│${NC}       ${BOLD}▲${NC}                                             ${CYAN}│${NC}\n"
-  printf "${CYAN}│${NC}       │       │  ${DIM}Installer${NC}                          ${CYAN}│${NC}\n"
-  printf "${CYAN}│${NC}   ${BOLD}A R C H É${NC}   │  Essential Behavioral Principles    ${CYAN}│${NC}\n"
-  printf "${CYAN}│${NC}       │       │  for Claude Code                    ${CYAN}│${NC}\n"
+  printf "${CYAN}│${NC}       │       │  Essential Behavioral Principles    ${CYAN}│${NC}\n"
+  printf "${CYAN}│${NC}   ${BOLD}A R C H É${NC}   │  for Claude Code                    ${CYAN}│${NC}\n"
+  printf "${CYAN}│${NC}       │       │  (v1.5.3)                           ${CYAN}│${NC}\n"
   box_empty
   box_separator
 }
