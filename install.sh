@@ -6,12 +6,22 @@ set -euo pipefail
 # Installs the Arche architecture framework to ~/.claude/arche
 # ============================================================================
 
-# --- Constants ---
+# --- Colors (Rich-inspired palette) ---
+readonly CYAN='\033[0;36m'
 readonly GREEN='\033[0;32m'
-readonly BLUE='\033[0;34m'
-readonly YELLOW='\033[1;33m'
+readonly YELLOW='\033[0;33m'
 readonly RED='\033[0;31m'
+readonly DIM='\033[2m'
+readonly BOLD='\033[1m'
 readonly NC='\033[0m'
+
+# --- Box Drawing Characters ---
+readonly BOX_TL='╭'
+readonly BOX_TR='╮'
+readonly BOX_BL='╰'
+readonly BOX_BR='╯'
+readonly BOX_H='─'
+readonly BOX_V='│'
 
 # --- Configuration ---
 readonly REPO_URL="https://github.com/daviguides/arche.git"
@@ -24,12 +34,77 @@ readonly SOURCE_SUBDIR="arche"
 readonly MARKETPLACE_URL="https://github.com/daviguides/claude-marketplace.git"
 readonly PLUGIN_IDENTIFIER="arche@daviguides"
 
+# --- Box width (53 chars between borders) ---
+readonly W=53
+
+# --- UI Helpers ---
+box_top() {
+  printf "${CYAN}╭"
+  printf '─%.0s' $(seq 1 $W)
+  printf "╮${NC}\n"
+}
+
+box_bottom() {
+  printf "${CYAN}╰"
+  printf '─%.0s' $(seq 1 $W)
+  printf "╯${NC}\n"
+}
+
+box_empty() {
+  printf "${CYAN}│${NC}%${W}s${CYAN}│${NC}\n" ""
+}
+
+box_separator() {
+  printf "${CYAN}│${DIM}"
+  printf '─%.0s' $(seq 1 $W)
+  printf "${NC}${CYAN}│${NC}\n"
+}
+
+# Row with plain text, left-padded 2 spaces
+box_text() {
+  local text="$1"
+  local len=${#text}
+  local pad=$((W - 2 - len))
+  printf "${CYAN}│${NC}  %s%${pad}s${CYAN}│${NC}\n" "$text" ""
+}
+
+# Status with icon (4 chars: 2 space + icon + space)
+status_line() {
+  local icon="$1"
+  local color="$2"
+  local text="$3"
+  local len=${#text}
+  local pad=$((W - 4 - len))
+  printf "${CYAN}│${NC}  ${color}%s${NC} %s%${pad}s${CYAN}│${NC}\n" "$icon" "$text" ""
+}
+
+status_ok() { status_line "✓" "$GREEN" "$1"; }
+status_warn() { status_line "⚠" "$YELLOW" "$1"; }
+status_error() { status_line "✗" "$RED" "$1"; }
+status_info() { status_line "→" "$DIM" "$1"; }
+
+spinner() {
+  local pid=$1
+  local msg="$2"
+  local len=${#msg}
+  local pad=$((W - 4 - len))
+  local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+  local i=0
+  while kill -0 "$pid" 2>/dev/null; do
+    printf "\r${CYAN}│${NC}  ${CYAN}%s${NC} %s%${pad}s${CYAN}│${NC}" "${spin:i++%10:1}" "$msg" ""
+    sleep 0.1
+  done
+  printf "\r%*s\r" 60 ""
+}
+
 # --- Cleanup ---
 cleanup() {
   if [ -d "$TMP_DIR" ]; then
-    printf "%b\n" "${BLUE}Cleaning up temporary files...${NC}"
+    status_info "Cleaning up..."
     rm -rf "$TMP_DIR"
   fi
+  box_bottom
+  printf "\n"
 }
 trap cleanup EXIT
 
@@ -38,36 +113,42 @@ trap cleanup EXIT
 # ============================================================================
 
 print_header() {
-  printf "%b\n" "${BLUE}Arche Installer${NC}"
-  printf "%b\n\n" "${BLUE}===========================${NC}"
+  printf "\n"
+  box_top
+  box_empty
+  # 53 visible chars between borders. Count: text + trailing spaces = 53
+  printf "${CYAN}│${NC}       ${BOLD}▲${NC}                                             ${CYAN}│${NC}\n"
+  printf "${CYAN}│${NC}       │       │  ${DIM}Installer${NC}                          ${CYAN}│${NC}\n"
+  printf "${CYAN}│${NC}   ${BOLD}A R C H É${NC}   │  Essential Behavioral Principles    ${CYAN}│${NC}\n"
+  printf "${CYAN}│${NC}       │       │  for Claude Code                    ${CYAN}│${NC}\n"
+  box_empty
+  box_separator
 }
 
 check_dependencies() {
   if ! command -v git >/dev/null 2>&1; then
-    printf "%b\n" "${RED}Error: git is not installed${NC}"
-    printf "%s\n" "Install: https://git-scm.com/downloads"
+    status_error "git is not installed"
+    printf "       Install: https://git-scm.com/downloads\n"
     exit 1
   fi
 }
 
 clone_repository() {
-  printf "%b\n" "${BLUE}Cloning Arche repository...${NC}"
-
-  if ! git clone --quiet "$REPO_URL" "$TMP_DIR" 2>/dev/null; then
-    printf "%b\n" "${RED}Error: Failed to clone repository${NC}"
-    printf "Repository: %s\n" "$REPO_URL"
+  git clone --quiet "$REPO_URL" "$TMP_DIR" 2>/dev/null &
+  local pid=$!
+  spinner $pid "Cloning repository..."
+  wait $pid || {
+    status_error "Failed to clone repository"
     exit 1
-  fi
-
-  printf "%b\n\n" "${GREEN}✓ Repository cloned successfully${NC}"
+  }
+  status_ok "Repository cloned"
 }
 
 validate_source_structure() {
   local src_subdir="$TMP_DIR/$SOURCE_SUBDIR"
 
   if [ ! -d "$src_subdir" ]; then
-    printf "%b\n" "${RED}Error: expected subfolder not found:${NC} $src_subdir"
-    printf "%s\n" "Repository structure may have changed. Verify 'arche/' exists at repo root."
+    status_error "Expected subfolder not found: $src_subdir"
     exit 1
   fi
 }
@@ -78,70 +159,70 @@ copy_files() {
   mkdir -p "$TARGET_DIR"
 
   if command -v rsync >/dev/null 2>&1; then
-    # Prefer rsync for better control
     rsync -a "$src_subdir"/ "$TARGET_DIR"/
   else
-    # POSIX fallback (includes dotfiles)
     ( set -f; cp -R "$src_subdir"/. "$TARGET_DIR"/ )
   fi
 }
 
 install() {
-  printf "%b\n" "${BLUE}Installing Arche to $TARGET_DIR...${NC}"
-
-  # Ensure ~/.claude directory exists
   [ -d "$CLAUDE_DIR" ] || mkdir -p "$CLAUDE_DIR"
-
-  # Remove existing installation
   [ -d "$TARGET_DIR" ] && rm -rf "$TARGET_DIR"
 
-  copy_files
+  copy_files &
+  local pid=$!
+  spinner $pid "Installing to ~/.claude/arche..."
+  wait $pid
 
-  printf "%b\n\n" "${GREEN}✓ Arche installed successfully!${NC}"
+  status_ok "Arche installed to ~/.claude/arche"
 }
 
 check_claude_cli() {
   if ! command -v claude >/dev/null 2>&1; then
-    printf "%b\n" "${YELLOW}Warning: 'claude' CLI not found${NC}"
-    printf "%s\n" "Skipping marketplace setup. Install Claude CLI to use marketplace features."
+    status_warn "Claude CLI not found, skipping marketplace"
     return 1
   fi
   return 0
 }
 
 setup_marketplace() {
-  printf "%b\n" "${BLUE}Setting up Claude Plugin Marketplace...${NC}"
-
-  # Check if claude CLI is available
   if ! check_claude_cli; then
     return 0
   fi
 
-  # Add marketplace if not already added
-  printf "%b\n" "${BLUE}Adding marketplace...${NC}"
-  if claude plugin marketplace add "$MARKETPLACE_URL" 2>/dev/null; then
-    printf "%b\n" "${GREEN}✓ Marketplace added${NC}"
-  else
-    # Marketplace might already be added, that's fine
-    printf "%b\n" "${BLUE}→ Marketplace already added or failed to add${NC}"
-  fi
+  # Add marketplace
+  claude plugin marketplace add "$MARKETPLACE_URL" >/dev/null 2>&1 &
+  local pid=$!
+  spinner $pid "Setting up marketplace..."
+  wait $pid && status_ok "Marketplace configured" || status_info "Marketplace already configured"
 
-  # Install plugin from marketplace
-  printf "%b\n" "${BLUE}Installing plugin from marketplace...${NC}"
-  if claude plugin install "$PLUGIN_IDENTIFIER" 2>/dev/null; then
-    printf "%b\n\n" "${GREEN}✓ Plugin installed from marketplace: $PLUGIN_IDENTIFIER${NC}"
-  else
-    printf "%b\n\n" "${YELLOW}⚠ Failed to install plugin from marketplace${NC}"
-    printf "%s\n" "You can manually install with: claude plugin install $PLUGIN_IDENTIFIER"
-  fi
+  # Install plugin
+  claude plugin install "$PLUGIN_IDENTIFIER" >/dev/null 2>&1 &
+  pid=$!
+  spinner $pid "Installing plugin..."
+  wait $pid && status_ok "Plugin installed: $PLUGIN_IDENTIFIER" || status_warn "Plugin install failed"
+}
+
+box_title() {
+  # "Installation Complete" = 21 chars, need 53-2-21 = 30 spaces
+  printf "${CYAN}│${NC}  ${GREEN}${BOLD}Installation Complete${NC}                              ${CYAN}│${NC}\n"
+}
+
+box_heading() {
+  # "Next Steps" = 10 chars, need 53-2-10 = 41 spaces
+  printf "${CYAN}│${NC}  ${BOLD}Next Steps${NC}                                         ${CYAN}│${NC}\n"
 }
 
 print_next_steps() {
-  printf "%b\n" "${GREEN}Installation complete!${NC}"
-  printf "%b\n\n" "${BLUE}Next steps:${NC}"
-  printf "%s\n" "1. Use /load-arche-context command to load Arche context when needed"
-  printf "%s\n" "2. Or reference specific specs/context files in your prompts"
-  printf "%s\n" "3. Docs: https://github.com/daviguides/Arche"
+  box_empty
+  box_separator
+  box_title "Installation Complete"
+  box_separator
+  box_empty
+  box_heading "Next Steps"
+  box_text "1. Use /arche:load-essential to load principles"
+  box_text "2. Docs: https://github.com/daviguides/Arche"
+  box_empty
 }
 
 # ============================================================================
