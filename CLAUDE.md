@@ -58,7 +58,7 @@ Plus: `essential-cognitive-modes.md` in `spec/modes/`
 
 | Command | Purpose |
 |---------|---------|
-| `/arche:load-essential` | Load all essential principles |
+| `/arche:load` | Load all essential principles |
 
 ---
 

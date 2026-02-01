@@ -112,7 +112,7 @@ arche/
 ├── context/                 # Applied examples
 │   └── guides/              # How to apply principles
 ├── prompts/                 # Workflow orchestrators
-│   └── load-essential.md    # Load all principles
+│   └── load.md              # Load all principles
 ├── commands/                # User-facing commands
 └── agents/                  # Specialized agents
 ```
@@ -131,7 +131,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/daviguides/arche/main/inst
 *Coming soon*
 
 ```bash
-/arche:load-essential        # Load all essential principles
+/arche:load                  # Load all essential principles
 /arche:validate              # Check compliance with principles
 ```
 

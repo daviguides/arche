@@ -220,7 +220,7 @@ print_next_steps() {
   box_separator
   box_empty
   box_heading "Next Steps"
-  box_text "1. Use /arche:load-essential to load principles"
+  box_text "1. Use /arche:load to load principles"
   box_text "2. Docs: https://github.com/daviguides/Arche"
   box_empty
 }

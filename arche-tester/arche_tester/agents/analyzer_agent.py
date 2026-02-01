@@ -67,7 +67,7 @@ class AnalyzerAgent(BaseAgent):
         Returns:
             Response confirming principles loaded.
         """
-        return await self._call_agent("/arche:load-essential")
+        return await self._call_agent("/arche:load")
 
     @property
     def agent_name(self) -> str:
