@@ -18,8 +18,13 @@ After reading all files, respond with EXACTLY this card:
 
 ```
 ╭─────────────────────────────────────────────────────╮
-│  Arché v1.5.1                                       │
-│  Essential Behavioral Principles for Claude Code    │
+│       ▲                                             │
+│       │                                             │
+│   A R C H É                                         │
+│       │                                             │
+│                                                     │
+│   [v1.5.2]                                          │
+│   Essential Behavioral Principles for Claude Code   │
 ╰─────────────────────────────────────────────────────╯
 
 ┌─ Principles ────────────────────────────────────────┐
