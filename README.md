@@ -10,6 +10,12 @@
 
 Arché provides the **essential principles** that govern LLM behavior - the foundational axioms that must be loaded before any work begins.
 
+## Installation
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/daviguides/arche/main/install.sh)"
+```
+
 ## Philosophy
 
 ### The First Principle (ἀρχή)
@@ -117,27 +123,11 @@ arche/
 └── agents/                  # Specialized agents
 ```
 
-## Installation
-
-*Coming soon*
-
-```bash
-# Future one-line installation
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/daviguides/arche/main/install.sh)"
-```
-
 ## Usage
-
-*Coming soon*
 
 ```bash
 /arche:load                  # Load all essential principles
-/arche:validate              # Check compliance with principles
 ```
-
-## Status
-
-🚧 **In Development** - Extracting from gradient plugin.
 
 ## License
 
