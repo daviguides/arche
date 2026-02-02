@@ -7,8 +7,11 @@ description: Load Arché Universal Principles
 ---
 
 # ⚠️ MANDATORY ACTION
+## BEFORE DO ANYTHING LOAD ARCHÉ!!!
 
-Use the Read tool on the file below. DO NOT summarize or acknowledge - READ IT:
+You can use simple: /arche:load
+
+Or use the Read tool on the file below. DO NOT summarize or acknowledge - READ IT:
 
 ```
 Read: ~/.claude/arche/prompts/load.md
