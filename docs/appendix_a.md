@@ -1,5 +1,4 @@
 # Appendix A: On Incident Work - From Reactive to Proactive (and What We Can Automate)
-*(Expanded + diagrams placed inline)*
 
 Claude Code doesn’t magically self-orient in production issues.  
 Just like any AI workflow, it needs:
