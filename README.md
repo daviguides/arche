@@ -57,19 +57,20 @@ Arche is the foundation upon which other plugins build:
 | Plugin | Philosophy | Depends on Arché |
 |--------|------------|------------------|
 | **arche** | Greek (ἀρχή) | — (is the foundation) |
-| **code-zen** | Zen Buddhism | Uses conciseness, anti-duplication |
+| **zazen** | Zen (座禅) | Zen principles for code clarity |
+| **shodo** | Calligraphy (書道) | Python standards for elegant code |
 | **gradient** | Architecture | Uses all principles for plugin creation |
 
 ```
-        ┌─────────┐
-        │  arche  │  ← Essential principles (load first)
-        └────┬────┘
-             │
-       ┌─────┴─────┐
-       ▼           ▼
-  ┌───────┐  ┌──────────┐
-  │code-zen│  │ gradient │
-  └───────┘  └──────────┘
+          ┌─────────┐
+          │  arche  │  ← Essential principles (load first)
+          └────┬────┘
+               │
+    ┌──────────┼──────────┐
+    ▼          ▼          ▼
+┌───────┐  ┌───────┐  ┌──────────┐
+│ zazen │  │ shodo │  │ gradient │
+└───────┘  └───────┘  └──────────┘
 ```
 
 ## Principles

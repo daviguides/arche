@@ -67,7 +67,8 @@ Plus: `essential-cognitive-modes.md` in `spec/modes/`
 ## Relationship with Other Plugins
 
 - **Gradient**: Uses Arché principles for plugin architecture
-- **Code-Zen**: Uses conciseness, anti-duplication principles
+- **Zazen**: Zen principles for code clarity (uses conciseness, anti-duplication)
+- **Shodo**: Python standards for elegant code (uses conciseness)
 
 ---
 
