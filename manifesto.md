@@ -374,48 +374,6 @@ This direction is less about automation and more about a **mindset shift**:
 
 Arché encodes months of iteration around that workflow.
 
-## Appendix on: "Incident Work: From Reactive to Proactive"
+## Appendix A: On Incident Work - From Reactive to Proactive (and What We Can Automate)
 
-Claude Code doesn’t magically self-orient in production issues.
-Just like any AI workflow, it needs:
-- clear instructions
-- strong context
-
-For each service/project, the docs we provide are critical context:
-- cluster name(s)
-- namespaces
-- services/pods
-- known failure modes
-- health expectations
-- kubectl commands
-- log locations and patterns
-
-With that foundation, we can evolve incident workflows gradually.
-
-### Diagram: Incident Handling Evolution
-
-```
-[ Detection ]
-      |
-      v
-[ Diagnosis ]
-      |
-      v
-[ Prognosis ]
-      |
-      v
-[ Solution Proposal ]
-      |
-      v
-[ Human Review + Decision ]
-```
-
-There is no silver bullet:
-- each service has unique failure modes
-- side effects matter
-- the system will not think beyond what the prompt/context enables
-
-So the real acceleration is cumulative:
-> Every incident fixed should leave behind context that makes the next incident faster.
-
-
+[READ](docs/appendix_a.md)
