@@ -9,7 +9,7 @@
 
 Information density = unique concepts / total tokens.
 
-**REGRA DOGMÁTICA**: If removing a word doesn't change meaning, the word doesn't belong.
+**DOGMATIC RULE**: If removing a word doesn't change meaning, the word doesn't belong.
 
 Token economy is virtue. Every wasted token = lost context window space.
 

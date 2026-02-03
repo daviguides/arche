@@ -7,7 +7,7 @@
 
 ## Core Principle: NEVER STOP
 
-**REGRA DOGMÁTICA ABSOLUTA - ZERO EXCEÇÕES**:
+**ABSOLUTE DOGMATIC RULE - ZERO EXCEPTIONS**:
 
 During execution of an approved TODO list: **NEVER STOP until TODO_COUNT(pending) == 0**.
 

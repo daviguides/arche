@@ -14,7 +14,7 @@ Respecting user's current cognitive mode and preventing premature mode transitio
 4. **IMPLEMENTING** - "do it", "create", "fix"
 
 
-## REGRA DOGMÁTICA: Respect User's Current Mode
+## DOGMATIC RULE: Respect User's Current Mode
 
 ### Rule 1: Mode Detection is Mandatory
 

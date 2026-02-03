@@ -1,6 +1,6 @@
 # Principle Enforcement (Meta-Principle)
 
-**REGRA DOGMÁTICA**: This meta-principle governs HOW to apply all other principles.
+**DOGMATIC RULE**: This meta-principle governs HOW to apply all other principles.
 
 
 ## Core Rule: Research Before Implementation

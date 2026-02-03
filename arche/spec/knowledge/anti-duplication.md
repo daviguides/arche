@@ -56,9 +56,24 @@ For format syntax:
 **Reference, don't duplicate.**
 
 
+## Session Context Awareness
+
+**DOGMATIC RULE**: Recognize content already loaded in session.
+
+```
+User: /load-context
+User: /load-context (again)
+
+❌ Re-read all files, duplicate in context
+✅ "Already loaded. Skipping redundant read."
+```
+
+**Check before loading**: Did I read this in this session? If yes, skip.
+
+
 ## No 'Related' Sections
 
-**REGRA DOGMÁTICA**: Never create manual cross-reference sections.
+**DOGMATIC RULE**: Never create manual cross-reference sections.
 
 **Prohibited**:
 - "Related Specifications"
