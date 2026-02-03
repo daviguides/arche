@@ -376,4 +376,6 @@ Arché encodes months of iteration around that workflow.
 
 ## Appendix A: On Incident Work - From Reactive to Proactive (and What We Can Automate)
 
-[READ](docs/appendix_a.md)
+**TL;DR**: Automate detection and data gathering, not judgment. Claude Code can run commands, collect logs, and propose hypotheses—but only if the repo contains service context (cluster maps, runbooks, health contracts). No context = roulette mode. Every incident fixed should leave behind documentation that makes the next one faster.
+
+[READ MORE →](docs/appendix_a.md)
