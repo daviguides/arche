@@ -35,7 +35,7 @@ Velocity comes from clarity, not automation.
 
 ## A Day-to-Day Anecdote (Why This Matters)
 
-A few weeks ago I tried to solve something complex using a single “super prompt”.  
+Some time ago I tried to solve something complex using a single “super prompt”.  
 It was well specified, but Claude Code still got lost.
 
 Why?
