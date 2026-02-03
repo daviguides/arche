@@ -314,79 +314,6 @@ What Arché does *not* do:
 
 ---
 
-## Responsibility Split
-
-```
-GIVEN (Platform)
-- Model (e.g. Opus 4.5)
-- Claude Code baseline assistant
-
-PROVIDED BY ARCHÉ
-- behavior shaping
-- workflow discipline
-
-DEVELOPER RESPONSIBILITY
-- spec-as-code
-- committed context
-- dialogal decision-making
-```
-
----
-
-## Final Note
-
-Automation without dialogue produces confident failure.
-
-The real shift is not tooling — it is **how we think while working with AI**.
-
-Arché simply enforces the habits that make this sustainable.
-
-## Incident Work: From Reactive to Proactive
-
-Claude Code doesn’t magically self-orient in production issues.
-Just like any AI workflow, it needs:
-- clear instructions
-- strong context
-
-For each service/project, the docs we provide are critical context:
-- cluster name(s)
-- namespaces
-- services/pods
-- known failure modes
-- health expectations
-- kubectl commands
-- log locations and patterns
-
-With that foundation, we can evolve incident workflows gradually.
-
-### Diagram: Incident Handling Evolution
-
-```
-[ Detection ]
-      |
-      v
-[ Diagnosis ]
-      |
-      v
-[ Prognosis ]
-      |
-      v
-[ Solution Proposal ]
-      |
-      v
-[ Human Review + Decision ]
-```
-
-There is no silver bullet:
-- each service has unique failure modes
-- side effects matter
-- the system will not think beyond what the prompt/context enables
-
-So the real acceleration is cumulative:
-> Every incident fixed should leave behind context that makes the next incident faster.
-
----
-
 ## “What We Get” vs “What We Must Build”
 
 We can split responsibilities clearly.
@@ -446,3 +373,49 @@ This direction is less about automation and more about a **mindset shift**:
 - then let execution be automated safely
 
 Arché encodes months of iteration around that workflow.
+
+## Appendix on: "Incident Work: From Reactive to Proactive"
+
+Claude Code doesn’t magically self-orient in production issues.
+Just like any AI workflow, it needs:
+- clear instructions
+- strong context
+
+For each service/project, the docs we provide are critical context:
+- cluster name(s)
+- namespaces
+- services/pods
+- known failure modes
+- health expectations
+- kubectl commands
+- log locations and patterns
+
+With that foundation, we can evolve incident workflows gradually.
+
+### Diagram: Incident Handling Evolution
+
+```
+[ Detection ]
+      |
+      v
+[ Diagnosis ]
+      |
+      v
+[ Prognosis ]
+      |
+      v
+[ Solution Proposal ]
+      |
+      v
+[ Human Review + Decision ]
+```
+
+There is no silver bullet:
+- each service has unique failure modes
+- side effects matter
+- the system will not think beyond what the prompt/context enables
+
+So the real acceleration is cumulative:
+> Every incident fixed should leave behind context that makes the next incident faster.
+
+
