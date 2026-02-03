@@ -61,16 +61,11 @@ Arche is the foundation upon which other plugins build:
 | **shodo** | Calligraphy (書道) | Python standards for elegant code |
 | **gradient** | Architecture | Uses all principles for plugin creation |
 
-```
-          ┌─────────┐
-          │  arche  │  ← Essential principles (load first)
-          └────┬────┘
-               │
-    ┌──────────┼──────────┐
-    ▼          ▼          ▼
-┌───────┐  ┌───────┐  ┌──────────┐
-│ zazen │  │ shodo │  │ gradient │
-└───────┘  └───────┘  └──────────┘
+```mermaid
+graph TD
+    A[arche] --> B[zazen]
+    A --> C[shodo]
+    A --> D[gradient]
 ```
 
 ## Principles
