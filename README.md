@@ -57,9 +57,9 @@ Arche is the foundation upon which other plugins build:
 | Plugin | Philosophy | Depends on Arché |
 |--------|------------|------------------|
 | **arche** | Greek (ἀρχή) | — (is the foundation) |
-| **zazen** | Zen (座禅) | Zen principles for code clarity |
-| **shodo** | Calligraphy (書道) | Python standards for elegant code |
-| **gradient** | Architecture | Uses all principles for plugin creation |
+| [**zazen**](https://github.com/daviguides/zazen) | Zen (座禅) | Zen principles for code clarity |
+| [**shodo**](https://github.com/daviguides/shodo) | Calligraphy (書道) | Python standards for elegant code |
+| [**gradient**](https://github.com/daviguides/gradient) | Architecture | Uses all principles for plugin creation |
 
 ```mermaid
 graph TD
