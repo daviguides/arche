@@ -48,8 +48,6 @@ Just as the Greek philosophers sought the arché of the universe - the fundament
 ├─────────────────────────────────────────┤
 │ 5. LLM Conciseness                      │  ← Token economy
 └─────────────────────────────────────────┘
-
-* Anti-Precocity optional modes → migrated to Dao plugin
 ```
 
 ## Relationship with Other Plugins
@@ -60,7 +58,6 @@ Arche is the foundation upon which other plugins build:
 |--------|------------|------------------|
 | **arche** | Greek (ἀρχή) | — (is the foundation) |
 | **code-zen** | Zen Buddhism | Uses conciseness, anti-duplication |
-| **dao** | Taoism (道) | Uses anti-babysitting, adds workflow extensions |
 | **gradient** | Architecture | Uses all principles for plugin creation |
 
 ```
@@ -68,11 +65,11 @@ Arche is the foundation upon which other plugins build:
         │  arche  │  ← Essential principles (load first)
         └────┬────┘
              │
-    ┌────────┼────────┐
-    ▼        ▼        ▼
-┌───────┐ ┌─────┐ ┌──────────┐
-│code-zen│ │ dao │ │ gradient │
-└───────┘ └─────┘ └──────────┘
+       ┌─────┴─────┐
+       ▼           ▼
+  ┌───────┐  ┌──────────┐
+  │code-zen│  │ gradient │
+  └───────┘  └──────────┘
 ```
 
 ## Principles

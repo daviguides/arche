@@ -2,7 +2,7 @@
 
 The 4 principal cognitive modes that define the user's journey from discovery to delivery.
 
-These are the **base modes** that can be extended or modified by other plugins (e.g., Dao).
+These are the **base modes** that govern user cognitive state throughout interactions.
 
 
 ## The User Journey

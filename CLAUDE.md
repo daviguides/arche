@@ -66,7 +66,6 @@ Plus: `essential-cognitive-modes.md` in `spec/modes/`
 
 ## Relationship with Other Plugins
 
-- **Dao**: Extends essential-cognitive-modes with optional modes and workflows
 - **Gradient**: Uses Arché principles for plugin architecture
 - **Code-Zen**: Uses conciseness, anti-duplication principles
 
