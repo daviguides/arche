@@ -102,6 +102,31 @@ graph TD
 - Search codebase before creating
 - Detect user's mode before responding
 
+## Essential Cognitive Modes
+
+The 4 principal modes that define the user's journey from discovery to delivery:
+
+```mermaid
+graph LR
+    E[EXPLORING] --> R[RESEARCHING]
+    R --> P[PLANNING]
+    P --> I[IMPLEMENTING]
+
+    E -.- e["'what is'"]
+    R -.- r["'analyze'"]
+    P -.- p["'how to'"]
+    I -.- i["'do it'"]
+```
+
+| Mode | User Intent | Signals |
+|------|-------------|---------|
+| **EXPLORING** | Discover what exists | "What is...", "Show me...", "Where is..." |
+| **RESEARCHING** | Deep analysis | "Analyze...", "Compare...", "Why does..." |
+| **PLANNING** | Design solution | "How should we...", "Plan out...", "Best approach..." |
+| **IMPLEMENTING** | Execute changes | "Do it", "Create...", "Fix...", "Go ahead" |
+
+**Each transition requires explicit user signal.** Never assume the user wants to move forward.
+
 ## Project Structure
 
 ```
