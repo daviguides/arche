@@ -26,6 +26,8 @@ arche/
 └── design/
 ```
 
+**Documentation**: `docs/` folder is at `./../gradients-docs/arche-docs`
+
 ---
 
 ## The 5 Essential Principles
