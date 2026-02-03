@@ -63,13 +63,11 @@ Arche is the foundation upon which other plugins build:
 | **arche** | Greek (ἀρχή) | — (is the foundation) |
 | [**zazen**](https://github.com/daviguides/zazen) | Zen (座禅) | Zen principles for code clarity |
 | [**shodo**](https://github.com/daviguides/shodo) | Calligraphy (書道) | Python standards for elegant code |
-| [**gradient**](https://github.com/daviguides/gradient) | Architecture | Uses all principles for plugin creation |
 
 ```mermaid
 graph TD
     A[arche] --> B[zazen]
     A --> C[shodo]
-    A --> D[gradient]
 ```
 
 ## Principles
