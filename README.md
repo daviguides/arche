@@ -16,6 +16,10 @@ Arché provides the **essential principles** that govern LLM behavior - the foun
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/daviguides/arche/main/install.sh)"
 ```
 
+## Manifesto
+
+Read the **[Manifesto](manifesto.md)** for a detailed explanation of the workflow philosophy: spec-as-code, phased cognitive work, and why human-in-the-loop matters.
+
 ## Philosophy
 
 ### The First Principle (ἀρχή)
