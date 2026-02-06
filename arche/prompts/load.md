@@ -21,7 +21,7 @@ After reading all files, respond with EXACTLY this card:
 │       ▲                                             │
 │       │       │  Essential Behavioral Principles    │
 │   A R C H É   │  for Claude Code                    │
-│       │       │  (v1.6.3)                           │
+│       │       │  (v1.6.4)                           │
 │                                                     │
 ╰─────────────────────────────────────────────────────╯
 
