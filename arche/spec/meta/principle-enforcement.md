@@ -18,24 +18,48 @@ THEN proceed with implementation
 **VIOLATION = HALT IMMEDIATELY AND REPORT TO USER**
 
 
-## 4 HALT Conditions
+## DOGMATIC RULE: @ References Are Mandatory Reads
 
-### ⛔ 1: Principles Not Loaded
+**Every `@` reference encountered in a file MUST be read using the Read tool.**
+
+`@` is NOT a "see also". It is NOT optional context. It is a **mandatory read directive**.
+
+```
+When reading a file and encountering @path/to/file.md:
+1. STOP processing current file
+2. READ the referenced file
+3. RESUME processing current file with referenced context loaded
+```
+
+**VIOLATION**: Using inline information from a file while ignoring its `@` references. The referenced file is the **authoritative source** — inline summaries exist only as navigation aids, never as substitutes.
+
+❌ Read resume-protocol.md → see `cd .worktrees/<task>` → execute → ignore `@../worktree/worktree-spec.md`
+✅ Read resume-protocol.md → see `@../worktree/worktree-spec.md` → READ worktree-spec.md → use authoritative commands from spec
+
+
+## 5 HALT Conditions
+
+### ⛔ 1: @ Reference Not Read
+- **Trigger**: Encountered `@path/to/file.md` in any loaded file
+- **Check**: Was the referenced file read with Read tool?
+- **If NO**: HALT → Read the referenced file before continuing
+
+### ⛔ 2: Principles Not Loaded
 - **Trigger**: User requests implementation
 - **Check**: Principles loaded in session?
 - **If NO**: HALT → "Load principles before proceeding"
 
-### ⛔ 2: Codebase Not Researched
+### ⛔ 3: Codebase Not Researched
 - **Trigger**: About to create files
 - **Check**: Used Glob/Grep/Read?
 - **If NO**: HALT → "Research existing implementations first"
 
-### ⛔ 3: Duplication Detected
+### ⛔ 4: Duplication Detected
 - **Trigger**: Research reveals existing implementation
 - **Check**: Similar code/feature exists?
 - **If YES**: HALT → Report, suggest extend/refactor
 
-### ⛔ 4: User Mode Unclear
+### ⛔ 5: User Mode Unclear
 - **Trigger**: Need to respond
 - **Check**: Can detect EXPLORING/RESEARCHING/PLANNING/IMPLEMENTING?
 - **If NO**: HALT → Ask user to clarify mode
@@ -110,6 +134,7 @@ When principles conflict:
 @~/.claude/arche/spec/_spec-framework.md
 
 **Pre-response checklist:**
+- [ ] All `@` references read?
 - [ ] Research done?
 - [ ] Principles loaded?
 - [ ] Duplication checked?
