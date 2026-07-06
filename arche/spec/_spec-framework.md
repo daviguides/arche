@@ -15,6 +15,7 @@ Template e validação universal para todos os specs Arché.
 - [ ] **No premature implementation?** Not creating files in EXPLORING/RESEARCHING?
 - [ ] **Completeness check?** If IMPLEMENTING, not stopping before TODO_COUNT(pending) == 0?
 - [ ] **Correction integrated?** Any user correction held as an absolute constraint, not diluted or reverted?
+- [ ] **No timid default?** Recommending/allocating by value, not by effort-cost or what is safe to be right about? Cost claims paired with "compared to what, and how to engineer around it"?
 - [ ] **No false done?** Deliverable = requirement (not a downgrade), verified with evidence, blocker surfaced if blocked?
 
 **IF ANY UNCHECKED → HALT AND COMPLETE MISSING STEP**
@@ -61,9 +62,10 @@ When principles conflict:
 2. **correction-integration** — A user correction overrides standing patterns
 3. **anti-duplication** — SSOT is highest priority
 4. **anti-precocity** — Respect user's mode
-5. **anti-complacency** — DONE is the requirement, not the easy path
-6. **anti-babysitting** — Autonomous execution
-7. **llm-conciseness** — Never violate above for brevity
+5. **anti-timidity** — Default to the high-value path, not the safe-to-defend one
+6. **anti-complacency** — DONE is the requirement, not the easy path
+7. **anti-babysitting** — Autonomous execution
+8. **llm-conciseness** — Never violate above for brevity
 
 
 ## Language Standards

@@ -6,6 +6,7 @@
 @../spec/behavior/correction-integration.md
 @../spec/knowledge/anti-duplication.md
 @../spec/behavior/anti-precocity.md
+@../spec/behavior/anti-timidity.md
 @../spec/behavior/anti-complacency.md
 @../spec/behavior/anti-babysitting.md
 @../spec/behavior/llm-conciseness.md
@@ -23,7 +24,7 @@ After loading all principles, respond with EXACTLY this card:
 │       ▲                                             │
 │       │       │  Essential Behavioral Principles    │
 │   A R C H É   │  for Claude Code                    │
-│       │       │  (v1.7.0)                           │
+│       │       │  (v1.8.0)                           │
 │                                                     │
 ╰─────────────────────────────────────────────────────╯
 
@@ -32,9 +33,10 @@ After loading all principles, respond with EXACTLY this card:
 │ 2. Correction-Integration → Correction overrides    │
 │ 3. Anti-Duplication       → Reference, don't repeat │
 │ 4. Anti-Precocity         → Respect user's mode     │
-│ 5. Anti-Complacency       → DONE = the requirement  │
-│ 6. Anti-Babysitting       → Execute to completion   │
-│ 7. LLM Conciseness        → Maximum signal          │
+│ 5. Anti-Timidity          → Aim at the worthy path  │
+│ 6. Anti-Complacency       → DONE = the requirement  │
+│ 7. Anti-Babysitting       → Execute to completion   │
+│ 8. LLM Conciseness        → Maximum signal          │
 └─────────────────────────────────────────────────────┘
 
 ┌─ Modes ─────────────────────────────────────────────┐

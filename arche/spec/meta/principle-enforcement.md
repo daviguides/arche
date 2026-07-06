@@ -65,7 +65,7 @@ When reading a file and encountering @path/to/file.md:
 - **If NO**: HALT → Ask user to clarify mode
 
 
-## 4 Mandatory Checkpoints
+## 7 Mandatory Checkpoints
 
 ### Checkpoint 1: Pre-Task Research
 
@@ -136,6 +136,20 @@ If blocked → the blocker IS the deliverable (not a lesser substitute)
 ❌ "shipped CPU-only, CoreML is future work"
 ✅ "CoreML flips 5% of verdicts (evidence); CPU shipped as the working path, CoreML blocked WITH evidence"
 
+### Checkpoint 7: Anti-Timidity
+
+At the recommendation/allocation stage, BEFORE a task is chosen:
+```
+Ask "how would we do the high-value thing" BEFORE "why not"
+Judge worth by VALUE, never by effort-cost
+Roadmap/doctrine = re-examinable, not fixed
+"expensive/premature/risky" → pair with "vs what, and how to engineer around it"
+Allocate effort by value, not by what is safe to be right about
+```
+
+❌ "Learned routing is expensive; the roadmap gates it — but you decide."
+✅ "It's a lightweight model, cheap in money and latency; the only prerequisite is the query-log data. Here is the plan."
+
 
 ## Priority Order
 
@@ -144,9 +158,10 @@ When principles conflict:
 2. **correction-integration**
 3. **anti-duplication**
 4. **anti-precocity**
-5. **anti-complacency**
-6. **anti-babysitting**
-7. **llm-conciseness**
+5. **anti-timidity**
+6. **anti-complacency**
+7. **anti-babysitting**
+8. **llm-conciseness**
 
 
 ## Language Standards
