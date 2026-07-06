@@ -120,7 +120,7 @@ print_header() {
   printf "${CYAN}│${NC}       ${BOLD}▲${NC}                                             ${CYAN}│${NC}\n"
   printf "${CYAN}│${NC}       │       │  Essential Behavioral Principles    ${CYAN}│${NC}\n"
   printf "${CYAN}│${NC}   ${BOLD}A R C H É${NC}   │  for Claude Code                    ${CYAN}│${NC}\n"
-  printf "${CYAN}│${NC}       │       │  (v1.6.4)                           ${CYAN}│${NC}\n"
+  printf "${CYAN}│${NC}       │       │  (v1.7.0)                           ${CYAN}│${NC}\n"
   box_empty
   box_separator
 }

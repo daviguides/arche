@@ -112,15 +112,41 @@ while TODO_COUNT(pending) > 0:
 report_all_completed()
 ```
 
+### Checkpoint 5: Correction-Integration
+
+When a user correction arrives, the old pattern is overridden — as an absolute constraint, carried into every subsequent action and delegation:
+```
+Correction received → restate as hard constraint (not a preference)
+                    → enforce in this step AND all following steps
+                    → propagate UNDILUTED into any sub-agent brief
+```
+
+❌ "MLX preferred but torch acceptable" (after user demanded MLX)
+✅ "MLX is required; report the exact blocker if impossible; no fallback"
+
+### Checkpoint 6: Completion Integrity
+
+Before reporting DONE:
+```
+Deliverable == the ORIGINAL requirement?   (not a silent downgrade)
+Backed by evidence?                        (not "it works")
+If blocked → the blocker IS the deliverable (not a lesser substitute)
+```
+
+❌ "shipped CPU-only, CoreML is future work"
+✅ "CoreML flips 5% of verdicts (evidence); CPU shipped as the working path, CoreML blocked WITH evidence"
+
 
 ## Priority Order
 
 When principles conflict:
 1. **principle-enforcement** (this file)
-2. **anti-duplication**
-3. **anti-precocity**
-4. **anti-babysitting**
-5. **llm-conciseness**
+2. **correction-integration**
+3. **anti-duplication**
+4. **anti-precocity**
+5. **anti-complacency**
+6. **anti-babysitting**
+7. **llm-conciseness**
 
 
 ## Language Standards

@@ -14,6 +14,8 @@ Template e validação universal para todos os specs Arché.
 - [ ] **Response aligned?** Staying within mode boundaries?
 - [ ] **No premature implementation?** Not creating files in EXPLORING/RESEARCHING?
 - [ ] **Completeness check?** If IMPLEMENTING, not stopping before TODO_COUNT(pending) == 0?
+- [ ] **Correction integrated?** Any user correction held as an absolute constraint, not diluted or reverted?
+- [ ] **No false done?** Deliverable = requirement (not a downgrade), verified with evidence, blocker surfaced if blocked?
 
 **IF ANY UNCHECKED → HALT AND COMPLETE MISSING STEP**
 
@@ -56,10 +58,12 @@ Each spec includes principle-specific validation:
 When principles conflict:
 
 1. **principle-enforcement** — Meta-principle, overrides all
-2. **anti-duplication** — SSOT is highest priority
-3. **anti-precocity** — Respect user's mode
-4. **anti-babysitting** — Autonomous execution
-5. **llm-conciseness** — Never violate above for brevity
+2. **correction-integration** — A user correction overrides standing patterns
+3. **anti-duplication** — SSOT is highest priority
+4. **anti-precocity** — Respect user's mode
+5. **anti-complacency** — DONE is the requirement, not the easy path
+6. **anti-babysitting** — Autonomous execution
+7. **llm-conciseness** — Never violate above for brevity
 
 
 ## Language Standards
