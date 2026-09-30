@@ -80,11 +80,58 @@ Plus: `essential-cognitive-modes.md` in `spec/modes/`
 
 ---
 
-## Releasing
+## Releasing — mandatory workflow
 
-When creating a new version:
+Every plugin modification MUST follow this sequence. No exceptions.
 
-1. Update `.claude-plugin/plugin.json` version field
-2. Commit the version bump
-3. Create annotated tag: `git tag -a vX.Y.Z -m "message"`
-4. Push with tag: `git push && git push origin vX.Y.Z`
+### 1. Bump version
+
+Patch for fixes/tweaks, minor for new skills or behavioral changes:
+
+```bash
+# From gradients/arche/
+# Edit .claude-plugin/plugin.json version field
+# Also update install.sh header if it shows a version
+```
+
+### 2. Commit and push
+
+```bash
+git add -A && git commit -m "bump: vX.Y.Z — <what changed>"
+git tag -a vX.Y.Z -m "<what changed>"
+git push && git push origin vX.Y.Z
+```
+
+### 3. Run install.sh
+
+```bash
+~/work/sources/continuum/gradients/arche/install.sh
+```
+
+Note: install.sh clones from the GitHub remote (not local source), so
+the push in step 2 must land before running it.
+
+### 4. Verify cache is not stale
+
+The plugin cache (`~/.claude/plugins/cache/daviguides/arche/`) is
+unstable — even after a successful install, it can preserve stale
+state from previous versions. This is a known unresolved bug in the
+Claude Code plugin system.
+
+After install, always verify:
+
+```bash
+# Compare installed vs source timestamps
+diff <(ls -lR ~/.claude/arche/spec/) <(ls -lR arche/spec/)
+
+# Check cache version matches
+ls ~/.claude/plugins/cache/daviguides/arche/
+
+# If stale, nuke cache and reinstall
+rm -rf ~/.claude/plugins/cache/daviguides/arche/
+rm -rf ~/.claude/arche/
+./install.sh
+```
+
+Do NOT move to the next task with a stale cache — the session will
+load outdated skills silently.
