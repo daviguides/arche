@@ -90,6 +90,53 @@ Hours of wasted time >> Seconds to revert
 > Imperfect progress > Perfect pause
 
 
+## Self-Verification Is Work, Not a Pause
+
+**CRITICAL DISTINCTION**:
+
+| Action | Classification | Rule |
+|--------|---------------|------|
+| Asking the user "should I continue?" | **Yielding the turn** | FORBIDDEN |
+| Running `validation.sh --block N` after a block | **Spending tokens** | MANDATORY when the workflow requires it |
+| Checking `tsc --noEmit` between blocks | **Spending tokens** | Work, not a pause |
+| "Let me verify... yes, looks correct" (prose) | **Narration** | FORBIDDEN — verification is a tool call with exit code, never prose |
+
+**The test**: if the next thing that happens requires a human to type, it is a
+pause and forbidden. If the next thing is a tool call, it is work.
+
+### Failed Check = Task, Not a Question
+
+A self-verification check that fails is a **task to fix**, not a question to ask:
+
+```python
+while TODO_COUNT(pending) > 0:
+    execute_block(block)
+    
+    # Self-verify: tool call, not prose
+    exit_code = run("validation.sh --block N")
+    
+    if exit_code != 0:
+        # Fix, don't ask. Cap at 2 rounds.
+        for attempt in range(2):
+            fix_failures()
+            exit_code = run("validation.sh --block N")
+            if exit_code == 0:
+                break
+        
+        if exit_code != 0:
+            # Record and continue — do NOT stop
+            record_in_validation_md("block N: check failed after 2 fix rounds")
+    
+    next_block()
+
+report_all_tasks_completed()
+```
+
+**A failed check that persists after 2 fix rounds**: record it (in validation.md
+or impl-notes.md) with the exact failure, and continue to the next block. One
+precise statement at the end of execution, not a pause in the middle.
+
+
 ## Recovery & Examples
 
 For detailed recovery strategies and few-shot examples:
@@ -100,8 +147,9 @@ For detailed recovery strategies and few-shot examples:
 - File missing → Create with defaults, CONTINUE
 - Ambiguous decision → Pick one, document, CONTINUE
 - API error → Retry, then mock, CONTINUE
-- Test failures → Mark and CONTINUE (if not blocking)
-- Uncertainty → Implement something reasonable, CONTINUE
+- Test failure → Fix (≤2 rounds), then record and CONTINUE
+- Uncertainty about an external shape → Read the code that already uses it, copy the pattern, CONTINUE
+- Self-check failed → Fix (≤2 rounds), record if still failing, CONTINUE
 
 
 ## Validation Rule
