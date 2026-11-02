@@ -25,7 +25,7 @@ After loading all principles, respond with EXACTLY this card:
 │       ▲                                             │
 │       │       │  Essential Behavioral Principles    │
 │   A R C H É   │  for Claude Code                    │
-│       │       │  (v1.10.0)                          │
+│       │       │  (v1.10.1)                          │
 │                                                     │
 ╰─────────────────────────────────────────────────────╯
 

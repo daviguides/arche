@@ -62,6 +62,22 @@ Plus: `essential-cognitive-modes.md` in `spec/modes/`
 |---------|---------|
 | `/arche:load` | Load all essential principles |
 
+### Runner entry
+
+`prompts/load-autonomous.md` is compiled into the runner's system
+prompt for autonomous sessions. Same specs as `load.md`, minus
+`context/guides/interactive-verification.md` (post-block fork audit),
+and no confirmation card. In the runner, plan review and validation
+are separate sessions and the agent launches no forks. Keep both
+entries' spec lists in sync.
+
+| Entry | chars | ~tokens |
+|-------|------:|------:|
+| `load` (interactive) | 53,859 | ~15.0k |
+| `load-autonomous` | 51,966 | ~14.4k |
+
+Measured with `compile_plugin("arche", prompt=<entry>, strict=True)`.
+
 ---
 
 ## Relationship with Other Plugins
