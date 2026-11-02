@@ -97,7 +97,7 @@ Hours of wasted time >> Seconds to revert
 | Action | Classification | Rule |
 |--------|---------------|------|
 | Asking the user "should I continue?" | **Yielding the turn** | FORBIDDEN |
-| Running `validation.sh --block N` after a block | **Spending tokens** | MANDATORY when the workflow requires it |
+| Running `bash validation.sh <worktree> <block>` after a block | **Spending tokens** | MANDATORY when the workflow requires it |
 | Checking `tsc --noEmit` between blocks | **Spending tokens** | Work, not a pause |
 | "Let me verify... yes, looks correct" (prose) | **Narration** | FORBIDDEN — verification is a tool call with exit code, never prose |
 
@@ -113,13 +113,13 @@ while TODO_COUNT(pending) > 0:
     execute_block(block)
     
     # Self-verify: tool call, not prose
-    exit_code = run("validation.sh --block N")
+    exit_code = run("bash validation.sh <worktree> N")
     
     if exit_code != 0:
         # Fix, don't ask. Cap at 2 rounds.
         for attempt in range(2):
             fix_failures()
-            exit_code = run("validation.sh --block N")
+            exit_code = run("bash validation.sh <worktree> N")
             if exit_code == 0:
                 break
         

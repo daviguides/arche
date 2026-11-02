@@ -13,7 +13,7 @@ Self-verification is mandatory regardless of which workflow is active:
 
 | Context | Verification after each block |
 |---------|-------------------------------|
-| dao + validation.sh | Fork audit (completeness) + `validation.sh --block N` (mechanics) |
+| dao + validation.sh | Fork audit (completeness) + `bash validation.sh <worktree> <block>` (mechanics) |
 | dao without validation.sh | Fork audit + type check + tests on changed files |
 | Session aberta (no dao) | Fork audit + type check + tests on changed files |
 
