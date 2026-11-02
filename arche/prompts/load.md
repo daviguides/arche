@@ -14,6 +14,7 @@
 @../spec/_spec-framework.md
 @../context/guides/pre-create-checkpoint.md
 @../context/guides/mode-execution-guide.md
+@../context/guides/interactive-verification.md
 @../context/examples/mode-transitions.md
 @../context/examples/recovery-strategies.md
 
@@ -24,7 +25,7 @@ After loading all principles, respond with EXACTLY this card:
 │       ▲                                             │
 │       │       │  Essential Behavioral Principles    │
 │   A R C H É   │  for Claude Code                    │
-│       │       │  (v1.8.0)                           │
+│       │       │  (v1.10.0)                          │
 │                                                     │
 ╰─────────────────────────────────────────────────────╯
 
