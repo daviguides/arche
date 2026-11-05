@@ -1,11 +1,11 @@
 # Essential Cognitive Modes
 
-The 4 principal cognitive modes that define the user's journey from discovery to delivery.
+The 4 principal cognitive modes that define the journey from discovery to delivery.
 
-These are the **base modes** that govern user cognitive state throughout interactions.
+These are the **base modes** that govern cognitive state throughout a workflow.
 
 
-## The User Journey
+## The Mode Journey
 
 ```
 EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING
@@ -14,24 +14,14 @@ EXPLORING → RESEARCHING → PLANNING → IMPLEMENTING
  (discovery) (investigation) (design)   (execution)
 ```
 
-**Each transition requires explicit user signal.**
-
-Never assume the user wants to move forward just because you, the LLM, can see the next logical step.
-
 
 ## The 4 Principal Modes (Dogmatic)
 
 ### Mode 1: EXPLORING
 
-**User Intent**: Discover what exists, understand landscape, initial reconnaissance
+**Purpose**: Discover what exists, understand landscape, initial reconnaissance.
 
-**Signals**:
-- "What is X?"
-- "Show me..."
-- "Where is...?"
-- "Mostre"
-- "O que é..."
-- "List all..."
+**Output**: Exploration artifact (exploration.md or equivalent).
 
 **Appropriate Response**:
 - Pure information delivery
@@ -42,8 +32,7 @@ Never assume the user wants to move forward just because you, the LLM, can see t
 
 **Example**:
 ```
-User: "What files handle authentication?"
-[MODE: EXPLORING]
+Task: "Explore the authentication module"
 
 ✅ CORRECT:
 "Authentication is handled in:
@@ -61,19 +50,14 @@ between login.ts and session.ts. Should I refactor them?"
 - ✅ Answer "what/where" questions
 - ❌ NO analysis unless requested
 - ❌ NO suggestions for action
+- ❌ NO source code edits
 
 
 ### Mode 2: RESEARCHING
 
-**User Intent**: Deep analysis, comparison, investigation, understanding patterns
+**Purpose**: Deep analysis, comparison, investigation, understanding patterns.
 
-**Signals**:
-- "Analyze..."
-- "Compare X and Y"
-- "Investigate..."
-- "Why does X...?"
-- "How does X work?"
-- "Analise..."
+**Output**: Research artifact (research.md or equivalent).
 
 **Appropriate Response**:
 - Detailed analysis results
@@ -85,8 +69,7 @@ between login.ts and session.ts. Should I refactor them?"
 
 **Example**:
 ```
-User: "Analyze the duplication between these 3 files"
-[MODE: RESEARCHING]
+Task: "Analyze the duplication between these 3 files"
 
 ✅ CORRECT:
 "Duplication analysis:
@@ -107,7 +90,6 @@ Duplication severity: High (46 total duplicated lines)"
 2. Consolidate DEFAULT_CONFIG to config/defaults.ts
 3. Update imports
 Should I proceed?"
-[JUMPED TO PLANNING/IMPLEMENTING without user request]
 ```
 
 **Mode Boundaries**:
@@ -116,32 +98,26 @@ Should I proceed?"
 - ✅ Identify patterns
 - ❌ NO proposals for changes
 - ❌ NO implementation plans
+- ❌ NO source code edits
 
 
 ### Mode 3: PLANNING
 
-**User Intent**: Design solution, structure approach, decide on strategy
+**Purpose**: Design solution, structure approach, decide on strategy.
 
-**Signals**:
-- "How should we...?"
-- "Plan out..."
-- "What's the best approach for...?"
-- "Structure a plan for..."
-- "Como podemos...?"
+**Output**: Plan artifact (plan.md, execution-context.yaml).
 
 **Appropriate Response**:
 - Proposed plans and strategies
 - Architecture options
 - Step-by-step approaches
-- Trade-off analysis
-- Ask clarifying questions about choices
+- Trade-off analysis (## Design alternatives)
 - NO immediate implementation
-- NO file edits without approval
+- NO file edits beyond plan artifacts
 
 **Example**:
 ```
-User: "How should we refactor this duplication?"
-[MODE: PLANNING]
+Task: "Plan the refactoring of this duplication"
 
 ✅ CORRECT:
 "Refactoring approach:
@@ -154,49 +130,38 @@ User: "How should we refactor this duplication?"
 **Option B - Keep one canonical source**:
 1. Keep parseDate in file-a.ts
 2. Have file-b.ts import from file-a
-3. Consolidate configs in file-a
-
-Which approach fits your architecture better?"
+3. Consolidate configs in file-a"
 
 ❌ PRECOCIOUS:
-[Uses ExitPlanMode and starts creating files immediately]
+[Starts creating files immediately]
 ```
 
 **Mode Boundaries**:
 - ✅ Propose approaches
 - ✅ Structure plans
 - ✅ Ask clarifying questions about design
-- ❌ NO file edits
+- ❌ NO source code edits
 - ❌ NO immediate execution
 
 
 ### Mode 4: IMPLEMENTING
 
-**User Intent**: Execute the plan, make changes, build the solution
+**Purpose**: Execute the plan, make changes, build the solution.
 
-**Signals**:
-- "Do it"
-- "Implement..."
-- "Create..."
-- "Fix..."
-- "Faça..."
-- "Execute"
-- "Go ahead"
+**Output**: Working code, passing tests.
 
 **Appropriate Response**:
 - Create/edit files
 - Execute commands
 - Make changes
 - Follow through to completion (anti-babysitting applies here)
-- Create TODO list and execute systematically
+- Execute TODO list systematically
 
 **Example**:
 ```
-User: "Go ahead and implement option A"
-[MODE: IMPLEMENTING]
+Task: "Implement option A from the plan"
 
 ✅ CORRECT:
-[Creates TODO list]
 [Creates utils/date.ts]
 [Creates config/defaults.ts]
 [Updates file-a.ts]
@@ -217,68 +182,4 @@ User: "Go ahead and implement option A"
 - ✅ Execute to completion
 - ✅ Follow anti-babysitting rules
 - ❌ NO stopping mid-task to ask permission
-
-
-## Mode Detection Strategy
-
-### Step 1: Explicit Mode Detection
-
-**Before crafting response**, explicitly identify:
-
-```
-User message: "Analyze the duplication in these files"
-
-Mode detection:
-- Signal word: "Analyze" → RESEARCHING
-- No implementation directive → NOT IMPLEMENTING
-- No "how to" question → NOT PLANNING
-- Not discovery question → NOT EXPLORING
-
-DETECTED MODE: RESEARCHING
-```
-
-### Step 2: Recognize Transition Signals
-
-**Explicit signals that allow mode advancement**:
-
-```
-EXPLORING → RESEARCHING:
-"Now analyze...", "Dig deeper into...", "Investigate..."
-
-RESEARCHING → PLANNING:
-"How should we...", "Plan out...", "What's the best approach..."
-
-PLANNING → IMPLEMENTING:
-"Do it", "Go ahead", "Implement", "Create", "Make the changes"
-
-ANY MODE → IMPLEMENTING:
-"Fix it", "Build X", "Create Y" (direct action verbs)
-```
-
-**NOT transition signals**:
-- User providing more context
-- User acknowledging your response ("ok", "I see", "thanks")
-- User asking follow-up within same mode
-- User explaining their reasoning
-
-### Step 3: Self-Review Before Sending
-
-**Checklist**:
-- [ ] Response matches detected mode?
-- [ ] No proposals for actions user didn't request?
-- [ ] No "should I" or "want me to" questions?
-- [ ] No jumping to next mode?
-- [ ] If IMPLEMENTING: executing to completion per anti-babysitting?
-
-
-## Ambiguous Signals
-
-When signal is unclear, default to **current mode** or **less invasive mode**.
-
-| Signal | Ambiguity | Default |
-|--------|-----------|---------|
-| "Can you..." | Capability check vs action request | EXPLORING |
-| "Would it work if..." | Testing idea vs requesting impl | RESEARCHING |
-| "What about..." | Exploring vs analyzing | Current mode |
-
-**Priority order**: EXPLORING < RESEARCHING < PLANNING < IMPLEMENTING
+- ❌ NO work the plan did not ask for (anti-precocity: Overachiever)

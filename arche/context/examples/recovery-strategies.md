@@ -11,10 +11,10 @@ Patterns for resolving problems during TODO execution without pausing.
 |-----------|---------------|---------------|
 | File missing | "Should I create it?" | Create with defaults, add TODO comment |
 | Ambiguous choice | "axios or fetch?" | Pick one, document choice |
-| API error | "Should I retry?" | Retry with backoff, then mock if fails |
+| API error | "Should I retry?" | Retry with backoff; still failing, record as blocker and continue |
 | Test failing | "Fix before continuing?" | Fix (≤2 rounds), then record and continue |
 | Uncertain impl | "async or promises?" | Pick modern approach, document |
-| Conflicting reqs | "Spec vs existing code?" | Follow spec, document conflict |
+| Conflicting reqs | "Spec vs existing code?" | Follow the brief and plan, document conflict |
 | External shape unknown | "What does the SDK return?" | Read the code that already consumes it, copy the pattern |
 | Self-check failed | "The check failed, should I continue?" | Fix (≤2 rounds), record if still failing, continue |
 | Validation.sh fails | "Block didn't pass, want me to fix?" | Fix (≤2 rounds), record, next block |
@@ -25,9 +25,8 @@ Patterns for resolving problems during TODO execution without pausing.
 When tasks have issues, MARK and CONTINUE:
 
 ```
-✅ "completed - needs review: reason"
-✅ "completed with approach X - may need refactor"
-✅ "completed with mock - needs real implementation"
+✅ "done, needs review: <reason>"
+✅ "done with approach X, may need refactor"
 
 ❌ "sorry I couldn't..."
 ❌ "should I have done X?"
@@ -49,4 +48,4 @@ Cost: 45min + 2h wait + 5min = 3.8x waste
 Cost: 50 min. Perfect efficiency.
 ```
 
-**95% done is NOT useful. Git protects everything. FINISH THE JOB.**
+**95% done is NOT useful. FINISH THE JOB.**

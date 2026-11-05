@@ -78,57 +78,12 @@ Test: "If I remove emoji, does meaning change?" NO → Prohibited.
 - `---`: ONLY major topic transitions (< 3 per doc)
 
 
-## Detection: Red Flags
-
-- Filler words (basically, actually, just)
-- Passive voice ("should be", "can be")
-- Bullet sprawl (fragmented single thought)
-- Buried leads (important info after preamble)
-- Paragraph bloat (> 6 lines)
-- Prose describing code
-- HR overuse (> 3 per doc)
-
-
-## Anti-Patterns
-
-### Bullet Sprawl
-```markdown
-❌ Benefits:
-- Eliminates burden
-- Prevents issues
-- Reduces load
-
-✅ **Benefits**: Eliminates burden, prevents issues, reduces load.
-```
-
-### Buried Lead
-```markdown
-❌ In this document we explore conciseness... The key principle is token economy.
-✅ **Token economy**: Every token must carry semantic value.
-```
-
-### Redundant Repetition
-```markdown
-❌ Use active voice. Don't use passive. Avoid passive phrasing.
-✅ Use active voice. Avoid passive.
-```
-
-### Academic Verbosity
-```markdown
-❌ It should be noted that in order to achieve optimal results...
-✅ Use validation.
-```
-
-
 ## Validation
-
-@~/.claude/arche/spec/_spec-framework.md
 
 **Conciseness specific:**
 - [ ] Zero filler words?
 - [ ] Active voice 90%+?
 - [ ] Code blocks for code?
-- [ ] HRs < 3 per document?
 - [ ] Lists only for real options?
 
 

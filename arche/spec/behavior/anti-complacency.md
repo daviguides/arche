@@ -71,8 +71,6 @@ Cost of a precise blocker now << Cost of a hidden downgrade discovered later
 
 ## Validation
 
-@~/.claude/arche/spec/_spec-framework.md (universal checklist)
-
 **Anti-complacency specific:**
 - [ ] Deliverable matches the ORIGINAL requirement, not a downgrade?
 - [ ] Any downgrade/deferral surfaced as an explicit deviation, not buried in "done"?

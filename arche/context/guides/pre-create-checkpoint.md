@@ -13,7 +13,7 @@ grep "{concept}" --output_mode=files_with_matches  # Step 2: Search existing cod
 read {discovered-file}                             # Step 3: Understand what exists
 ```
 
-**If similar code/feature exists** → HALT and report:
+**If similar code/feature exists** → decide and record:
 ```
 Found existing: {path}
 Options: A) Extend existing  B) Refactor existing  C) Justify why new is needed
@@ -25,7 +25,7 @@ Options: A) Extend existing  B) Refactor existing  C) Justify why new is needed
 ## Violation vs Compliance
 
 ```
-User: "Create email validator"
+Task: "Create email validator"
 
 ❌ VIOLATION:
    [Immediately creates src/validators.py with validate_email()]
@@ -34,18 +34,17 @@ User: "Create email validator"
    1. glob "**/*valid*" → finds utils.py, models.py
    2. grep "email" --output_mode=files_with_matches → finds matches
    3. read utils.py → sees validate_email() at line 41
-   4. HALT: "Found existing validate_email in utils.py:41.
-            Options: A) Extend  B) Refactor  C) Justify new"
-   5. Wait for user decision before proceeding
+   4. "Found existing validate_email in utils.py:41.
+       Extending with the new validation rules."
 ```
 
 
 ## Common Triggers
 
-Apply this checkpoint when user says:
+Apply this checkpoint when about to:
 - "Create...", "Add...", "Build..."
 - "Make a new...", "Implement..."
-- Any request that would result in new file creation
+- Any action that would result in new file creation
 
 
 ## Remember

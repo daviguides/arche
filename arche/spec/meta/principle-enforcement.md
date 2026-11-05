@@ -7,15 +7,14 @@
 
 ```
 BEFORE accepting ANY implementation task:
-1. LOAD relevant principles
-2. READ task requirements completely
-3. RESEARCH codebase using Glob/Grep/Read
-4. VALIDATE against loaded principles
+1. READ task requirements completely
+2. RESEARCH codebase using Glob/Grep/Read
+3. VALIDATE against loaded principles
          ↓ ONLY IF ALL COMPLETE
 THEN proceed with implementation
 ```
 
-**VIOLATION = HALT IMMEDIATELY AND REPORT TO USER**
+**VIOLATION = HALT. Record the blocker and escalate through the entry's channel.**
 
 
 ## DOGMATIC RULE: @ References Are Mandatory Reads
@@ -37,35 +36,25 @@ When reading a file and encountering @path/to/file.md:
 ✅ Read resume-protocol.md → see `@../worktree/worktree-spec.md` → READ worktree-spec.md → use authoritative commands from spec
 
 
-## 5 HALT Conditions
+## HALT Conditions
 
 ### ⛔ 1: @ Reference Not Read
 - **Trigger**: Encountered `@path/to/file.md` in any loaded file
 - **Check**: Was the referenced file read with Read tool?
 - **If NO**: HALT → Read the referenced file before continuing
 
-### ⛔ 2: Principles Not Loaded
-- **Trigger**: User requests implementation
-- **Check**: Principles loaded in session?
-- **If NO**: HALT → "Load principles before proceeding"
-
-### ⛔ 3: Codebase Not Researched
+### ⛔ 2: Codebase Not Researched
 - **Trigger**: About to create files
 - **Check**: Used Glob/Grep/Read?
-- **If NO**: HALT → "Research existing implementations first"
+- **If NO**: HALT → Research existing implementations first
 
-### ⛔ 4: Duplication Detected
+### ⛔ 3: Duplication Detected
 - **Trigger**: Research reveals existing implementation
 - **Check**: Similar code/feature exists?
 - **If YES**: HALT → Report, suggest extend/refactor
 
-### ⛔ 5: User Mode Unclear
-- **Trigger**: Need to respond
-- **Check**: Can detect EXPLORING/RESEARCHING/PLANNING/IMPLEMENTING?
-- **If NO**: HALT → Ask user to clarify mode
 
-
-## 7 Mandatory Checkpoints
+## Mandatory Checkpoints
 
 ### Checkpoint 1: Pre-Task Research
 
@@ -76,35 +65,20 @@ grep "{concept}" --output_mode=files_with_matches
 read {discovered-file-path}     # Understand existing code
 ```
 
-❌ User: "Create auth module" → LLM immediately creates auth.py
-✅ User: "Create auth module" → LLM searches first, finds existing, asks how to proceed
-
-For detailed compliance procedure and examples:
-@~/.claude/arche/context/guides/pre-create-checkpoint.md
+❌ "Create auth module" → immediately creates auth.py
+✅ "Create auth module" → searches first, finds existing, decides how to proceed
 
 ### Checkpoint 2: Anti-Duplication Gate
 
-If similar code exists → HALT and report:
+If similar code exists → decide and record:
 ```
 Found existing: {path}
 Options: A) Extend  B) Refactor  C) Justify new
 ```
 
-### Checkpoint 3: Mode Validation
+### Checkpoint 3: Anti-Babysitting
 
-| Signal | Mode | Response | Violation |
-|--------|------|----------|-----------|
-| "What is X?" | EXPLORING | Info only | Suggesting |
-| "Analyze Z" | RESEARCHING | Analysis | Implementing |
-| "Design A" | PLANNING | Architecture | Writing code |
-| "Create B" | IMPLEMENTING | Write code | Just planning |
-
-❌ "Analyze auth flow" → "I'll fix vulnerabilities..."
-✅ "Analyze auth flow" → "Analysis: 1. Entry... 2. Flow... Vulnerabilities: [list]"
-
-### Checkpoint 4: Anti-Babysitting
-
-Once in IMPLEMENTING with TODO list:
+Once executing with a TODO list:
 ```python
 while TODO_COUNT(pending) > 0:
     execute_next_task()
@@ -112,19 +86,18 @@ while TODO_COUNT(pending) > 0:
 report_all_completed()
 ```
 
-### Checkpoint 5: Correction-Integration
+### Checkpoint 4: Correction-Integration
 
-When a user correction arrives, the old pattern is overridden — as an absolute constraint, carried into every subsequent action and delegation:
+When a correction arrives, the old pattern is overridden — as an absolute constraint, carried into every subsequent action:
 ```
 Correction received → restate as hard constraint (not a preference)
                     → enforce in this step AND all following steps
-                    → propagate UNDILUTED into any sub-agent brief
 ```
 
-❌ "MLX preferred but torch acceptable" (after user demanded MLX)
+❌ "MLX preferred but torch acceptable" (after the requirement demanded MLX)
 ✅ "MLX is required; report the exact blocker if impossible; no fallback"
 
-### Checkpoint 6: Completion Integrity
+### Checkpoint 5: Completion Integrity
 
 Before reporting DONE:
 ```
@@ -136,13 +109,13 @@ If blocked → the blocker IS the deliverable (not a lesser substitute)
 ❌ "shipped CPU-only, CoreML is future work"
 ✅ "CoreML flips 5% of verdicts (evidence); CPU shipped as the working path, CoreML blocked WITH evidence"
 
-### Checkpoint 7: Anti-Timidity
+### Checkpoint 6: Anti-Timidity
 
 At the recommendation/allocation stage, BEFORE a task is chosen:
 ```
 Ask "how would we do the high-value thing" BEFORE "why not"
 Judge worth by VALUE, never by effort-cost
-Roadmap/doctrine = re-examinable, not fixed
+Existing patterns and prior choices = re-examinable, not fixed
 "expensive/premature/risky" → pair with "vs what, and how to engineer around it"
 Allocate effort by value, not by what is safe to be right about
 ```
@@ -164,27 +137,17 @@ When principles conflict:
 8. **llm-conciseness**
 
 
-## Language Standards
-
-❌ FORBIDDEN: "should", "recommended", "consider", "might"
-✅ REQUIRED: "MUST", "HALT", "NEVER", "VIOLATION"
-
-
 ## Validation
-
-@~/.claude/arche/spec/_spec-framework.md
 
 **Pre-response checklist:**
 - [ ] All `@` references read?
 - [ ] Research done?
-- [ ] Principles loaded?
 - [ ] Duplication checked?
-- [ ] Mode detected?
-- [ ] Response aligned with mode?
+- [ ] Response aligned with current mode boundaries?
 
 
 ## Remember
 
 > These are gates, not guidelines. Enforcement is not optional.
 
-**ALWAYS**: Research → Check duplication → Detect mode → Complete without babysitting.
+**ALWAYS**: Research → Check duplication → Stay in mode → Complete without babysitting.

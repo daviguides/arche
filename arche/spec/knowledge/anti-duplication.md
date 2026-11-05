@@ -61,8 +61,8 @@ For format syntax:
 **DOGMATIC RULE**: Recognize content already loaded in session.
 
 ```
-User: /load-context
-User: /load-context (again)
+/load-context
+/load-context (again)
 
 ❌ Re-read all files, duplicate in context
 ✅ "Already loaded. Skipping redundant read."
@@ -71,73 +71,20 @@ User: /load-context (again)
 **Check before loading**: Did I read this in this session? If yes, skip.
 
 
-## No 'Related' Sections
-
-**DOGMATIC RULE**: Never create manual cross-reference sections.
-
-**Prohibited**:
-- "Related Specifications"
-- "See Also"
-- "Further Reading"
-- "Application to [Project]"
-
-**Why forbidden**: Violate SSOT, require manual maintenance, become stale.
-
-**Correct approach**: Load workflows connect specs + context automatically.
-
-```markdown
-❌ ## See Also
-   @./spec/file1.md
-
-✅ [Spec ends without cross-references]
-   [Load workflows handle connections]
-```
-
-
 ## Refactoring Duplication
 
-1. **Identify SSOT**: Rule/definition → SPECS. Example/pattern → CONTEXT.
+1. **Identify SSOT**: Where is the authoritative definition?
 2. **Consolidate**: Move to SSOT, merge unique insights
-3. **Replace with references**: `@./bundle/specs/xyz.md`
+3. **Replace with references**: `@./path/to/source.md`
 4. **Validate**: All references resolve, no info lost
 
 
-## Layer Rules
-
-**SPECS**: No examples, no guides, all normative
-**CONTEXT**: No syntax definitions, reference specs for rules
-**PROMPTS**: Mostly `@` references, < 5 lines inline
-
-
-## Anti-Patterns
-
-### Spec Repetition
-```markdown
-❌ specs/: "meta section with id, kind, version"
-   context/: "meta section containing id, kind, version, title"
-
-✅ context/: "For metadata requirements: @./specs/format.md"
-```
-
-### Verbose Prompts
-```markdown
-❌ prompts/: (100 lines explaining format)
-✅ prompts/: @./specs/format.md
-```
-
-### Quick Reference Files
-Eliminate entirely. For LLMs: no value (process full specs equally fast).
-
-
 ## Validation
-
-@~/.claude/arche/spec/_spec-framework.md
 
 **Anti-duplication specific:**
 - [ ] Content exists elsewhere?
 - [ ] Could reference instead?
 - [ ] Is this the SSOT?
-- [ ] No "Related" sections?
 
 
 ## Remember

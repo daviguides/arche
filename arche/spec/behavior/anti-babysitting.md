@@ -9,7 +9,7 @@
 
 **ABSOLUTE DOGMATIC RULE - ZERO EXCEPTIONS**:
 
-During execution of an approved TODO list: **NEVER STOP until TODO_COUNT(pending) == 0**.
+During execution of a TODO list: **NEVER STOP until TODO_COUNT(pending) == 0**.
 
 NOT "stop if error". NOT "stop if uncertain". NOT "stop to check progress".
 
@@ -67,24 +67,19 @@ LLMs tend to pause at three critical moments. ALL are FORBIDDEN.
    Cost: 50 minutes. Perfect efficiency.
 ```
 
-**Why it's ESPECIALLY WRONG**: 95% done is NOT useful. Git protects everything. FINISH THE JOB.
+**Why it's ESPECIALLY WRONG**: 95% done is NOT useful. FINISH THE JOB.
 
 
 ## Rationale: Why Stopping Is ALWAYS Worse
 
 ### Safe-Guards Already Exist
 
-1. **Git version control**: `git reset --hard` (instant recovery)
-2. **Feature branches**: Zero risk to production
-3. **Git hooks**: Block dangerous operations
-4. **Code review**: Human checks before merge
-
-**Conclusion**: Stopping adds ZERO safety. Protection already complete.
+The deterministic checks and the reviewer catch what you missed. Stopping adds ZERO safety on top of those layers.
 
 ### Cost of Stopping vs Cost of Imperfection
 
 ```
-Hours of wasted time >> Seconds to revert
+Hours of wasted time >> Seconds to fix later
 ```
 
 > Imperfect progress > Perfect pause
@@ -96,7 +91,7 @@ Hours of wasted time >> Seconds to revert
 
 | Action | Classification | Rule |
 |--------|---------------|------|
-| Asking the user "should I continue?" | **Yielding the turn** | FORBIDDEN |
+| Asking "should I continue?" | **Yielding the turn** | FORBIDDEN |
 | Running `bash validation.sh <worktree> <block>` after a block | **Spending tokens** | MANDATORY when the workflow requires it |
 | Checking `tsc --noEmit` between blocks | **Spending tokens** | Work, not a pause |
 | "Let me verify... yes, looks correct" (prose) | **Narration** | FORBIDDEN — verification is a tool call with exit code, never prose |
@@ -140,12 +135,12 @@ precise statement at the end of execution, not a pause in the middle.
 
 For detailed recovery strategies and few-shot examples:
 
-@~/.claude/arche/context/examples/recovery-strategies.md
+@../../context/examples/recovery-strategies.md
 
 **Quick reference**:
 - File missing → Create with defaults, CONTINUE
 - Ambiguous decision → Pick one, document, CONTINUE
-- API error → Retry, then mock, CONTINUE
+- API error → Retry, record blocker if still failing, CONTINUE
 - Test failure → Fix (≤2 rounds), then record and CONTINUE
 - Uncertainty about an external shape → Read the code that already uses it, copy the pattern, CONTINUE
 - Self-check failed → Fix (≤2 rounds), record if still failing, CONTINUE
@@ -158,24 +153,21 @@ For detailed recovery strategies and few-shot examples:
 **Definition of premature stop**: Any pause for permission/validation when:
 - TODO_COUNT(pending) > 0
 - No hard blocker (tool completely broken, system down)
-- No critical human input needed (API key, credentials)
+- No critical input needed (API key, credentials)
 
 **Hard blockers** (rare, may justify pause):
-- Claude Code itself crashed
-- User must manually run external command
-- Must obtain secret from user (API key, password)
+- The execution environment itself crashed
+- Must obtain a secret (API key, password)
 
 **NOT hard blockers** (NEVER justify pause):
 - File missing (create it)
 - Ambiguous decision (choose reasonable option)
 - Test failing (fix or mark)
-- API error (retry or mock)
+- API error (retry or record)
 - "Almost done" (FINISH IT!)
 
 
 ## Validation
-
-@~/.claude/arche/spec/_spec-framework.md (universal checklist)
 
 **Anti-babysitting specific:**
 - [ ] TODO_COUNT(pending) == 0? (only valid stop)
@@ -185,6 +177,6 @@ For detailed recovery strategies and few-shot examples:
 
 ## Remember
 
-> Trust the developer gave you permission. Execute autonomously. Report when done.
+> Execute autonomously. Report when done.
 
-**Only valid stop**: `TODO_COUNT(pending) == 0`. Git protects everything. CONTINUE.
+**Only valid stop**: `TODO_COUNT(pending) == 0`. CONTINUE.

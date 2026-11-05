@@ -14,14 +14,16 @@
 arche/
 ├── arche/                    ← BUNDLE
 │   ├── spec/
-│   │   ├── behavior/         # How LLM should act
-│   │   ├── knowledge/        # How to handle information
-│   │   ├── meta/             # Governs other principles
-│   │   └── modes/            # Essential cognitive modes
+│   │   ├── behavior/         # How LLM should act (core, shared by all entries)
+│   │   ├── knowledge/        # How to handle information (anti-duplication, spec-authoring)
+│   │   ├── meta/             # Governs other principles (principle-enforcement)
+│   │   ├── modes/            # Essential cognitive modes (mode definitions and limits)
+│   │   ├── interactive/      # User-in-the-loop: mode detection by signal, fork audit
+│   │   └── runner/           # Runner overlays: autonomous (authors), reviewer
 │   ├── context/
 │   │   ├── guides/           # Practical compliance procedures
 │   │   └── examples/         # Few-shot examples
-│   └── prompts/
+│   └── prompts/              # load, load-autonomous, load-reviewer
 ├── commands/
 └── design/
 ```
@@ -62,21 +64,30 @@ Plus: `essential-cognitive-modes.md` in `spec/modes/`
 |---------|---------|
 | `/arche:load` | Load all essential principles |
 
-### Runner entry
+### Entries
 
-`prompts/load-autonomous.md` is compiled into the runner's system
-prompt for autonomous sessions. Same specs as `load.md`, minus
-`context/guides/interactive-verification.md` (post-block fork audit),
-and no confirmation card. In the runner, plan review and validation
-are separate sessions and the agent launches no forks. Keep both
-entries' spec lists in sync.
+Three entries, each composing from the same specs with a different
+overlay. Each spec is written once; entries only choose what to import.
 
-| Entry | chars | ~tokens |
-|-------|------:|------:|
-| `load` (interactive) | 53,859 | ~15.0k |
-| `load-autonomous` | 51,966 | ~14.4k |
+| Entry | Purpose | Overlay | chars | ~tokens |
+|-------|---------|---------|------:|--------:|
+| `load` (interactive) | Sessions with a human | `spec/interactive/` + `interactive-verification` | 41,784 | ~11.6k |
+| `load-autonomous` | Runner author sessions (G1 discovery, G3 implementing) | `spec/runner/autonomous` | 38,936 | ~10.8k |
+| `load-reviewer` | Runner reviewer sessions (G2 plan_review, G4 validate) | `spec/runner/reviewer` | 15,705 | ~4.4k |
 
-Measured with `compile_plugin("arche", prompt=<entry>, strict=True)`.
+Measured with `compile_plugin("arche", prompt=<entry>, strict=True)`
+from the dev layout (`GRADIENT_PLUGIN_PATH` pointing to the plugin root).
+
+**Spec with a runner variant**: each spec in `spec/behavior/`, `spec/meta/`,
+`spec/knowledge/` and `spec/modes/` is neutralized (no user-as-interlocutor,
+no git, no forks). The interactive and runner overlays add the context-specific
+escalation channel. When editing a core spec, verify the compiled output of
+all 3 entries.
+
+**Release order for YAML changes**: the arche release and `install.sh` MUST
+land before any workflow YAML that references a new entry. A YAML pointing
+to an entry that does not exist in the installed bundle causes `PluginError`
+and stops every task at that mode.
 
 ---
 

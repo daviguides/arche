@@ -5,18 +5,17 @@
 @../spec/meta/principle-enforcement.md
 @../spec/behavior/correction-integration.md
 @../spec/knowledge/anti-duplication.md
+@../spec/modes/essential-cognitive-modes.md
 @../spec/behavior/anti-precocity.md
 @../spec/behavior/anti-timidity.md
 @../spec/behavior/anti-complacency.md
 @../spec/behavior/anti-babysitting.md
-@../spec/behavior/llm-conciseness.md
-@../spec/modes/essential-cognitive-modes.md
-@../spec/_spec-framework.md
-@../context/guides/pre-create-checkpoint.md
-@../context/guides/mode-execution-guide.md
-@../context/guides/interactive-verification.md
-@../context/examples/mode-transitions.md
 @../context/examples/recovery-strategies.md
+@../spec/behavior/llm-conciseness.md
+@../spec/knowledge/spec-authoring.md
+@../context/guides/pre-create-checkpoint.md
+@../spec/interactive/user-in-the-loop.md
+@../context/guides/interactive-verification.md
 
 After loading all principles, respond with EXACTLY this card:
 
@@ -25,7 +24,7 @@ After loading all principles, respond with EXACTLY this card:
 │       ▲                                             │
 │       │       │  Essential Behavioral Principles    │
 │   A R C H É   │  for Claude Code                    │
-│       │       │  (v1.10.3)                          │
+│       │       │  (v1.11.0)                          │
 │                                                     │
 ╰─────────────────────────────────────────────────────╯
 
@@ -33,7 +32,7 @@ After loading all principles, respond with EXACTLY this card:
 │ 1. Principle Enforcement  → Research before action  │
 │ 2. Correction-Integration → Correction overrides    │
 │ 3. Anti-Duplication       → Reference, don't repeat │
-│ 4. Anti-Precocity         → Respect user's mode     │
+│ 4. Anti-Precocity         → Respect mode boundaries │
 │ 5. Anti-Timidity          → Aim at the worthy path  │
 │ 6. Anti-Complacency       → DONE = the requirement  │
 │ 7. Anti-Babysitting       → Execute to completion   │
